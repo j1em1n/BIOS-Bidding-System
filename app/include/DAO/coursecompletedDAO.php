@@ -2,23 +2,35 @@
 
 class CoursecompletedDAO {
 
-public  function retrieveAll() {
-    $sql = 'SELECT * FROM course_completed ORDER BY userid, code';
-        
-    $connMgr = new ConnectionManager();      
-    $conn = $connMgr->getConnection();
+    public  function retrieveAll() {
+        $sql = 'SELECT * FROM course_completed ORDER BY userid, code';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
 
-    $stmt = $conn->prepare($sql);
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute();
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
 
-    $result = array();
+        $result = array();
 
-    while($row = $stmt->fetch()) {
-        $result[] = new Coursecompleted($row['userid'], $row['code']);
+        while($row = $stmt->fetch()) {
+            $result[] = new Coursecompleted($row['userid'], $row['code']);
+        }
+            
+        return $result;
     }
-        
-    return $result;
-}
 
+    public function removeAll() {
+        $sql = 'TRUNCATE TABLE course_completed';
+        
+        $connMgr = new ConnectionManager();
+        $conn = $connMgr->getConnection();
+        
+        $stmt = $conn->prepare($sql);
+        
+        $stmt->execute();
+        $count = $stmt->rowCount();
+    }    
+}
 ?>

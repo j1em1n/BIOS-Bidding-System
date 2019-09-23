@@ -2,23 +2,35 @@
 
 class PrerequisiteDAO {
 
-public  function retrieveAll() {
-    $sql = 'SELECT * FROM prerequisite ORDER BY course, prerequisite';
-        
-    $connMgr = new ConnectionManager();      
-    $conn = $connMgr->getConnection();
+    public  function retrieveAll() {
+        $sql = 'SELECT * FROM prerequisite ORDER BY course, prerequisite';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
 
-    $stmt = $conn->prepare($sql);
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute();
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
 
-    $result = array();
+        $result = array();
 
-    while($row = $stmt->fetch()) {
-        $result[] = new Prerequisite($row['course'], $row['prerequisite']);
+        while($row = $stmt->fetch()) {
+            $result[] = new Prerequisite($row['course'], $row['prerequisite']);
+        }
+            
+        return $result;
     }
         
-    return $result;
+    public function removeAll() {
+        $sql = 'TRUNCATE TABLE prerequisite';
+        
+        $connMgr = new ConnectionManager();
+        $conn = $connMgr->getConnection();
+        
+        $stmt = $conn->prepare($sql);
+        
+        $stmt->execute();
+        $count = $stmt->rowCount();
+    }    
 }
-
 ?>
