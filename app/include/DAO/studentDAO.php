@@ -21,5 +21,5 @@ public  function retrieveAll() {
         
     return $result;
 }
-
+}
 ?>

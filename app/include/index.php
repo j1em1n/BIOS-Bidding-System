@@ -2,9 +2,10 @@
 
 require_once 'include/common.php';
 require_once 'include/protect.php';
+require_once 'DAO/studentDAO.php';
 
-$dao = new PokemonDAO();
-$results = $dao->retrieveAll();
+$dao = new StudentDAO();
+$user = $dao->retrieveAll();
     
 ?>
 
@@ -14,7 +15,7 @@ $results = $dao->retrieveAll();
     </head>
     <body>
         <h1>BIOS BIDDING</h1>
-        <h2>Welcome <?$user->name?>
+        <h2>Welcome <?=$user[0]->name?>
         <p>
             <a href='logout.php'>Logout</a>
         </p>
@@ -22,7 +23,7 @@ $results = $dao->retrieveAll();
         <table>
             <tr>
                 <th></th>
-                <th>E_Balance: $<?$user->edollar ?></th>
+                <th>E_Balance: $<?=$user[0]->edollar ?></th>
             </tr>
         
         </table>
