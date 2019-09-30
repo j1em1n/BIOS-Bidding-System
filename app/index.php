@@ -16,7 +16,9 @@ if(isset($_SESSION['userid'])){
 $biddao = new BidDAO();
 $allbid = $biddao->retrieveAll();
 
-//var_dump($allbid);
+$coursedao = new CourseDAO();
+$allcourse = $coursedao->retrieveAll();
+//var_dump($allcourse);
 
 ?>
 
@@ -45,27 +47,33 @@ $allbid = $biddao->retrieveAll();
             foreach ($allbid as $eachbid){
                 foreach($eachbid as $eachuserbid){
                     if($eachuserbid == $userid){
-                        //var_dump($userid);
-                        //var_dump($eachuserbid);
-                        echo 
-                        "<tr>
-                            <td>$eachbid->code</td>
-                            <td>$eachbid->code </td>
+                        echo "
+                        <tr>
+                            <td>$eachbid->code</td>";
+
+                            foreach($allcourse as $eachcourse) {
+                                foreach($eachcourse as $eachcoursecode){
+                       
+                                    if($eachcoursecode == $eachbid->code){
+                                        var_dump($eachcoursecode);
+                                        echo "<td>$eachcourse->title</td>";
+                                    }
+                                }
+                            }
+                            echo "
                             <td>$eachbid->section</td>
                             <td>$eachbid->amount</td>
-
+                            
                         </tr>";
-                        
                     }
                 }
             }
-            // COURSE NAME FROM COURSe!!!
         ?>
 
         </table>
 
         <table>
-            <tr>
+            <tr>"
                 <th>E_Balance: $<?=$user[0]->edollar ?></th>
             </tr>
 
