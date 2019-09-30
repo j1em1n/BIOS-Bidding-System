@@ -10,6 +10,7 @@ $user = $dao->retrieveAll();
     
 if(isset($_SESSION['userid'])){
     $userid = $_SESSION['userid'];
+    header("Location: planbidphp")
     ///echo $userid;
 }
 
