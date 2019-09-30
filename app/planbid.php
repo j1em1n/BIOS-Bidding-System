@@ -17,6 +17,7 @@ $userschool = $retrieveall->school;
 $coursedao = new CourseDAO();
 $allcourse = $coursedao->retrieveAll();
 
+
 ?>
 
 
@@ -27,6 +28,15 @@ $allcourse = $coursedao->retrieveAll();
     </head>
     <body>        
         <h1>Add Bid</h1>
+            <select name = "Pick a school">
+                <option value = 'SIS'>SIS</option> <? // can use disabled to block optin?>
+                <option value = 'SOB'>SOB</option>
+                <option value = 'SOE'>SOE</option>
+                <option value = 'SOA'>SOA</option>
+                <option value = 'SOL'>SOL</option>
+                <option value = 'SOSS'>SOSS</option>
+
+            </select>
 
             <table>
 
