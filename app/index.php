@@ -22,6 +22,41 @@ $user = $dao->retrieveAll();
 
         <table>
             <tr>
+                <b>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Section</th>
+                <th>Bid amount (e$)</th>
+                </b>
+            </tr>
+            <tr>
+                <th>IS212</th>
+                <th>SPM</th>
+                <th>G1</th>
+                <th>25.01</th>
+            </tr>
+            <tr>
+                <th>IS212</th>
+                <th>SPM</th>
+                <th>G1</th>
+                <th>25.01</th>
+            </tr>
+            <tr>
+                <th>IS212</th>
+                <th>SPM</th>
+                <th>G1</th>
+                <th>25.01</th>
+            </tr>
+            <tr>
+                <th>IS212</th>
+                <th>SPM</th>
+                <th>G1</th>
+                <th>25.01</th>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
                 <th></th>
                 <th>E_Balance: $<?=$user[0]->edollar ?></th>
             </tr>
