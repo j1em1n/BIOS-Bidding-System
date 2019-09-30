@@ -116,7 +116,7 @@ function doBootstrap() {
 					$name = trim($data[2]);
 					$school = trim($data[3]);
 					$edollar = trim($data[4]);
-					//Check for any field 
+					//Check for any empty field 
 					if(!(empty($userId) || empty($pwd) || empty($name) || empty($school) || empty($edollar))){
 						//An indexed array to store all the exisiting userid in, to check for duplicate userid
 						$checkDupUserId[] = $userId;
@@ -129,6 +129,7 @@ function doBootstrap() {
 						} else {
 							$_SESSION['errors'] = "student.csv - row $countStud - the userid field must not exceed 128 characters.";
 						}
+						//Checking if edollar is >= 0.0
 						if($edollar >= 0.0){
 							//Check whether the double has more than 2 decimal place 
 							$checkedollar = strval($edollar);
@@ -148,8 +149,6 @@ function doBootstrap() {
 							$_SESSION['errors'] = "student.csv - row $countStud - name should not contain more than 100 characters.";
 						}
 						if(count($_SESSION['errors']) == 0){
-							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
-							$edollar = strval($edollar);
 							$studentObj = new Student($userId, $pwd, $name, $school, $edollar);
 							$studentDAOobj->add($studentObj);
 							$student_processed++; #line added successfully	
@@ -189,21 +188,78 @@ function doBootstrap() {
 				# must not be blank 
 				# for the project, the full error list is listed in the wiki
 
-				// Pokemon Type
+				// COURSE 
 
-				$pokemonTypeDAO = new PokemonDAO();
-				$pokemonTypeDAO->removeAll(); #clearing data (not database)
-				$data = fgetcsv($pokemon_type); 
-
-				while ( ($data = fgetcsv($pokemon_type) ) !== false){ #double == to check for boolean also. 
-					# $data[0] = name $data[1] = type
-					$pokemonType = new Pokemon ($data[0]);
-					$pokemonTypeDAO->add($pokemonType);
-					$pokemon_type_processed++;
+				#skip header
+				$data = fgetcsv($course); #will get array in data (2 fields cause csv files only have 2 columns)
+				#give a file to read  
+				while ( ($data = fgetcsv($course) ) !== false){ #double == to check for boolean also. 
+					$countCourse = 1;
+					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
+					$getCourse = trim($data[0]);
+					$school = trim($data[1]);
+					$title = trim($data[2]);
+					$description = trim($data[3]);
+					$exam_date = trim($data[4]);
+					$exam_start = trim($data[5]);
+					$exam_end = trim($data[6]);
+					//Check for any empty field 
+					if(!(empty($getCourse) || empty($school) || empty($title) || empty($description) || empty($exam_date) || empty($exam_start) || empty($exam_end))){
+						//Checking if the title field is > 100 characters using strlen()
+						if(strlen($title) > 100){
+							$_SESSION['errors'] = "course.csv - row $countCourse - the title field must not exceed 100 characters.";
+						} 
+						//Checking if the description field has > 1000 characters using strlen()
+						if(strlen($description) > 1000){
+							$_SESSION['errors'] = "course.csv - row $countCourse - description should not contain more than 1000 characters.";
+						}
+						//Checking if the date field is in ymd format
+						if(($exam_date = date("Ymd")) == FALSE){
+							$_SESSION['errors'] = "course.csv - row $countCourse - exam date is not in yyyymmdd format.";
+						}
+						if(strtotime($exam_start) == FALSE){
+							$_SESSION['errors'] = "course.csv - row $countCourse - exam start time is not in .";
+						}
+						if(count($_SESSION['errors']) == 0){
+							$CourseObj = new Course($getCourse, $school, $title, $description, $exam_date, $exam_start, $exam_end);
+							$studentDAOobj->add($studentObj);
+							$student_processed++; #line added successfully	
+						} else {
+							//Print out all the errors for user
+							//print error for blank fields? CHECK!
+							printErrors();
+						}
+					} else {
+						//pass the line in the file (apparently dun need to write any code?? try try)
+						//Print out all the errors for user
+						if(empty($data[0])){
+							$_SESSION['errors'] = "course field is blank.";
+						} 
+						if(empty($data[1])){
+							$_SESSION['errors'] = "school field is blank.";
+						}
+						if(empty($data[2])){
+							$_SESSION['errors'] = "title field is blank.";
+						}
+						if(empty($data[3])){
+							$_SESSION['errors'] = "description field is blank.";
+						}
+						if(empty($data[4])){
+							$_SESSION['errors'] = "exam date field is blank.";
+						}
+						if(empty($data[5])){
+							$_SESSION['errors'] = "exam start field is blank.";
+						}
+						if(empty($data[6])){
+							$_SESSION['errors'] = "exam end field is blank.";
+						}
+						printErrors();
+					}
+					$countCourse++;
 				}
 
-				fclose($pokemon_type); //close file handle
-				unlink($pokemon_type_path); //delete the temp file
+				fclose($course); // close the file handle
+				unlink($course_path); // delete the temp file
 
 				// User 
 

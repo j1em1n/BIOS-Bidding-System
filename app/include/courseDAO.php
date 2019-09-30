@@ -34,6 +34,29 @@ class CourseDAO {
         $count = $stmt->rowCount();
     }    
 
+    public function add($course) {
+        $sql = 'INSERT INTO course (course, school, title, description, exam_date, exam_start, exam_end) VALUES (:course, :school, :title, :description, :exam_date, :exam_start, :exam_end)';
+        
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->bindParam(':course', $course->getCourse(), PDO::PARAM_STR);
+        $stmt->bindParam(':school', $course->getSchool(), PDO::PARAM_STR);
+        $stmt->bindParam(':title', $course->getTitle(), PDO::PARAM_STR);
+        $stmt->bindParam(':description', $course->getDescription(), PDO::PARAM_STR);
+        $stmt->bindParam(':exam_date', $course->getExamDate(), PDO::PARAM_STR);
+        $stmt->bindParam(':exam_start', $course->getExamStart(), PDO::PARAM_STR);
+        $stmt->bindParam(':exam_end', $course->getExamEnd(), PDO::PARAM_STR);
+
+        $isAddOK = False;
+        if ($stmt->execute()) {
+            $isAddOK = True;
+        }
+
+        return $isAddOK;
+    }
 
     
 }
