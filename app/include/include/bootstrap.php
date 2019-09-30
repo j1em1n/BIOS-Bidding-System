@@ -12,7 +12,12 @@ function doBootstrap() {
 	$temp_dir = sys_get_temp_dir();
 
 	# keep track of number of lines successfully processed for each file
-	$userid_processed=0;
+	$student_processed=0;
+	$section_processed=0;
+	$course_processed=0;
+	$course_completed_processed=0;
+	$prerequisite_processed=0;
+	$bid_processed=0;
 
 	# check file size
 	if ($_FILES["bootstrap-file"]["size"] <= 0)
@@ -60,7 +65,7 @@ function doBootstrap() {
 				
 				if (!empty($course_completed)) {
 					fclose($course_completed);
-					@unlink($course_completed);
+					@unlink($course_completed_path);
 				}
 				
 				if (!empty($prerequisite)) {
@@ -93,7 +98,7 @@ function doBootstrap() {
 				#give a file to read i.e. $pokemon 
 				while ( ($data = fgetcsv($student) ) !== false){ #double == to check for boolean also. 
 					# $data[0] = name $data[1] = type
-					$studentObj = new Student ($data[0], $data[2], $data[3], $data[4]);
+					$studentObj = new Student ($data[0], $data[1], data[2], $data[3], $data[4]);
 					$studentDAOobj->add($studentObj);
 					$pokemon_processed++;
 				}
@@ -158,9 +163,13 @@ function doBootstrap() {
 		$result = [ 
 			"status" => "success",
 			"num-record-loaded" => [
-				"pokemon.csv" => $pokemon_processed,
-				"pokemon_type.csv" => $pokemon_type_processed,
-				"User.csv" => $User_processed
+				"student.csv" => $student_processed,
+				"section.csv" => $section_processed,
+				"course.csv" => $course_processed,
+				"course_completed.csv" => $course_completed_processed,
+				"prerequisite.csv" => $prerequisite_processed,
+				"bid.csv" => $bid_processed
+
 			]
 		];
 	}

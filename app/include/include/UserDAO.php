@@ -40,6 +40,25 @@ class UserDAO {
         return $result;
     }
 
+    public function add(){
+        $sql = 'INSERT INTO `student`(`userid`, `password`, `name`, `school`, `edollar`) ';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = array();
+
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $result[] = new s($row['userid'], $row['gender'],$row['password'], $row['name']);
+        }
+        return $result;
+    }
+
    
 }
 
