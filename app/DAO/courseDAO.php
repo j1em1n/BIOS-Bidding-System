@@ -1,9 +1,9 @@
 <?php
 
-class StudentDAO {
+class CourseDAO {
 
     public  function retrieveAll() {
-        $sql = 'SELECT * FROM student ORDER BY userid';
+        $sql = 'SELECT * FROM course ORDER BY course';
         
             
         $connMgr = new ConnectionManager();      
@@ -16,14 +16,14 @@ class StudentDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Student($row['userid'], $row['password'], $row['name'], $row['school'], $row['edollar']);
+            $result[] = new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
             
         return $result;
     }
 
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE student';
+        $sql = 'TRUNCATE TABLE course';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -33,5 +33,8 @@ class StudentDAO {
         $stmt->execute();
         $count = $stmt->rowCount();
     }    
+
+
+    
 }
 ?>
