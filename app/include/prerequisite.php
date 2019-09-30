@@ -11,12 +11,12 @@ class Prerequisite{
         
     }
 
-    public function getCourse()){
+    public function getCourse(){
         return $this->course;
     }
 
     public function getPrerequisite(){
         return $this->prerequisite;
     }
-
+}
 ?>
