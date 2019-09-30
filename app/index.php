@@ -6,7 +6,18 @@ require_once './include/studentDAO.php';
 
 $dao = new StudentDAO();
 $user = $dao->retrieveAll();
+//var_dump($user);
     
+if(isset($_SESSION['userid'])){
+    $userid = $_SESSION['userid'];
+    ///echo $userid;
+}
+
+$biddao = new BidDAO();
+$allbid = $biddao->retrieveAll();
+
+//var_dump($allbid);
+
 ?>
 
 <html>
@@ -29,30 +40,28 @@ $user = $dao->retrieveAll();
                 <th>Bid amount (e$)</th>
                 </b>
             </tr>
-            <tr>
-                <th>IS212</th>
-                <th>SPM</th>
-                <th>G1</th>
-                <th>25.01</th>
-            </tr>
-            <tr>
-                <th>IS212</th>
-                <th>SPM</th>
-                <th>G1</th>
-                <th>25.01</th>
-            </tr>
-            <tr>
-                <th>IS212</th>
-                <th>SPM</th>
-                <th>G1</th>
-                <th>25.01</th>
-            </tr>
-            <tr>
-                <th>IS212</th>
-                <th>SPM</th>
-                <th>G1</th>
-                <th>25.01</th>
-            </tr>
+
+        <?php
+            foreach ($allbid as $eachbid){
+                foreach($eachbid as $eachuserbid){
+                    if($eachuserbid == $userid){
+                        //var_dump($userid);
+                        //var_dump($eachuserbid);
+                        echo 
+                        "<tr>
+                            <td>$eachbid->code</td>
+                            <td>$eachbid->code </td>
+                            <td>$eachbid->section</td>
+                            <td>$eachbid->amount</td>
+
+                        </tr>";
+                        
+                    }
+                }
+            }
+            // COURSE NAME FROM COURSe!!!
+        ?>
+
         </table>
 
         <table>
