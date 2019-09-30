@@ -2,7 +2,7 @@
 
 require_once 'include/common.php';
 require_once 'include/protect.php';
-require_once 'DAO/studentDAO.php';
+require_once './include/studentDAO.php';
 
 $dao = new StudentDAO();
 $user = $dao->retrieveAll();
