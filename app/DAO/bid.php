@@ -15,7 +15,7 @@ class Bid{
         
     }
 
-    public function getUserid()){
+    public function getUserid(){
         return $this->userid;
     }
 
