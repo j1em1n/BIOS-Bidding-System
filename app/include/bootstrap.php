@@ -345,21 +345,21 @@ function doBootstrap() {
 							}
 						}
 						if ($result == false) {
-							$_SESSION['errors'] = "invalid course";
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid course";
 						}
 						//check if the first character should be an S followed by a positive numeric number (1-99). Check only if course is valid.
 						//intval returns 0 if the parameter cannot be converted to int successfully.
 						$sectionNum = intval(substr($sectionS, 1));
 						if(substr($sectionS, 0, 1) !== 'S' || $sectionNum == 0){
-							$_SESSION['errors'] = "invalid section";
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid section";
 						# check if the integers after S in in range 1 - 99  
 						} elseif (1 > $sectionNum > 99) {
-							$_SESSION['errors'] = "invalid section";
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid section";
 						}
 						// Check if the day field is a number between 1(inclusive) and 7 (inclusive). 1 - Monday, 2 - Tuesday, ... , 7 - Sunday.
 						//$day < 1 && $day > 7
 						if(1 > $day > 7){
-							$_SESSION['errors'] = "invalid day";
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid day";
 						} 
 						//Checking if exam_start is in H:mm format
 						$start_h = 0;
@@ -422,15 +422,15 @@ function doBootstrap() {
 						}
 						//Checking if the instructor field > 100 characters using strlen()
 						if(strlen($instructor) > 100){
-							$_SESSION['errors'] = "invalid instructor";
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid instructor";
 						}
 						//Checking if the venue field has > 100 characters using strlen()
 						if(strlen($venue) > 100){
-							$_SESSION['errors'] = "invalid venue";
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid venue";
 						}
 						// Check if the field is a positive numeric number.
 						if(!is_numeric($size) || $size < 0) {
-							$_SESSION['errors'] = "invalid size";
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid size";
 						}
 						if(count($_SESSION['errors']) == 0){
 							$sectionObj = new Section($course, $sectionS, $day, $start, $end, $instructor, $venue, $size);
@@ -476,7 +476,65 @@ function doBootstrap() {
 				fclose($section); // close the file handle
 				unlink($section_path); // delete the temp file
 				
+				// PRE-REQUISITE 
+
+				#skip header
+				$data = fgetcsv($prerequisite); #will get array in data (2 fields cause csv files only have 2 columns)
+				#give a file to read  
+				while ( ($data = fgetcsv($prerequisite) ) !== false){ #double == to check for boolean also. 
+					$countPreReq = 1;
+					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
+					$course = trim($data[0]);
+					$prerequisite = trim($data[1]);
 				
+					//Check for any field 
+					if(!(empty($course) || empty($prerequisite)){
+						// Check if course code is found in the course.csv
+						// Check if prerequisite course code is found in the course.csv
+						$courses = $courseObj->retrieveAll();
+						$course_result = FALSE;
+						$prereq_result = FALSE;
+						foreach ($courses as $one_course) {
+							if ($course == $one_course->getCourse()) {
+								$course_result = TRUE;
+							}
+							if ($prerequisite == $one_course->getCourse()) {
+								$prereq_result = TRUE;
+							}
+						} 
+						if ($course_result == FALSE) {
+							$_SESSION['errors'] = "prerequisite.csv - row $countPreReq - course code does not exist";
+						} 
+						if ($prereq_result == FALSE) {
+							$_SESSION['errors'] = "prerequisite.csv - row $countPreReq - prerequisite course code does not exist";
+						}
+					
+						if(count($_SESSION['errors']) == 0){
+							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
+							$prerequisiteObj = new Prerequisite($course, $prerequisite);
+							$prerequisiteDAOobj->add($prerequisiteObj);
+							$prerequisite_processed++; #line added successfully  
+						} else {
+						//Print out all the errors for user
+						//print error for blank fields? CHECK!
+						printErrors();
+						}
+					} else {
+						//pass the line in the file (apparently dun need to write any code?? try try)
+						//Print out all the errors for user
+						if(empty($data[0])){
+							$_SESSION['errors'] = "course field is blank.";
+						} 
+						if(empty($data[1])){
+							$_SESSION['errors'] = "prerequisite field is blank.";
+						}
+						printErrors();
+					}
+					$countPreReq++;
+				}
+
+				fclose($prerequisite); // close the file handle
+				unlink($prerequisite_path); // delete the temp file
 			}
 		}
 	}
