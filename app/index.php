@@ -19,7 +19,7 @@ $user = $dao->retrieveAll();
         <p>
             <a href='logout.php'>Logout</a>
         </p>
-
+        
         <table>
             <tr>
                 <b>
@@ -57,9 +57,12 @@ $user = $dao->retrieveAll();
 
         <table>
             <tr>
-                <th></th>
                 <th>E_Balance: $<?=$user[0]->edollar ?></th>
             </tr>
+
+            <tr> 
+                <th>Amount left for bidding: $</th>
+
         
         </table>
 
