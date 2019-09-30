@@ -11,7 +11,7 @@ class Coursecompleted{
         
     }
 
-    public function getUserid()){
+    public function getUserid(){
         return $this->userid;
     }
 
