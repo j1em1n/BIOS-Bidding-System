@@ -33,5 +33,8 @@ class CourseDAO {
         $stmt->execute();
         $count = $stmt->rowCount();
     }    
+
+
+    
 }
 ?>
