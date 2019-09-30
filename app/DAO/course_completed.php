@@ -19,4 +19,5 @@ class Coursecompleted{
         return $this->code;
     }
 
+}
 ?>
