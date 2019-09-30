@@ -31,15 +31,15 @@ function printErrors() {
 
 
 
-function isMissingOrEmpty($name) {
-    if (!isset($_REQUEST[$name])) {
-        return "$name cannot be empty";
+function isMissingOrEmpty($user) {
+    if (!isset($_REQUEST[$user])) {
+        return "$user cannot be empty";
     }
 
     // client did send the value over
-    $value = $_REQUEST[$name];
+    $value = $_REQUEST[$user];
     if (empty($value)) {
-        return "$name cannot be empty";
+        return "$user cannot be empty";
     }
 }
 
