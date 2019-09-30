@@ -9,7 +9,7 @@ if ( isset($_GET['error']) ) {
     $username = $_POST['userid'];
     $password = $_POST['password'];
 
-    $dao = new UserDAO();
+    $dao = new StudentDAO();
     $user = $dao->retrieve($username);
 
     if ( $user != null && $user->authenticate($password) ) {
