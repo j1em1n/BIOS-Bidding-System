@@ -32,5 +32,9 @@ $user = $dao->retrieveAll();
         <p>
         <a id="add" href="PlanBid.php">Plan & Bid</a>
     </body>
+
+
+
+
 </html>
 
