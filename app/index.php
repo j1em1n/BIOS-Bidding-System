@@ -3,24 +3,26 @@
 require_once 'include/common.php';
 require_once 'include/protect.php';
 require_once './include/studentDAO.php';
-
-$dao = new StudentDAO();
-$user = $dao->retrieveAll();
-//var_dump($user);
     
 if(isset($_SESSION['userid'])){
     $userid = $_SESSION['userid'];
-    header("Location: planbidphp")
     ///echo $userid;
 }
 
+$dao = new StudentDAO();
+$student = $dao->retrieve($userid);
+// var_dump($userid);
+// var_dump($student); 
+$name = $student->getName();
+$edollar = $student->getEdollar();
+
 $biddao = new BidDAO();
 $allbid = $biddao->retrieveAll();
+$studentbid = 
 
 $coursedao = new CourseDAO();
 $allcourse = $coursedao->retrieveAll();
 //var_dump($allcourse);
-
 ?>
 
 <html>
@@ -29,7 +31,7 @@ $allcourse = $coursedao->retrieveAll();
     </head>
     <body>
         <h1>BIOS BIDDING</h1>
-        <h2>Welcome <?=$user[0]->name?>
+        <h2>Welcome <?=$name?>
         <p>
             <a href='logout.php'>Logout</a>
         </p>
@@ -56,7 +58,7 @@ $allcourse = $coursedao->retrieveAll();
                                 foreach($eachcourse as $eachcoursecode){
                        
                                     if($eachcoursecode == $eachbid->code){
-                                        var_dump($eachcoursecode);
+                                        // var_dump($eachcoursecode);
                                         echo "<td>$eachcourse->title</td>";
                                     }
                                 }
@@ -64,7 +66,6 @@ $allcourse = $coursedao->retrieveAll();
                             echo "
                             <td>$eachbid->section</td>
                             <td>$eachbid->amount</td>
-                            
                         </tr>";
                     }
                 }
@@ -74,8 +75,8 @@ $allcourse = $coursedao->retrieveAll();
         </table>
 
         <table>
-            <tr>"
-                <th>E_Balance: $<?=$user[0]->edollar ?></th>
+            <tr>
+                <th>E_Balance: $<?=$edollar?></th>
             </tr>
 
             <tr> 
