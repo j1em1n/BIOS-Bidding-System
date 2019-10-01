@@ -6,7 +6,21 @@ require_once './include/studentDAO.php';
 
 $dao = new StudentDAO();
 $user = $dao->retrieveAll();
+//var_dump($user);
     
+if(isset($_SESSION['userid'])){
+    $userid = $_SESSION['userid'];
+    header("Location: planbidphp")
+    ///echo $userid;
+}
+
+$biddao = new BidDAO();
+$allbid = $biddao->retrieveAll();
+
+$coursedao = new CourseDAO();
+$allcourse = $coursedao->retrieveAll();
+//var_dump($allcourse);
+
 ?>
 
 <html>
@@ -19,12 +33,54 @@ $user = $dao->retrieveAll();
         <p>
             <a href='logout.php'>Logout</a>
         </p>
-
+        
         <table>
             <tr>
-                <th></th>
+                <b>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Section</th>
+                <th>Bid amount (e$)</th>
+                </b>
+            </tr>
+
+        <?php
+            foreach ($allbid as $eachbid){
+                foreach($eachbid as $eachuserbid){
+                    if($eachuserbid == $userid){
+                        echo "
+                        <tr>
+                            <td>$eachbid->code</td>";
+
+                            foreach($allcourse as $eachcourse) {
+                                foreach($eachcourse as $eachcoursecode){
+                       
+                                    if($eachcoursecode == $eachbid->code){
+                                        var_dump($eachcoursecode);
+                                        echo "<td>$eachcourse->title</td>";
+                                    }
+                                }
+                            }
+                            echo "
+                            <td>$eachbid->section</td>
+                            <td>$eachbid->amount</td>
+                            
+                        </tr>";
+                    }
+                }
+            }
+        ?>
+
+        </table>
+
+        <table>
+            <tr>"
                 <th>E_Balance: $<?=$user[0]->edollar ?></th>
             </tr>
+
+            <tr> 
+                <th>Amount left for bidding: $</th>
+
         
         </table>
 
@@ -32,5 +88,9 @@ $user = $dao->retrieveAll();
         <p>
         <a id="add" href="PlanBid.php">Plan & Bid</a>
     </body>
+
+
+
+
 </html>
 

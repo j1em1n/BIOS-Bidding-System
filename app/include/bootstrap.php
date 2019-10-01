@@ -116,7 +116,7 @@ function doBootstrap() {
 					$name = trim($data[2]);
 					$school = trim($data[3]);
 					$edollar = trim($data[4]);
-					//Check for any field 
+					//Check for any empty field 
 					if(!(empty($userId) || empty($pwd) || empty($name) || empty($school) || empty($edollar))){
 						//An indexed array to store all the exisiting userid in, to check for duplicate userid
 						$checkDupUserId[] = $userId;
@@ -129,6 +129,7 @@ function doBootstrap() {
 						} else {
 							$_SESSION['errors'] = "student.csv - row $countStud - the userid field must not exceed 128 characters.";
 						}
+						//Checking if edollar is >= 0.0
 						if($edollar >= 0.0){
 							//Check whether the double has more than 2 decimal place 
 							$checkedollar = strval($edollar);
@@ -148,8 +149,6 @@ function doBootstrap() {
 							$_SESSION['errors'] = "student.csv - row $countStud - name should not contain more than 100 characters.";
 						}
 						if(count($_SESSION['errors']) == 0){
-							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
-							$edollar = strval($edollar);
 							$studentObj = new Student($userId, $pwd, $name, $school, $edollar);
 							$studentDAOobj->add($studentObj);
 							$student_processed++; #line added successfully	
@@ -159,7 +158,7 @@ function doBootstrap() {
 							printErrors();
 						}
 					} else {
-						//pass the line in the file (apparently dun need to write any code?? try try)
+						//pass the line in the file 
 						//Print out all the errors for user
 						if(empty($data[0])){
 							$_SESSION['errors'] = "userid field is blank.";
@@ -189,37 +188,353 @@ function doBootstrap() {
 				# must not be blank 
 				# for the project, the full error list is listed in the wiki
 
-				// Pokemon Type
+				// COURSE 
 
-				$pokemonTypeDAO = new PokemonDAO();
-				$pokemonTypeDAO->removeAll(); #clearing data (not database)
-				$data = fgetcsv($pokemon_type); 
+				#skip header
+				$data = fgetcsv($course); #will get array in data (2 fields cause csv files only have 2 columns)
+				#give a file to read  
+				while ( ($data = fgetcsv($course) ) !== false){ #double == to check for boolean also. 
+					$countCourse = 1;
+					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
+					$getCourse = trim($data[0]);
+					$school = trim($data[1]);
+					$title = trim($data[2]);
+					$description = trim($data[3]);
+					$exam_date = trim($data[4]);
+					$exam_start = trim($data[5]);
+					$exam_end = trim($data[6]);
+					//Check for any empty field 
+					if(!(empty($getCourse) || empty($school) || empty($title) || empty($description) || empty($exam_date) || empty($exam_start) || empty($exam_end))){
+						//Checking if the title field is > 100 characters using strlen()
+						if(strlen($title) > 100){
+							$_SESSION['errors'] = "course.csv - row $countCourse - the title field must not exceed 100 characters.";
+						} 
+						//Checking if the description field has > 1000 characters using strlen()
+						if(strlen($description) > 1000){
+							$_SESSION['errors'] = "course.csv - row $countCourse - description should not contain more than 1000 characters.";
+						}
+						//Checking if the date field is in ymd format
+						if(($exam_date = date("Ymd")) == FALSE){
+							$_SESSION['errors'] = "course.csv - row $countCourse - exam date is not in yyyymmdd format.";
+						}
+						//Checking if exam_start is in H:mm format
+						$exam_start_h = 0;
+						if(strtotime($exam_start) != FALSE){
+							$checkFormat = FALSE; 
+							if(strlen($exam_start) == 4){
+								$hour = substring($exam_start, 0, 1);
+								$exam_start_h = $hour;
+								$min = substring($exam_start, 2);
+								if($hour > 0 && $hour <= 24){
+									if($min >= 0 && $min <= 60){
+										$checkFormat = TRUE;
+									}
+								}
+							} elseif(strlen($exam_start) == 5){
+								$hour = substring($exam_start, 0, 2);
+								$exam_start_h = $hour;
+								$min = substring($exam_start, 3);
+								if($hour > 0 && $hour <= 24){
+									if($min >= 0 && $min <= 60){
+										$checkFormat = TRUE;
+									}
+								}
+							}
+							if($checkFormat == FALSE){
+								$_SESSION['errors'] = "course.csv - row $countCourse - exam start time is not in H:mm format.";
+							}
+						}
+						//Checking if exam_end is in H:mm format & exam_end is later than exam_start
+						$exam_end_h = 0;
+						if(strtotime($exam_end) != FALSE){
+							$checkFormat = FALSE; 
+							if(strlen($exam_end) == 4){
+								$hour = substring($exam_end, 0, 1);
+								$exam_end_h = $hour;
+								$min = substring($exam_end, 2);
+								if($hour > 0 && $hour <= 24){
+									if($min >= 0 && $min <= 60){
+										$checkFormat = TRUE;
+									}
+								}
+							} elseif(strlen($exam_end) == 5){
+								$hour = substring($exam_end, 0, 2);
+								$exam_end_h = $hour;
+								$min = substring($exam_end, 3);
+								if($hour > 0 && $hour <= 24){
+									if($min >= 0 && $min <= 60){
+										$checkFormat = TRUE;
+									}
+								}
+							}
+							if($checkFormat == FALSE){
+								$_SESSION['errors'] = "course.csv - row $countCourse - exam end time is not in H:mm format.";
+							}
 
-				while ( ($data = fgetcsv($pokemon_type) ) !== false){ #double == to check for boolean also. 
-					# $data[0] = name $data[1] = type
-					$pokemonType = new Pokemon ($data[0]);
-					$pokemonTypeDAO->add($pokemonType);
-					$pokemon_type_processed++;
+							$diff = $exam_end_h - $exam_start_h;
+							if($diff < 0){
+								$_SESSION['errors'] = "course.csv - row $countCourse - exam end time should be later than exam start time.";
+							}
+
+						}
+						if(count($_SESSION['errors']) == 0){
+							$CourseObj = new Course($getCourse, $school, $title, $description, $exam_date, $exam_start, $exam_end);
+							$courseDAOobj->add($CourseObj);
+							$course_processed++; #line added successfully	
+						} else {
+							//Print out all the errors for user
+							//print error for blank fields? CHECK!
+							printErrors();
+						}
+					} else {
+						//pass the line in the file 
+						//Print out all the errors for user
+						if(empty($data[0])){
+							$_SESSION['errors'] = "course field is blank.";
+						} 
+						if(empty($data[1])){
+							$_SESSION['errors'] = "school field is blank.";
+						}
+						if(empty($data[2])){
+							$_SESSION['errors'] = "title field is blank.";
+						}
+						if(empty($data[3])){
+							$_SESSION['errors'] = "description field is blank.";
+						}
+						if(empty($data[4])){
+							$_SESSION['errors'] = "exam date field is blank.";
+						}
+						if(empty($data[5])){
+							$_SESSION['errors'] = "exam start field is blank.";
+						}
+						if(empty($data[6])){
+							$_SESSION['errors'] = "exam end field is blank.";
+						}
+						printErrors();
+					}
+					$countCourse++;
 				}
 
-				fclose($pokemon_type); //close file handle
-				unlink($pokemon_type_path); //delete the temp file
+				fclose($course); // close the file handle
+				unlink($course_path); // delete the temp file
 
-				// User 
+				// SECTION 
+        		# sectionS is the individual sections like S1, S2, etc
+        		#skip header
+        		$data = fgetcsv($section); #will get array in data (2 fields cause csv files only have 2 columns)
+        		#give a file to read  
+        		while ( ($data = fgetcsv($section) ) !== false){ #double == to check for boolean also. 
+          			$countSect = 1;
+          			//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
+					$course = trim($data[0]);
+					$sectionS = trim($data[1]);
+					$day = trim($data[2]);
+					$start = trim($data[3]);
+					$end = trim($data[4]);
+					$instructor = trim($data[5]);
+					$venue = trim($data[6]);
+					$size = trim($data[7]);
+					//Check for any field 
+          			if(!(empty($course) || empty($sectionS) || empty($day) || empty($start) || empty($end) || empty($instructor) || empty($venue)|| empty($size))){
+            			//check if course is in course.csv
+						$courses = $courseObj->retrieveAll();
+						$result = false;
+						foreach ($courses as $one_course) {
+							if ($course == $one_course->getCourse()) {
+								$result = true;
+							}
+						}
+						if ($result == false) {
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid course";
+						}
+						//check if the first character should be an S followed by a positive numeric number (1-99). Check only if course is valid.
+						//intval returns 0 if the parameter cannot be converted to int successfully.
+						$sectionNum = intval(substr($sectionS, 1));
+						if(substr($sectionS, 0, 1) !== 'S' || $sectionNum == 0){
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid section";
+						# check if the integers after S in in range 1 - 99  
+						} elseif (1 > $sectionNum > 99) {
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid section";
+						}
+						// Check if the day field is a number between 1(inclusive) and 7 (inclusive). 1 - Monday, 2 - Tuesday, ... , 7 - Sunday.
+						//$day < 1 && $day > 7
+						if(1 > $day > 7){
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid day";
+						} 
+						//Checking if exam_start is in H:mm format
+						$start_h = 0;
+						if(strtotime($start) != FALSE){
+							$checkFormat = FALSE; 
+							if(strlen($start) == 4){
+								$hour = substring($start, 0, 1);
+								$start_h = $hour;
+								$min = substring($start, 2);
+								if($hour > 0 && $hour <= 24){
+									if($min >= 0 && $min <= 60){
+										$checkFormat = TRUE;
+									}
+								}
+							} elseif(strlen($start) == 5){
+								$hour = substring($start, 0, 2);
+								$start_h = $hour;
+								$min = substring($start, 3);
+								if($hour > 0 && $hour <= 24){
+									if($min >= 0 && $min <= 60){
+										$checkFormat = TRUE;
+									}
+								}
+							}
+							if($checkFormat == FALSE){
+								$_SESSION['errors'] = "section.csv - row $countSect - start time is not in H:mm format.";
+							}
+						}
+						//Checking if exam_end is in H:mm format & exam_end is later than exam_start
+						$end_h = 0;
+						if(strtotime($end) != FALSE){
+							$checkFormat = FALSE; 
+							if(strlen($end) == 4){
+								$hour = substring($end, 0, 1);
+								$end_h = $hour;
+								$min = substring($end, 2);
+								if($hour > 0 && $hour <= 24){
+									if($min >= 0 && $min <= 60){
+										$checkFormat = TRUE;
+									}
+								}
+							} elseif(strlen($end) == 5){
+								$hour = substring($end, 0, 2);
+								$end_h = $hour;
+								$min = substring($end, 3);
+								if($hour > 0 && $hour <= 24){
+									if($min >= 0 && $min <= 60){
+										$checkFormat = TRUE;
+									}
+								}
+							}
+							if($checkFormat == FALSE){
+								$_SESSION['errors'] = "section.csv - row $countSect - end time is not in H:mm format.";
+							}
 
-				$pokemonUserDAO = new PokemonDAO();
-				$pokemonUserDAO->removeAll(); #clearing data (not database)
+							$diff = $end_h - $start_h;
+							if($diff < 0){
+								$_SESSION['errors'] = "section.csv - row $countSect - end time should be later than start time.";
+							}
+						}
+						//Checking if the instructor field > 100 characters using strlen()
+						if(strlen($instructor) > 100){
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid instructor";
+						}
+						//Checking if the venue field has > 100 characters using strlen()
+						if(strlen($venue) > 100){
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid venue";
+						}
+						// Check if the field is a positive numeric number.
+						if(!is_numeric($size) || $size < 0) {
+							$_SESSION['errors'] = "section.csv - row $countSect - invalid size";
+						}
+						if(count($_SESSION['errors']) == 0){
+							$sectionObj = new Section($course, $sectionS, $day, $start, $end, $instructor, $venue, $size);
+							$sectionDAOobj->add($sectionObj);
+							$section_processed++; #line added successfully  
+						} else {
+							//Print out all the errors for user
+							//print error for blank fields? CHECK!
+							printErrors();
+						}
+				} else {
+					//pass the line in the file 
+					//Print out all the errors for user
+					if(empty($data[0])){
+						$_SESSION['errors'] = "course is blank.";
+					} 
+					if(empty($data[1])){
+						$_SESSION['errors'] = "section field is blank.";
+					}
+					if(empty($data[2])){
+						$_SESSION['errors'] = "day field is blank.";
+					}
+					if(empty($data[3])){
+						$_SESSION['errors'] = "start time is blank.";
+					}
+					if(empty($data[4])){
+						$_SESSION['errors'] = "end time is blank.";
+					}
+					if(empty($data[5])){
+						$_SESSION['errors'] = "instructor field is blank.";
+					}
+					if(empty($data[6])){
+						$_SESSION['errors'] = "venue field is blank.";
+					}
+					if(empty($data[7])){
+						$_SESSION['errors'] = "size field is blank.";
+					}
+					printErrors();
+				}
+				$countSect++;
+			}
 
-				$data = fgetcsv($User); 
-				while ( ($data = fgetcsv($User) ) !== false){ #double == to check for boolean also. 
-					$pokemonObj = new Pokemon ($data[0], $data[1], $data[2], $data[3]);
-					$pokemonUserDAO->add($pokemonObj);
-					$User_processed++;
+				fclose($section); // close the file handle
+				unlink($section_path); // delete the temp file
+				
+				// PRE-REQUISITE 
+
+				#skip header
+				$data = fgetcsv($prerequisite); #will get array in data (2 fields cause csv files only have 2 columns)
+				#give a file to read  
+				while ( ($data = fgetcsv($prerequisite) ) !== false){ #double == to check for boolean also. 
+					$countPreReq = 1;
+					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
+					$course = trim($data[0]);
+					$prerequisite = trim($data[1]);
+				
+					//Check for any field 
+					if(!(empty($course) || empty($prerequisite)){
+						// Check if course code is found in the course.csv
+						// Check if prerequisite course code is found in the course.csv
+						$courses = $courseObj->retrieveAll();
+						$course_result = FALSE;
+						$prereq_result = FALSE;
+						foreach ($courses as $one_course) {
+							if ($course == $one_course->getCourse()) {
+								$course_result = TRUE;
+							}
+							if ($prerequisite == $one_course->getCourse()) {
+								$prereq_result = TRUE;
+							}
+						} 
+						if ($course_result == FALSE) {
+							$_SESSION['errors'] = "prerequisite.csv - row $countPreReq - course code does not exist";
+						} 
+						if ($prereq_result == FALSE) {
+							$_SESSION['errors'] = "prerequisite.csv - row $countPreReq - prerequisite course code does not exist";
+						}
+					
+						if(count($_SESSION['errors']) == 0){
+							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
+							$prerequisiteObj = new Prerequisite($course, $prerequisite);
+							$prerequisiteDAOobj->add($prerequisiteObj);
+							$prerequisite_processed++; #line added successfully  
+						} else {
+						//Print out all the errors for user
+						//print error for blank fields? CHECK!
+						printErrors();
+						}
+					} else {
+						//pass the line in the file (apparently dun need to write any code?? try try)
+						//Print out all the errors for user
+						if(empty($data[0])){
+							$_SESSION['errors'] = "course field is blank.";
+						} 
+						if(empty($data[1])){
+							$_SESSION['errors'] = "prerequisite field is blank.";
+						}
+						printErrors();
+					}
+					$countPreReq++;
 				}
 
-				fclose($User); //close file handle
-				unlink($User_path); //delete the temp file
-			
+				fclose($prerequisite); // close the file handle
+				unlink($prerequisite_path); // delete the temp file
 			}
 		}
 	}

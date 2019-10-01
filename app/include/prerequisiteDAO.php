@@ -32,5 +32,24 @@ class PrerequisiteDAO {
         $stmt->execute();
         $count = $stmt->rowCount();
     }    
+
+    public function add($prerequisite) {
+        $sql = 'INSERT INTO prerequisite (course, prerequisite) VALUES (:course, :prerequisite)';
+        
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->bindParam(':course', $prerequisite->getCourse(), PDO::PARAM_STR);
+        $stmt->bindParam(':prerequisite', $prerequisite->getPrerequisite(), PDO::PARAM_STR);
+       
+        $isAddOK = False;
+        if ($stmt->execute()) {
+            $isAddOK = True;
+        }
+
+        return $isAddOK;
+    }
 }
 ?>

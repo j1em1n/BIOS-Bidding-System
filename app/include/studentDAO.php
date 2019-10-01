@@ -64,7 +64,6 @@ class StudentDAO {
         $stmt->bindParam(':password', $student->getPwd(), PDO::PARAM_STR);
         $stmt->bindParam(':name', $student->getName(), PDO::PARAM_STR);
         $stmt->bindParam(':school', $student->getSchool(), PDO::PARAM_STR);
-        // CONVERT TO DOUBLE AFTER GETTING THE DATA
         $stmt->bindParam(':edollar', $student->getEdollar(), PDO::PARAM_STR);
 
         $isAddOK = False;
@@ -74,5 +73,6 @@ class StudentDAO {
 
         return $isAddOK;
     }
+    
 }
 ?>
