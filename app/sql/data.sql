@@ -65,3 +65,8 @@ CREATE TABLE prerequisite
     CONSTRAINT prerequisite_fk2 FOREIGN KEY(prerequisite) REFERENCES course(course)
 );
 
+DROP TABLE IF EXISTS admin;
+CREATE TABLE admin
+(	userid varchar(300) NOT NULL PRIMARY KEY,
+	password varchar(300) NOT NULL
+);
