@@ -9,10 +9,12 @@ if ( isset($_GET['error']) ) {
     $username = $_POST['userid'];
     $password = $_POST['password'];
 
-    $dao = new StudentDAO();
-    $user = $dao->retrieve($username);
+//Validation for student
+if($_POST['role'] == "Student"){
+    $studentDAO = new StudentDAO();
+    $stud = $studentDAO->retrieve($username);
 
-    if ( $user != null && $user->authenticate($password) ) {
+    if ( $stud != null && $stud->authenticate($password) ) {
         $_SESSION['userid'] = $username; 
         header("Location: index.php");
         return;
@@ -20,6 +22,28 @@ if ( isset($_GET['error']) ) {
     } else {
         $error = 'Incorrect username or password!';
     }
+} else{
+    //Validation for admin
+    $adminDAO = new AdminDAO();
+    $admin = $adminDAO->retrieve($username);
+    
+    //Get the hashedpassword from database
+    $hashed = $adminDAO->getHashedPassword($username);
+
+    //Verify whether the password given is correct using hashedpassword
+    $status = password_verify($password,$hashed);
+
+    if ( $admin != null && $status ) {
+        $_SESSION['userid'] = $username; 
+        //bidding_admin = admin home page? can be change ltr on 
+        header("Location: bidding_admin.php");
+        return;
+
+    } else {
+        $error = 'Incorrect username or password!';
+    }
+}
+    
 
 
 }
@@ -33,6 +57,14 @@ if ( isset($_GET['error']) ) {
         <h1>Login</h1>
         <form method='POST' action='login.php'>
             <table>
+                <tr>
+                    <td>Select your role:
+                        <select name='role'>
+                            <option value='Student' selected>Student</option>
+                            <option value='Admin'>Admin</option>
+                        </select>
+                    </td>
+                </tr>
                 <tr>
                     <td>Username</td>
                     <td>
