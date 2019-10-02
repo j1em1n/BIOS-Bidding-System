@@ -24,7 +24,7 @@ class StudentDAO {
         return $result;
     }
 
-    public  function retrieve() {
+    public  function retrieve($userid) {
         $sql = 'SELECT * FROM student ORDER BY userid';
             
         $connMgr = new ConnectionManager();      
