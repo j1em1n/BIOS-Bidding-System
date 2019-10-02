@@ -4,22 +4,43 @@ class SectionDAO {
 
     public  function retrieveAll() {
         $sql = 'SELECT * FROM section ORDER BY course, section ';
-        
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $result = array();
 
         while($row = $stmt->fetch()) {
             $result[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
         }
-            
+
+        $stmt = null;
+        $conn = null;
+
         return $result;
+    }
+
+    public  function retrieve() {
+        $sql = 'SELECT * FROM section ORDER BY course, section ';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
+        }
+       
+        $stmt = null;
+        $conn = null;
+
     }
 
     public function removeAll() {
@@ -32,6 +53,9 @@ class SectionDAO {
         
         $stmt->execute();
         $count = $stmt->rowCount();
+
+        $stmt = null;
+        $conn = null;
     }    
 
     public function add($section) {
@@ -55,6 +79,9 @@ class SectionDAO {
         if ($stmt->execute()) {
             $isAddOK = True;
         }
+
+        $stmt = null;
+        $conn = null;
 
         return $isAddOK;
     }
