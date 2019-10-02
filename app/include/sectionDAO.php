@@ -34,16 +34,13 @@ class SectionDAO {
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-        $result = array();
-
-        while($row = $stmt->fetch()) {
-            $result[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
         }
-
+       
         $stmt = null;
         $conn = null;
 
-        return $result;
     }
 
     public function removeAll() {

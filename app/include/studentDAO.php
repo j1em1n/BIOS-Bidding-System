@@ -25,25 +25,26 @@ class StudentDAO {
     }
 
     public  function retrieve($userid) {
-        $sql = 'SELECT * FROM student ORDER BY userid';
-            
-        $connMgr = new ConnectionManager();      
+        $sql = 'select userid, password, name, school, edollar from student where userid=:userid';
+        
+        $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
-
+        
+            
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->execute();
 
-        $result = array();
 
-        while($row = $stmt->fetch()) {
-            $result[] = new Student($row['userid'], $row['password'], $row['name'], $row['school'], $row['edollar']);
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new Student($row['userid'],$row['password'], $row['name'],
+                $row['school'], $row['edollar']);
         }
+    
 
         $stmt = null;
         $conn = null;
-
-        return $result;
     }
     
     public function removeAll() {

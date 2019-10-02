@@ -34,16 +34,11 @@ class BidDAO {
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         
-
-        $result = array();
-
-        while($row = $stmt->fetch()) {
-            $result[] = new Bid($row['userid'], $row['amount'],$row['code'], $row['section']);
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
         }
         $stmt = null;
         $conn = null;
-            
-        return $result;
     }
 
     public function removeAll() {

@@ -36,16 +36,13 @@ class CourseDAO {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 
-        $result = array();
-
-        while($row = $stmt->fetch()) {
-            $result[] = new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
         
         $stmt = null;
         $conn = null;
-
-        return $result;
+        
     }
 
     public function removeAll() {

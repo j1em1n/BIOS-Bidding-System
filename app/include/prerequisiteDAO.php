@@ -34,16 +34,13 @@ class PrerequisiteDAO {
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-        $result = array();
-
-        while($row = $stmt->fetch()) {
-            $result[] = new Prerequisite($row['course'], $row['prerequisite']);
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new Prerequisite($row['course'], $row['prerequisite']);
         }
         
         $stmt = null;
         $conn = null;
 
-        return $result;
     }
         
     public function removeAll() {
