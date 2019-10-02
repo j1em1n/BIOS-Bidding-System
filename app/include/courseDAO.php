@@ -25,6 +25,29 @@ class CourseDAO {
         return $result;
     }
 
+    public  function retrieve() {
+        $sql = 'SELECT * FROM course ORDER BY course';
+         
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+
+        $result = array();
+
+        while($row = $stmt->fetch()) {
+            $result[] = new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        }
+        
+        $stmt = null;
+        $conn = null;
+
+        return $result;
+    }
+
     public function removeAll() {
         $sql = 'TRUNCATE TABLE course';
         

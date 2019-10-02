@@ -24,6 +24,28 @@ class BidDAO {
         return $result;
     }
 
+    public  function retrieve() {
+        $sql = 'SELECT * FROM bid ORDER BY userid, code, section';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        
+
+        $result = array();
+
+        while($row = $stmt->fetch()) {
+            $result[] = new Bid($row['userid'], $row['amount'],$row['code'], $row['section']);
+        }
+        $stmt = null;
+        $conn = null;
+            
+        return $result;
+    }
+
     public function removeAll() {
         $sql = 'TRUNCATE TABLE bid';
         

@@ -23,6 +23,28 @@ class PrerequisiteDAO {
 
         return $result;
     }
+
+    public  function retrieve() {
+        $sql = 'SELECT * FROM prerequisite ORDER BY course, prerequisite';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $result = array();
+
+        while($row = $stmt->fetch()) {
+            $result[] = new Prerequisite($row['course'], $row['prerequisite']);
+        }
+        
+        $stmt = null;
+        $conn = null;
+
+        return $result;
+    }
         
     public function removeAll() {
         $sql = 'TRUNCATE TABLE prerequisite';
