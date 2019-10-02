@@ -9,15 +9,18 @@ class PrerequisiteDAO {
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $result = array();
 
         while($row = $stmt->fetch()) {
             $result[] = new Prerequisite($row['course'], $row['prerequisite']);
         }
-            
+        
+        $stmt = null;
+        $conn = null;
+
         return $result;
     }
         
@@ -31,6 +34,9 @@ class PrerequisiteDAO {
         
         $stmt->execute();
         $count = $stmt->rowCount();
+
+        $stmt = null;
+        $conn = null;
     }    
 
     public function add($prerequisite) {
@@ -48,6 +54,9 @@ class PrerequisiteDAO {
         if ($stmt->execute()) {
             $isAddOK = True;
         }
+
+        $stmt = null;
+        $conn = null;
 
         return $isAddOK;
     }

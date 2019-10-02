@@ -4,21 +4,23 @@ class StudentDAO {
 
     public  function retrieveAll() {
         $sql = 'SELECT * FROM student ORDER BY userid';
-        
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $result = array();
 
         while($row = $stmt->fetch()) {
             $result[] = new Student($row['userid'], $row['password'], $row['name'], $row['school'], $row['edollar']);
         }
-            
+
+        $stmt = null;
+        $conn = null;
+
         return $result;
     }
 
@@ -28,17 +30,18 @@ class StudentDAO {
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
         
-            
         $stmt = $conn->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
         $stmt->execute();
 
-
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return new Student($row['userid'],$row['password'], $row['name'],
                 $row['school'], $row['edollar']);
         }
+        
+        $stmt = null;
+        $conn = null;
     }
     public function removeAll() {
         $sql = 'TRUNCATE TABLE student';
@@ -50,6 +53,9 @@ class StudentDAO {
         
         $stmt->execute();
         $count = $stmt->rowCount();
+        
+        $stmt = null;
+        $conn = null;
     }  
     
     public function add($student) {
@@ -71,6 +77,9 @@ class StudentDAO {
             $isAddOK = True;
         }
 
+        $stmt = null;
+        $conn = null;
+        
         return $isAddOK;
     }
     
