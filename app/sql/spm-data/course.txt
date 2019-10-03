@@ -1,6 +1,6 @@
 course	school	title	description	exam date	exam start	exam end
 IS100	SIS	Calculus 	"The basic objective of Calculus is to relate small-scale (differential) quantities to large-scale (integrated) quantities. This is accomplished by means of the Fundamental Theorem of Calculus. Students should demonstrate an understanding of the integral as a cumulative sum, of the derivative as a rate of change, and of the inverse relationship between integration and differentiation."	20131119	8:30	11:45
-IS101	SIS	Advanced Calculus	This is a second course on calculus. It is more advanced definitely.	20131118	12:00	15:15
+IS101	SIS	Advanced Calculus	This is a second course on calculus. It is more advanced definitely.	20131118	12:00	15:15
 IS102	SIS	Java programming	This course teaches you on Java programming. I love Java definitely.	20131117	15:30	18:45
 IS103	SIS	Web Programming	"JSP, Servlets using Tomcat"	20131116	8:30	11:45
 IS104	SIS	Advanced Programming	How to write code that nobody can understand	20131115	12:00	15:15
