@@ -7,7 +7,8 @@ if  (isset($_SESSION['userid'])) {
 	$username = $_SESSION['userid'];
 } #checks if username is valid
 else { #user not logged in
-	header("Location: login.php?error='You are not logged in' ");
+	$_SESSION['errors'] = 'You are not logged in.';
+	header("Location: login.php");
 	exit;
 }
 

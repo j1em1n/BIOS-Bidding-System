@@ -9,16 +9,8 @@ require_once 'include/common.php';
     </head>
     <body>
         <h1>Login</h1>
-        <form method='POST' action='login.php'>
+        <form method='POST' action='process_login.php'>
             <table>
-                <tr>
-                    <td>Select your role:
-                        <select name='role'>
-                            <option value='Student' selected>Student</option>
-                            <option value='Admin'>Admin</option>
-                        </select>
-                    </td>
-                </tr>
                 <tr>
                     <td>Username</td>
                     <td>
@@ -40,7 +32,7 @@ require_once 'include/common.php';
         </form>
 
         <p>
-            <?=$error?>
+            <?=printErrors();?>
         </p>
         
     </body>

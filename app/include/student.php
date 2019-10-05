@@ -20,7 +20,7 @@ class Student{
         return $this->userid;
     }
 
-    public function getPwd(){
+    public function getPassword(){
         return $this->password;
     }
 

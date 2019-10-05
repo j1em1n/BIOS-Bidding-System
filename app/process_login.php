@@ -1,48 +1,39 @@
 <?php
-$error = '';
+    require_once 'include/common.php';
 
-if ( isset($_GET['error']) ) {
-    $error = $_GET['error'];
-} elseif ( isset($_POST['userid']) && isset($_POST['password']) ) {
-    $username = $_POST['userid'];
+    $userid = $_POST['userid'];
     $password = $_POST['password'];
 
-//Validation for student
-if($_POST['role'] == "Student"){
-    $studentDAO = new StudentDAO();
-    $stud = $studentDAO->retrieve($username);
-
-    if ( $stud != null && $stud->authenticate($password) ) {
-        $_SESSION['userid'] = $username; 
-        header("Location: index.php");
-        return;
-
-    } else {
-        $error = 'Incorrect username or password!';
-    }
-} else{
     //Validation for admin
-    $adminDAO = new AdminDAO();
-    $admin = $adminDAO->retrieve($username);
-    
-    //Get the hashedpassword from database
-    $hashed = $adminDAO->getHashedPassword($username);
+    if ($userid === 'admin') {
 
-    //Verify whether the password given is correct using hashedpassword
-    $status = password_verify($password,$hashed);
+        $adminDAO = new AdminDAO();
+        $admin = $adminDAO->retrieve($userid);
+        
+        //Get the hashedpassword from database
+        $hashed = $adminDAO->getHashedPassword($userid);
 
-    if ( $admin != null && $status ) {
-        $_SESSION['userid'] = $username; 
-        //bidding_admin = admin home page? can be change ltr on 
-        header("Location: bidding_admin.php");
-        return;
+        if ( password_verify($password,$hashed) ) {
+            $_SESSION['userid'] = $userid; 
+            //bidding_admin = admin home page? can be change ltr on 
+            header("Location: admin_index.php");
+            exit();
+        }
 
     } else {
-        $error = 'Incorrect username or password!';
+        //Validation for student
+        $studentDAO = new StudentDAO();
+        $student = $studentDAO->retrieve($userid);
+
+        if ( $student != null && $student->getPassword() == $password ) {
+            $_SESSION['userid'] = $userid; 
+            header("Location: index.php");
+            exit();
+
+        }
     }
-}
-    
-
-
-}
+        
+    $_SESSION['errors'] = ['Invalid username / password'];
+    header("Location: login.php");
+    exit();
 ?>
