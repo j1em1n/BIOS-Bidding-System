@@ -36,8 +36,5 @@ class Student{
         return $this->edollar;
     }
 
-    public function authenticate($enteredPwd) {
-        return $this->password == $enteredPwd;
-    }
 }
 ?>

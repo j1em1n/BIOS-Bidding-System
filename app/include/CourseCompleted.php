@@ -1,6 +1,6 @@
 <?php
 
-class Coursecompleted{
+class CourseCompleted{
     //property declaration
     public $userid;
     public $code;
@@ -11,12 +11,13 @@ class Coursecompleted{
         
     }
 
-    public function getUserid()){
+    public function getUserid(){
         return $this->userid;
     }
 
     public function getCode(){
         return $this->code;
     }
+}
 
 ?>

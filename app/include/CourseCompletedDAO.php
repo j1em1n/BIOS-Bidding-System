@@ -1,6 +1,6 @@
 <?php
 
-class CoursecompletedDAO {
+class CourseCompletedDAO {
 
     public  function retrieveAll() {
         $sql = 'SELECT * FROM course_completed ORDER BY userid, code';
@@ -15,7 +15,7 @@ class CoursecompletedDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Coursecompleted($row['userid'], $row['code']);
+            $result[] = new CourseCompleted($row['userid'], $row['code']);
         }
             
         return $result;

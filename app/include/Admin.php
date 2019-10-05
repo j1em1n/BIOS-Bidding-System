@@ -18,8 +18,5 @@ class Admin{
         return $this->hashed_password;
     }
 
-    // public function authenticate($enteredPwd) {
-    //     return $this->hashed_password == $enteredPwd;
-    // }
 }
 ?>

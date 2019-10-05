@@ -10,10 +10,9 @@
         $adminDAO = new AdminDAO();
         $admin = $adminDAO->retrieve($userid);
         
-        //Get the hashedpassword from database
-        $hashed = $adminDAO->getHashedPassword($userid);
+        //Get the hashedpassword and verify
 
-        if ( password_verify($password,$hashed) ) {
+        if ( password_verify($password,$admin->getPassword()) ) {
             $_SESSION['userid'] = $userid; 
             //bidding_admin = admin home page? can be change ltr on 
             header("Location: admin_index.php");
