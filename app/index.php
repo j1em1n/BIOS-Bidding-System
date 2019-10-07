@@ -17,8 +17,8 @@ $name = $student->getName();
 $edollar = $student->getEdollar();
 
 $biddao = new BidDAO();
-$allbid = $biddao->retrieveAll();
-$studentbid = 
+$allbid = $biddao->retrieveAll(); // CREATE retrieve function for BidDAO, CourseDAO just as shown on StudentDAO
+// $studentbid = 
 
 $coursedao = new CourseDAO();
 $allcourse = $coursedao->retrieveAll();

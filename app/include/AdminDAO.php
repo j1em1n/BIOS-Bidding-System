@@ -50,7 +50,7 @@ class AdminDAO {
     }
 
     public  function retrieve($userid) {
-        $sql = 'SELECT * FROM admin ORDER BY userid';
+        $sql = "SELECT * FROM admin where userid=:userid";
         
             
         $connMgr = new ConnectionManager();      
@@ -63,7 +63,7 @@ class AdminDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Admin($row['userid'], $row['password']);
+            $result = new Admin($row['userid'], $row['password']);
         }
 
         $stmt = null;

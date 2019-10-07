@@ -68,3 +68,10 @@ function isEmpty($var) {
     if (empty($var))
         return TRUE;
 }
+
+# Function to check date-time format YYYY-MM-DD
+function validateDate($date, $format)
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}

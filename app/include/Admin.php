@@ -3,19 +3,19 @@
 class Admin{
     //property declaration
     public $userid;
-    public $hashed_password;
+    public $hashedpassword;
 
-    public function __construct($userid, $hashed_password){
+    public function __construct($userid, $hashedpassword){
         $this->userid = $userid;
-        $this->hashedpassword = $hashed_password;
+        $this->hashedpassword = $hashedpassword;
     }
 
     public function getUserid(){
         return $this->userid;
     }
 
-    public function getPwd(){
-        return $this->hashed_password;
+    public function getPassword(){
+        return $this->hashedpassword;
     }
 
 }

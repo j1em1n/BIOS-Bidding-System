@@ -25,16 +25,16 @@ class CourseDAO {
         return $result;
     }
 
-    public  function retrieve() {
-        $sql = 'SELECT * FROM course ORDER BY course';
+    public  function retrieve($courseid) {
+        $sql = "SELECT * FROM course WHERE course=:courseid";
          
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-
+        $stmt->bindParam(':courseid', $courseid, PDO::PARAM_STR);
+        $stmt->execute();
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
