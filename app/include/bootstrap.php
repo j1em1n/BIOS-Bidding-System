@@ -166,19 +166,19 @@ function doBootstrap() {
 						//pass the line in the file 
 						//Print out all the errors for user
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - userid field is blank.";
+							$_SESSION['errors'][] = "student.csv - row $countStud - blank userid";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - password field is blank.";
+							$_SESSION['errors'][] = "student.csv - row $countStud - blank password";
 						}
 						if(empty($data[2])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - name field is blank.";
+							$_SESSION['errors'][] = "student.csv - row $countStud - blank name";
 						}
 						if(empty($data[3])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - school field is blank.";
+							$_SESSION['errors'][] = "student.csv - row $countStud -  blank school";
 						}
 						if(empty($data[4])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - e-dollar field is blank.";
+							$_SESSION['errors'][] = "student.csv - row $countStud - blank e-dollar";
 						}
 						printErrors();
 					}
@@ -236,69 +236,6 @@ function doBootstrap() {
 							}
 						}
 
-						// $exam_start_h = 0;
-
-						// if(strtotime($exam_start) != FALSE){
-						// 	$checkFormat = FALSE; 
-						// 	if(strlen($exam_start) == 4){
-						// 		$hour = substring($exam_start, 0, 1);
-						// 		$exam_start_h = $hour;
-						// 		$min = substring($exam_start, 2);
-						// 		if($hour > 0 && $hour <= 24){
-						// 			if($min >= 0 && $min <= 60){
-						// 				$checkFormat = TRUE;
-						// 			}
-						// 		}
-						// 	} elseif(strlen($exam_start) == 5){
-						// 		$hour = substring($exam_start, 0, 2);
-						// 		$exam_start_h = $hour;
-						// 		$min = substring($exam_start, 3);
-						// 		if($hour > 0 && $hour <= 24){
-						// 			if($min >= 0 && $min <= 60){
-						// 				$checkFormat = TRUE;
-						// 			}
-						// 		}
-						// 	}
-						// 	if($checkFormat == FALSE){
-						// 		$_SESSION['errors'] = "course.csv - row $countCourse - invalid exam start ";
-						// 	}
-						// }
-
-
-
-
-						// $exam_end_h = 0;
-						// if(strtotime($exam_end) != FALSE){
-						// 	$checkFormat = FALSE; 
-						// 	if(strlen($exam_end) == 4){
-						// 		$hour = substring($exam_end, 0, 1);
-						// 		$exam_end_h = $hour;
-						// 		$min = substring($exam_end, 2);
-						// 		if($hour > 0 && $hour <= 24){
-						// 			if($min >= 0 && $min <= 60){
-						// 				$checkFormat = TRUE;
-						// 			}
-						// 		}
-						// 	} elseif(strlen($exam_end) == 5){
-						// 		$hour = substring($exam_end, 0, 2);
-						// 		$exam_end_h = $hour;
-						// 		$min = substring($exam_end, 3);
-						// 		if($hour > 0 && $hour <= 24){
-						// 			if($min >= 0 && $min <= 60){
-						// 				$checkFormat = TRUE;
-						// 			}
-						// 		}
-						// 	}
-						// 	if($checkFormat == FALSE){
-						// 		$_SESSION['errors'] = "course.csv - row $countCourse - invalid exam end";
-						// 	}
-
-						// 	$diff = $exam_end_h - $exam_start_h;
-						// 	if($diff < 0){
-						// 		$_SESSION['errors'] = "course.csv - row $countCourse - invalid exam end";
-						// 	}
-
-						// }
 						if(count($_SESSION['errors']) == 0){
 							$courseObj = new Course($getCourse, $school, $title, $description, $exam_date, $exam_start, $exam_end);
 							$courseDAO->add($courseObj);
@@ -312,25 +249,25 @@ function doBootstrap() {
 						//pass the line in the file 
 						//Print out all the errors for user
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - course field is blank.";
+							$_SESSION['errors'][] = "course.csv - row $countCourse - blank course";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - school field is blank.";
+							$_SESSION['errors'][] = "course.csv - row $countCourse - blank school";
 						}
 						if(empty($data[2])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - title field is blank.";
+							$_SESSION['errors'][] = "course.csv - row $countCourse - blank title";
 						}
 						if(empty($data[3])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - description field is blank.";
+							$_SESSION['errors'][] = "course.csv - row $countCourse - blank description";
 						}
 						if(empty($data[4])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - exam date field is blank.";
+							$_SESSION['errors'][] = "course.csv - row $countCourse - blank exam date";
 						}
 						if(empty($data[5])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - exam start field is blank.";
+							$_SESSION['errors'][] = "course.csv - row $countCourse - blank exam start";
 						}
 						if(empty($data[6])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - exam end field is blank.";
+							$_SESSION['errors'][] = "course.csv - row $countCourse - blank exam end";
 						}
 						printErrors();
 					}
@@ -423,28 +360,28 @@ function doBootstrap() {
 					//pass the line in the file 
 					//Print out all the errors for user
 					if(empty($data[0])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - course is blank.";
+						$_SESSION['errors'][] = "section.csv - row $countSect - blank course";
 					} 
 					if(empty($data[1])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - section field is blank.";
+						$_SESSION['errors'][] = "section.csv - row $countSect - blank section";
 					}
 					if(empty($data[2])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - day field is blank.";
+						$_SESSION['errors'][] = "section.csv - row $countSect - blank day";
 					}
 					if(empty($data[3])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - start time is blank.";
+						$_SESSION['errors'][] = "section.csv - row $countSect - blank start time";
 					}
 					if(empty($data[4])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - end time is blank.";
+						$_SESSION['errors'][] = "section.csv - row $countSect - blank end time";
 					}
 					if(empty($data[5])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - instructor field is blank.";
+						$_SESSION['errors'][] = "section.csv - row $countSect - blank instructor";
 					}
 					if(empty($data[6])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - venue field is blank.";
+						$_SESSION['errors'][] = "section.csv - row $countSect - blank venue";
 					}
 					if(empty($data[7])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - size field is blank.";
+						$_SESSION['errors'][] = "section.csv - row $countSect - blank size";
 					}
 					printErrors();
 				}
@@ -460,37 +397,27 @@ function doBootstrap() {
 				$data = fgetcsv($prerequisite); #will get array in data (2 fields cause csv files only have 2 columns)
 				#give a file to read  
 				while ( ($data = fgetcsv($prerequisite) ) !== false){ #double == to check for boolean also. 
-					$countPreReq = 1;
+					$countPrereq = 1;
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
-					$course = trim($data[0]);
-					$prerequisite = trim($data[1]);
+					$courseid = trim($data[0]);
+					$prerequisiteid = trim($data[1]);
 				
 					//Check for any field 
-					if(!(empty($course) || empty($prerequisite)){
+					if(!(empty($courseid) || empty($prerequisiteid))){
 						// Check if course code is found in the course.csv
 						// Check if prerequisite course code is found in the course.csv
-						$courses = $courseObj->retrieveAll();
-						$course_result = FALSE;
-						$prereq_result = FALSE;
-						foreach ($courses as $one_course) {
-							if ($course == $one_course->getCourse()) {
-								$course_result = TRUE;
-							}
-							if ($prerequisite == $one_course->getCourse()) {
-								$prereq_result = TRUE;
-							}
-						} 
-						if ($course_result == FALSE) {
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPreReq - invalid course";
-						} 
-						if ($prereq_result == FALSE) {
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPreReq - invalid prerequisite";
+
+						if(!($courseDAO->retrieve($courseid))) {
+							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - invalid course";
+						}
+						if(!($courseDAO->retrieve($prerequisiteid))) {
+							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - invalid prerequisite";
 						}
 					
 						if(count($_SESSION['errors']) == 0){
 							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
-							$prerequisite = new Prerequisite($course, $prerequisite);
-							$prerequisiteDAO->add($prerequisite);
+							$prerequisiteObj = new Prerequisite($courseid, $prerequisiteid);
+							$prerequisiteDAO->add($prerequisiteObj);
 							$prerequisite_processed++; #line added successfully  
 						} else {
 						//Print out all the errors for user
@@ -501,14 +428,14 @@ function doBootstrap() {
 						//pass the line in the file (apparently dun need to write any code?? try try)
 						//Print out all the errors for user
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPreReq - course field is blank.";
+							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - blank course";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPreReq - prerequisite field is blank.";
+							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - blank prerequisite";
 						}
 						printErrors();
 					}
-					$countPreReq++;
+					$countPrereq++;
 				}
 
 				fclose($prerequisite); // close the file handle
