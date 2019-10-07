@@ -440,6 +440,56 @@ function doBootstrap() {
 
 				fclose($prerequisite); // close the file handle
 				unlink($prerequisite_path); // delete the temp file
+
+				// COURSE COMPLETED
+
+				#skip header
+				$data = fgetcsv($course_completed); #will get array in data (2 fields cause csv files only have 2 columns)
+				#give a file to read  
+				while ( ($data = fgetcsv($course_completed) ) !== false){ #double == to check for boolean also. 
+					$countCourseCompleted = 1;
+					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
+					$userid = trim($data[0]);
+					$code = trim($data[1]);
+				
+					//Check for any field 
+					if(!(empty($userid) || empty($code))){
+						// Check if userid is found in the student.csv
+						// Check if course code is found in the course.csv
+
+						if(!($studentDAO->retrieve($userid))) {
+							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid userid";
+						}
+						if(!($courseDAO->retrieve($code))) {
+							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid code";
+						}
+					
+						if(count($_SESSION['errors']) == 0){
+							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
+							$courseCompletedObj = new Prerequisite($userid, $code);
+							$courseCompletedDAO->add($courseCompletedObj);
+							$course_completed_processed++; #line added successfully  
+						} else {
+						//Print out all the errors for user
+						//print error for blank fields? CHECK!
+						printErrors();
+						}
+					} else {
+						//pass the line in the file (apparently dun need to write any code?? try try)
+						//Print out all the errors for user
+						if(empty($data[0])){
+							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - blank userid";
+						} 
+						if(empty($data[1])){
+							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - blank code";
+						}
+						printErrors();
+					}
+					$countCourseCompleted++;
+				}
+
+				fclose($course_completed); // close the file handle
+				unlink($course_completed_path); // delete the temp file
 			}
 		}
 	}
