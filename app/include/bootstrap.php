@@ -134,8 +134,8 @@ function doBootstrap() {
 						} else {
 							$_SESSION['errors'][] = "student.csv - row $countStud - invalid userid";
 						}
-						//Checking if edollar is >= 0.0
-						if($edollar >= 0.0){
+						//Checking if edollar is a numeric value and >= 0.0
+						if((is_numeric($edollar) || is_float($edollar)) && $edollar >= 0.0){
 							//Check whether the double has more than 2 decimal place 
 							$checkedollar = strval($edollar);
 							$edollarArr = explode(".", $checkedollar);
@@ -490,6 +490,77 @@ function doBootstrap() {
 
 				fclose($course_completed); // close the file handle
 				unlink($course_completed_path); // delete the temp file
+
+				// COURSE COMPLETED
+
+				#skip header
+				$data = fgetcsv($bid); #will get array in data (2 fields cause csv files only have 2 columns)
+				#give a file to read  
+				while ( ($data = fgetcsv($bid) ) !== false){ #double == to check for boolean also. 
+					$countBid = 1;
+					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
+					$userid = trim($data[0]);
+					$amount = trim($data[1]);
+					$code = trim($data[2]);
+					$section = trim($data[3]);
+				
+					//Check for any field 
+					if(!(empty($userid) || empty($amount) || empty($code) || empty($section))){
+						// Check if userid is found in the student.csv
+						if(!($studentDAO->retrieve($userid))) {
+							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid userid";
+						}
+						// Check if bidding amount is a numeric value and >= 10.0
+						if((is_numeric($amount) || is_float($amount)) && $amount >= 10.0){
+							//Check whether the double has more than 2 decimal places 
+							$checkedamount = strval($amount);
+							$amountArr = explode(".", $checkedamount);
+							if(strlen($amountArr[1]) > 2){
+								$_SESSION['errors'][] = "bid.csv - row $countBid - invalid amount";
+							} 
+						} else {
+							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid amount";
+						}
+						// Check if course code is found in the course.csv
+						if(!($courseDAO->retrieve($code))) {
+							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid code";
+						} elseif (!($sectionDAO->retrieve($section))) {
+							// Check if section code is found in section.csv (only for valid course code)
+							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid section";
+						}
+						
+						if(count($_SESSION['errors']) == 0){
+							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
+							$bidObj = new Bid($userid, $amount, $code, $section);
+							$bidDAO->add($bidObj);
+							$bid_processed++; #line added successfully  
+						} else {
+						//Print out all the errors for user
+						//print error for blank fields? CHECK!
+						printErrors();
+						}
+					} else {
+						//pass the line in the file (apparently dun need to write any code?? try try)
+						//Print out all the errors for user
+						if(empty($data[0])){
+							$_SESSION['errors'][] = "bid.csv - row $countBid - blank userid";
+						} 
+						if(empty($data[1])){
+							$_SESSION['errors'][] = "bid.csv - row $countBid - blank amount";
+						}
+						if(empty($data[2])){
+							$_SESSION['errors'][] = "bid.csv - row $countBid - blank code";
+						}
+						if(empty($data[3])){
+							$_SESSION['errors'][] = "bid.csv - row $countBid - blank section";
+						}
+						printErrors();
+					}
+					$countBid++;
+				}
+
+				fclose($bid); // close the file handle
+				unlink($bid_path); // delete the temp file
 			}
 		}
 	}
