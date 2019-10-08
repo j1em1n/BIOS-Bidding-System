@@ -87,6 +87,29 @@ class CourseDAO {
         return $isAddOK;
     }
 
+    public function getCoursesBySchool($school){
+
+        $sql = 'SELECT course, school, title, description, exam_date, exam_start, exam_end
+            FROM Course WHERE school=:school';
+        
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':school', $school, PDO::PARAM_STR);
+        $stmt->execute();
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        }
+        
+        $stmt = null;
+        $conn = null;
+    }
+
     
 }
 ?>

@@ -87,7 +87,7 @@ $allcourse = $coursedao->retrieveAll();
 
         
         <p>
-        <a id="add" href="PlanBid.php">Plan & Bid</a>
+        <a id="add" href="placebid.php">Plan & Bid</a>
     </body>
 
 
