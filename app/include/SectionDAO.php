@@ -24,15 +24,18 @@ class SectionDAO {
         return $result;
     }
 
-    public  function retrieve() {
-        $sql = 'SELECT * FROM section ORDER BY course, section ';
+    public  function retrieve($coursecode, $section) {
+        $sql = 'SELECT * FROM section WHERE course=:coursecode, section=:section ';
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':coursecode', $coursecode, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        $stmt->execute();
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);

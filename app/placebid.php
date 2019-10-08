@@ -20,7 +20,7 @@
                 </tr>
                 <tr>
                     <th>E-dollars</th>
-                    <td><input name='edollar' type='text'></td>
+                    <td><input name='edollar' type='text' maxlength='5'></td>
                 </tr>
                 <tr>
                     <td colspan='2'><input type='submit' value='Place Bid'></td>

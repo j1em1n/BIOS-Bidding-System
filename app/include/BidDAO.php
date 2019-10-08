@@ -41,6 +41,24 @@ class BidDAO {
         $conn = null;
     }
 
+    public  function retrieveByUserid($userid) {
+        $sql = 'SELECT * FROM bid WHERE userid=:userid';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->execute();
+        
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
+        }
+        $stmt = null;
+        $conn = null;
+    }
+
     public function removeAll() {
         $sql = 'TRUNCATE TABLE bid';
         
