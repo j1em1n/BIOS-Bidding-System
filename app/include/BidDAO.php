@@ -79,7 +79,61 @@ class BidDAO {
 
         return $isAddOK;
     }
+
+    public function delete($bid){
+
+        $sql = 'DELETE FROM bid (userid, amount, code, section) VALUES (:userid, :amount, :code, :section)';
+        
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->bindParam(':userid', $bid->getUserid(), PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $bid->getAmount(), PDO::PARAM_STR);
+        $stmt->bindParam(':code', $bid->getCode(), PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bid->getSection(), PDO::PARAM_STR);
+
+        $isAddOK = False;
+        if ($stmt->execute()) {
+            $isAddOK = True;
+        }
+
+        $stmt = null;
+        $conn = null;
+
+        return $isAddOK;
+
+    }
     
+    public function getEnrolledBids($bid){
+
+        $sql = 'SELECT userid, amount, code, section FROM bid WHERE :status = "enrolled"';
+        
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->bindParam(':userid', $bid->getUserid(), PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $bid->getAmount(), PDO::PARAM_STR);
+        $stmt->bindParam(':code', $bid->getCode(), PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bid->getSection(), PDO::PARAM_STR);
+
+        $isAddOK = False;
+        if ($stmt->execute()) {
+            $isAddOK = True;
+        }
+
+        $stmt = null;
+        $conn = null;
+
+        return $isAddOK;
+
+
+
+
+    }
     
     
 }

@@ -89,7 +89,7 @@ class StudentDAO {
 
     public function updateEdollar($biddedAmount){
 
-        $sql = 'INSERT INTO student (userid edollar) VALUES (:userid, :biddedAmount)';
+        $sql = 'INSERT INTO student (userid, edollar) VALUES (:userid, :biddedAmount)';
 
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();

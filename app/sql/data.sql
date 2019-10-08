@@ -42,6 +42,7 @@ CREATE TABLE bid
 	amount decimal(10,2) NOT NULL,
     code varchar(300) NOT NULL,
     section varchar(300) NOT NULL,
+    status varchar(300) NOT NULL,
     CONSTRAINT bid_pk PRIMARY KEY (userid, code, section),
     CONSTRAINT bid_fk1 FOREIGN KEY(userid) REFERENCES student(userid),
     CONSTRAINT bid_fk2 FOREIGN KEY(code, section) REFERENCES section(course, section)
