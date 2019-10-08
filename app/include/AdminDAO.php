@@ -57,8 +57,10 @@ class AdminDAO {
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+
+        $stmt->bindParam(":userid", $userid);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
 
         $result = array();
 
