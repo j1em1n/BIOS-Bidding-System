@@ -85,5 +85,26 @@ class SectionDAO {
 
         return $isAddOK;
     }
+
+    public function getSectionsByCourse($course){
+
+        $sql = 'SELECT section FROM section WHERE course=:course';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->execute();
+
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return $sections[] = $row['section'];
+        }
+       
+        $stmt = null;
+        $conn = null;
+    }
 }
 ?>
