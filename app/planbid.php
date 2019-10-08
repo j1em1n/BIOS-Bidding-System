@@ -50,13 +50,14 @@ $allcourse = $coursedao->retrieveAll();
             </b>
             </tr>
 
+                <form method = "POST" action = "index.php">
                 <?php
                 foreach($allcourse as $eachcourse){
                     if($eachcourse->school == $userschool){
 
                         echo 
                         "<tr>
-                            <td><input type = 'checkbox' name = 'courseschosen[]'></td>
+                            <td><input type = 'checkbox' name = 'courseschosen[]' value = '$eachcourse->course'></td>
                             <td>$eachcourse->course</td>
                             <td>$eachcourse->school</td>
                             <td>$eachcourse->title</td>
