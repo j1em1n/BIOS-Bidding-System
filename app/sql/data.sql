@@ -74,6 +74,6 @@ CREATE TABLE admin
 
 DROP TABLE IF EXISTS round;
 CREATE TABLE round
-(   round_num varchar(300) NOT NULL,
-    status varchar(300) NOT NULL,
+(   round_num int NOT NULL,
+    status varchar(300) NOT NULL
 );
