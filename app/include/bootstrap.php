@@ -463,6 +463,14 @@ function doBootstrap() {
 						if(!($courseDAO->retrieve($code))) {
 							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid code";
 						}
+						// Check if the completed course has a prerequisite
+						if($prerequisiteDAO->retrieve($code)) {
+							$prereqcourse = $prerequisiteDAO->retrieve($code);
+							// Check if the student has completed the prerequisite (row with userid and prerequisite code exists)
+							if(!($courseCompletedDAO->retrieveByUserIdAndCode($userid, $prereqcourse->getPrerequisite()))){
+								$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid course completed";
+							}
+						}
 					
 						if(count($_SESSION['errors']) == 0){
 							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 

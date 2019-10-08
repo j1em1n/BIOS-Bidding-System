@@ -24,15 +24,17 @@ class PrerequisiteDAO {
         return $result;
     }
 
-    public  function retrieve() {
-        $sql = 'SELECT * FROM prerequisite ORDER BY course, prerequisite';
+    public  function retrieve($coursecode) {
+        $sql = 'SELECT * FROM prerequisite where course = :coursecode';
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->bindParam(":coursecode", $coursecode);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return new Prerequisite($row['course'], $row['prerequisite']);
