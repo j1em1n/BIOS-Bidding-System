@@ -71,3 +71,9 @@ CREATE TABLE admin
 (	userid varchar(300) NOT NULL PRIMARY KEY,
 	password varchar(300) NOT NULL
 );
+
+DROP TABLE IF EXISTS round;
+CREATE TABLE round
+(   round_num int NOT NULL,
+    status varchar(300) NOT NULL
+);
