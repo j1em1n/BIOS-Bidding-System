@@ -43,10 +43,12 @@
 
                 //specifiy which bid want to drop based on userid and coursecode and sectionnum
                 //foreach($listofbids as $eachbid){
-                    if($listofbids->userid == $userid && $listofbids->code == $coursecode && $listofbids->section == $sectionnum){
+                    if($listofbids->userid == $userid && $listofbids->code == $coursecode 
+                        && $listofbids->section == $sectionnum){
                         // update edollars by subtraction
                         $biddedamount = $listofbids->amount;                        
-                        $updatedamount = $currentedollars - $biddedamount;
+                        $updatedamount =  strval($currentedollars - $biddedamount);
+
                         var_dump($updatedamount);
                         var_dump($userid);
 
@@ -63,6 +65,12 @@
             } 
         }
         
+
+
+
+
+
+
     } else {
         if(empty($coursecode)) {
             $_SESSION['errors'][] = "blank course code";
