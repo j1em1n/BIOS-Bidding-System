@@ -8,7 +8,7 @@
 
     <body>
         <h1>Bid for a Section</h1>
-        <form action='process_planbid.php' method='POST'>
+        <form action='process_placebid.php' method='POST'>
             <table border='1'>
                 <tr>
                     <th>Course Code</th>
