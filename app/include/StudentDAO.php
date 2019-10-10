@@ -87,17 +87,17 @@ class StudentDAO {
         return $isAddOK;
     }
 
-    public function updateEdollar($biddedAmount){
+    public function updateEdollar($userid, $biddedAmount){
 
-        $sql = 'INSERT INTO student (userid, edollar) VALUES (:userid, :biddedAmount)';
+        $sql = 'UPDATE student SET edollar=:biddedAmount WHERE userid=:userid';
 
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':userid', $student->getUserid(), PDO::PARAM_STR);
-        $stmt->bindParam(':edollar', $biddedAmount, PDO::PARAM_INT);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':edollar', $biddedAmount, PDO::PARAM_STR);
 
         $isAddOK = False;
         if ($stmt->execute()) {
