@@ -36,7 +36,7 @@ class StudentDAO {
         $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
         $stmt->execute();
 
-
+        $student = null;
         if($row = $stmt->fetch()) {
             $student = new Student($row['userid'],$row['password'], $row['name'],
                 $row['school'], $row['edollar']);

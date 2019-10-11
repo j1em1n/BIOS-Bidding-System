@@ -35,7 +35,7 @@ class PrerequisiteDAO {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
-
+        $prerequisite = null;
         if($row = $stmt->fetch()) {
             $prerequisite = new Prerequisite($row['course'], $row['prerequisite']);
         }

@@ -35,6 +35,7 @@ class CourseDAO {
         $stmt->bindParam(':courseid', $courseid, PDO::PARAM_STR);
         $stmt->execute();
 
+        $course = null;
         if($row = $stmt->fetch()) {
             $course = new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }

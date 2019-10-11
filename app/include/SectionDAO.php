@@ -25,7 +25,7 @@ class SectionDAO {
     }
 
     public  function retrieve($coursecode, $section) {
-        $sql = 'SELECT * FROM section WHERE course=:coursecode, section=:section ';
+        $sql = 'SELECT * FROM section WHERE course=:coursecode AND section=:section';
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -37,7 +37,8 @@ class SectionDAO {
         $stmt->bindParam(':section', $section, PDO::PARAM_STR);
         $stmt->execute();
 
-        while($row = $stmt->fetch()) {
+        $section = null;
+        if($row = $stmt->fetch()) {
             $section = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
         }
        

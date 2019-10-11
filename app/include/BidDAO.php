@@ -9,9 +9,8 @@ class BidDAO {
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        
+        $stmt->execute();
 
         $result = array();
 
@@ -24,21 +23,28 @@ class BidDAO {
         return $result;
     }
 
-    public  function retrieve() {
-        $sql = 'SELECT * FROM bid ORDER BY userid, code, section';
+    public  function retrieve($userid, $code, $section) {
+        $sql = 'SELECT * FROM bid WHERE userid=:userid AND code=:code AND section=:section';
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+
+        $stmt->bindParam(":userid", $userid, PDO::PARAM_STR);
+        $stmt->bindParam(":code", $code, PDO::PARAM_STR);
+        $stmt->bindParam(":section", $section, PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
+        $stmt->execute();
+
+        $bid = null;        
+        if($row = $stmt->fetch()) {
+            $bid = new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
         }
         $stmt = null;
         $conn = null;
+
+        return $bid;
     }
 
     public  function retrieveByUserid($userid) {
@@ -51,12 +57,16 @@ class BidDAO {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
         $stmt->execute();
+
+        $bids = array();
         
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
+        while($row = $stmt->fetch()) {
+            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
         }
         $stmt = null;
         $conn = null;
+
+        return $bids;
     }
 
     public function removeAll() {
@@ -75,22 +85,24 @@ class BidDAO {
     }
 
     public function add($bid) {
-        $sql = 'INSERT INTO bid (userid, amount, code, section) VALUES (:userid, :amount, :code, :section)';
+        $userid = $bid->getUserid();
+        $amount = $bid->getAmount();
+        $code = $bid->getCode();
+        $section = $bid->getSection();
         
+        $sql = 'INSERT INTO bid (userid, amount, code, section) VALUES (:userid, :amount, :code, :section)';
+
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
-         
+        
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':userid', $bid->getUserid(), PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $bid->getAmount(), PDO::PARAM_STR);
-        $stmt->bindParam(':code', $bid->getCode(), PDO::PARAM_STR);
-        $stmt->bindParam(':section', $bid->getSection(), PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
+        $stmt->bindParam(':code', $code, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
+        $isAddOK = $stmt->execute();
 
         $stmt = null;
         $conn = null;
@@ -99,6 +111,10 @@ class BidDAO {
     }
 
     public function delete($bid){
+        $userid = $bid->getUserid();
+        $amount = $bid->getAmount();
+        $code = $bid->getCode();
+        $section = $bid->getSection();
 
         $sql = 'DELETE FROM bid (userid, amount, code, section) VALUES (:userid, :amount, :code, :section)';
         
@@ -107,52 +123,70 @@ class BidDAO {
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':userid', $bid->getUserid(), PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $bid->getAmount(), PDO::PARAM_STR);
-        $stmt->bindParam(':code', $bid->getCode(), PDO::PARAM_STR);
-        $stmt->bindParam(':section', $bid->getSection(), PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
+        $stmt->bindParam(':code', $code, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
+        $isDeleteOK = $stmt->execute();
 
         $stmt = null;
         $conn = null;
 
-        return $isAddOK;
+        return $isDeleteOK;
 
     }
     
-    public function getEnrolledBids($bid){
+    public function getBidsByStatus($status){
 
-        $sql = 'SELECT userid, amount, code, section FROM bid WHERE :status = "enrolled"';
+        $sql = 'SELECT * FROM bid WHERE status=:status';
         
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':userid', $bid->getUserid(), PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $bid->getAmount(), PDO::PARAM_STR);
-        $stmt->bindParam(':code', $bid->getCode(), PDO::PARAM_STR);
-        $stmt->bindParam(':section', $bid->getSection(), PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        $stmt->execute();
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
+        $bids = array();
+
+        while ($row = $stmt->fetch()) {
+            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
         }
 
         $stmt = null;
         $conn = null;
 
-        return $isAddOK;
-
-
-
-
+        return $bids;
     }
-    
-    
+
+    public function getBidsBySectionStatus($course, $section, $status){
+
+        $sql = 'SELECT * FROM bid WHERE code=:course AND section=:section AND status=:status';
+        
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $bids = array();
+
+        while ($row = $stmt->fetch()) {
+            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
+        }
+
+        $stmt = null;
+        $conn = null;
+
+        return $bids;
+    }
 }
 ?>

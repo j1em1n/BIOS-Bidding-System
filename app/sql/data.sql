@@ -8,7 +8,7 @@ CREATE TABLE student
 	password varchar(300) NOT NULL,
     name varchar(300) NOT NULL,
     school varchar(300) NOT NULL,
-    edollar decimal(10,2) NOT NULL
+    edollar varchar(300) NOT NULL
 );
 
 DROP TABLE IF EXISTS course;
@@ -17,9 +17,9 @@ CREATE TABLE course
 	school varchar(300) NOT NULL,
     title varchar(300) NOT NULL,
     description varchar(1000) NOT NULL,
-    exam_date date NOT NULL,
-    exam_start time NOT NULL,
-    exam_end time NOT NULL
+    exam_date varchar(300) NOT NULL,
+    exam_start varchar(300) NOT NULL,
+    exam_end varchar(300) NOT NULL
 );
 
 DROP TABLE IF EXISTS section;
@@ -27,8 +27,8 @@ CREATE TABLE section
 (	course varchar(300) NOT NULL,
 	section varchar(300) NOT NULL,
     day int(5) NOT NULL,
-    start time NOT NULL,
-    end time NOT NULL,
+    start varchar(300) NOT NULL,
+    end varchar(300) NOT NULL,
     instructor varchar(300) NOT NULL,
     venue varchar(300) NOT NULL,
     size int(5) NOT NULL,
@@ -39,10 +39,10 @@ CREATE TABLE section
 DROP TABLE IF EXISTS bid;
 CREATE TABLE bid
 (	userid varchar(300) NOT NULL,
-	amount decimal(10,2) NOT NULL,
+	amount varchar(300) NOT NULL,
     code varchar(300) NOT NULL,
     section varchar(300) NOT NULL,
-    status varchar(300) NOT NULL,
+    status varchar(300) DEFAULT "Pending" NOT NULL,
     CONSTRAINT bid_pk PRIMARY KEY (userid, code, section),
     CONSTRAINT bid_fk1 FOREIGN KEY(userid) REFERENCES student(userid),
     CONSTRAINT bid_fk2 FOREIGN KEY(code, section) REFERENCES section(course, section)
@@ -75,5 +75,6 @@ CREATE TABLE admin
 DROP TABLE IF EXISTS round;
 CREATE TABLE round
 (   round_num int NOT NULL,
-    status varchar(300) NOT NULL
+    status varchar(300) NOT NULL,
+    CONSTRAINT round_pk PRIMARY KEY (round_num, status)
 );

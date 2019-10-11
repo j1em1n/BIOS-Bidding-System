@@ -24,18 +24,19 @@ class CourseCompletedDAO {
         return $result;
     }
 
-    public  function retrieveByUserIdAndCode($userid, $coursecode) {
-        $sql = 'SELECT * FROM couse_completed where userid = :userid, course = :coursecode';
+    public  function retrieve($userid, $coursecode) {
+        $sql = 'SELECT * FROM course_completed WHERE userid = :userid AND code = :coursecode';
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(":userid", $userid);
-        $stmt->bindParam(":coursecode", $coursecode);
+        $stmt->bindParam(":userid", $userid, PDO::PARAM_STR);
+        $stmt->bindParam(":coursecode", $coursecode, PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
+        $result = null;
         if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $result = new CourseCompleted($row['userid'], $row['code']);
         }

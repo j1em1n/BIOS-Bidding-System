@@ -467,7 +467,7 @@ function doBootstrap() {
 						if($prerequisiteDAO->retrieve($code)) {
 							$prereqcourse = $prerequisiteDAO->retrieve($code);
 							// Check if the student has completed the prerequisite (row with userid and prerequisite code exists)
-							if(!($courseCompletedDAO->retrieveByUserIdAndCode($userid, $prereqcourse->getPrerequisite()))){
+							if(!($courseCompletedDAO->retrieve($userid, $prereqcourse->getPrerequisite()))){
 								$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid course completed";
 							}
 						}

@@ -26,7 +26,7 @@ class AdminDAO {
     }
 
     public  function retrieve($userid) {
-        $sql = "SELECT * FROM admin where userid=:userid";
+        $sql = "SELECT * FROM admin WHERE userid=:userid";
         
             
         $connMgr = new ConnectionManager();      
@@ -38,6 +38,7 @@ class AdminDAO {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
+        $admin = null;
         if($row = $stmt->fetch()) {
             $admin = new Admin($row['userid'], $row['password']);
         }
