@@ -37,13 +37,14 @@ class SectionDAO {
         $stmt->bindParam(':section', $section, PDO::PARAM_STR);
         $stmt->execute();
 
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
+        while($row = $stmt->fetch()) {
+            $section = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
         }
        
         $stmt = null;
         $conn = null;
 
+        return $section;
     }
 
     public function removeAll() {
@@ -78,10 +79,7 @@ class SectionDAO {
         $stmt->bindParam(':venue', $section->getVenue(), PDO::PARAM_STR);
         $stmt->bindParam(':size', $section->getSize(), PDO::PARAM_INT);
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
+        $isAddOK = $stmt->execute();
 
         $stmt = null;
         $conn = null;
@@ -101,13 +99,16 @@ class SectionDAO {
         $stmt->bindParam(':course', $course, PDO::PARAM_STR);
         $stmt->execute();
 
+        $sections = array();
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return $sections[] = $row['section'];
+            $sections[] = $row['section'];
         }
        
         $stmt = null;
         $conn = null;
+
+        return $sections;
     }
 }
 ?>

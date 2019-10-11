@@ -37,14 +37,15 @@ class StudentDAO {
         $stmt->execute();
 
 
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Student($row['userid'],$row['password'], $row['name'],
+        if($row = $stmt->fetch()) {
+            $student = new Student($row['userid'],$row['password'], $row['name'],
                 $row['school'], $row['edollar']);
         }
     
-
         $stmt = null;
         $conn = null;
+
+        return $student;
     }
     
     public function removeAll() {
@@ -76,10 +77,7 @@ class StudentDAO {
         $stmt->bindParam(':school', $student->getSchool(), PDO::PARAM_STR);
         $stmt->bindParam(':edollar', $student->getEdollar(), PDO::PARAM_STR);
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
+        $isAddOK = $stmt->execute();
 
         $stmt = null;
         $conn = null;
@@ -99,15 +97,12 @@ class StudentDAO {
         $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
         $stmt->bindParam(':edollar', $biddedAmount, PDO::PARAM_STR);
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
+        $isUpdateOK = $stmt->execute();
 
         $stmt = null;
         $conn = null;
         
-        return $isAddOK;
+        return $isUpdateOK;
     }
 
     

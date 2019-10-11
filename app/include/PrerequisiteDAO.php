@@ -36,13 +36,14 @@ class PrerequisiteDAO {
         $stmt->execute();
 
 
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Prerequisite($row['course'], $row['prerequisite']);
+        if($row = $stmt->fetch()) {
+            $prerequisite = new Prerequisite($row['course'], $row['prerequisite']);
         }
         
         $stmt = null;
         $conn = null;
 
+        return $prerequisite;
     }
         
     public function removeAll() {
@@ -71,10 +72,7 @@ class PrerequisiteDAO {
         $stmt->bindParam(':course', $prerequisite->getCourse(), PDO::PARAM_STR);
         $stmt->bindParam(':prerequisite', $prerequisite->getPrerequisite(), PDO::PARAM_STR);
        
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
+        $isAddOK = $stmt->execute();
 
         $stmt = null;
         $conn = null;

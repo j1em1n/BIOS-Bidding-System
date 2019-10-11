@@ -17,6 +17,9 @@ class CourseCompletedDAO {
         while($row = $stmt->fetch()) {
             $result[] = new CourseCompleted($row['userid'], $row['code']);
         }
+
+        $stmt = null;
+        $conn = null;
             
         return $result;
     }
@@ -33,13 +36,14 @@ class CourseCompletedDAO {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new CourseCompleted($row['userid'], $row['code']);
+        if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $result = new CourseCompleted($row['userid'], $row['code']);
         }
         
         $stmt = null;
         $conn = null;
 
+        return $result;
     }
 
     public function removeAll() {
@@ -52,6 +56,9 @@ class CourseCompletedDAO {
         
         $stmt->execute();
         $count = $stmt->rowCount();
+
+        $stmt = null;
+        $conn = null;
     }    
 
     public function add($courseCompleted) {
@@ -65,11 +72,7 @@ class CourseCompletedDAO {
         $stmt->bindParam(':userid', $courseCompleted->getUserid(), PDO::PARAM_STR);
         $stmt->bindParam(':code', $courseCompleted->getCode(), PDO::PARAM_STR);
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
-
+        $isAddOK = $stmt->execute();
         return $isAddOK;
     }
 }

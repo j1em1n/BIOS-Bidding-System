@@ -12,7 +12,6 @@ class CourseDAO {
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-
         $result = array();
 
         while($row = $stmt->fetch()) {
@@ -36,13 +35,14 @@ class CourseDAO {
         $stmt->bindParam(':courseid', $courseid, PDO::PARAM_STR);
         $stmt->execute();
 
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        if($row = $stmt->fetch()) {
+            $course = new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
         
         $stmt = null;
         $conn = null;
         
+        return $course;
     }
 
     public function removeAll() {
@@ -76,10 +76,7 @@ class CourseDAO {
         $stmt->bindParam(':exam_start', $course->getExamStart(), PDO::PARAM_STR);
         $stmt->bindParam(':exam_end', $course->getExamEnd(), PDO::PARAM_STR);
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
+        $isAddOK = $stmt->execute();
 
         $stmt = null;
         $conn = null;
@@ -89,25 +86,26 @@ class CourseDAO {
 
     public function getCoursesBySchool($school){
 
-        $sql = 'SELECT course, school, title, description, exam_date, exam_start, exam_end
-            FROM Course WHERE school=:school';
+        $courses = [];
+        $sql = 'SELECT * FROM Course WHERE school=:school';
         
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt = $conn->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->bindParam(':school', $school, PDO::PARAM_STR);
         $stmt->execute();
 
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        while($row = $stmt->fetch()) {
+            $courses[] = new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
         
         $stmt = null;
         $conn = null;
+
+        return $courses;
     }
 
     

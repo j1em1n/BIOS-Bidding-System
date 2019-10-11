@@ -12,10 +12,7 @@ class RoundDAO {
         $stmt->bindParam(':status_entered', $status_entered, PDO::PARAM_STR);
         $stmt->bindParam(':round_num', $round_num, PDO::PARAM_INT);
 
-        $isAddOK = False;
-        if ($stmt->execute()) {
-            $isAddOK = True;
-        }
+        $isAddOK = $stmt->execute();
 
         $stmt = null;
         $conn = null;
