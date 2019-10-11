@@ -2,13 +2,13 @@
 
 class Course{
     //property declaration
-    public $course;
-    public $school;
-    public $title;
-    public $description;
-    public $exam_date;
-    public $exam_start;
-    public $exam_end;
+    private $course;
+    private $school;
+    private $title;
+    private $description;
+    private $exam_date;
+    private $exam_start;
+    private $exam_end;
 
     public function __construct($course, $school, $title, $description, $exam_date, $exam_start, $exam_end){
         $this->course = $course;

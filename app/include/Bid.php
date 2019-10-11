@@ -2,16 +2,18 @@
 
 class Bid{
     //property declaration
-    public $userid;
-    public $amount;
-    public $code;
-    public $section;
+    private $userid;
+    private $amount;
+    private $code;
+    private $section;
+    private $status;
 
-    public function __construct($userid, $amount, $code, $section) {
+    public function __construct($userid, $amount, $code, $section, $status) {
         $this->userid = $userid;
         $this->amount = $amount;
         $this->code = $code;
         $this->section = $section;
+        $this->status = $status;
         
     }
 
@@ -29,6 +31,10 @@ class Bid{
 
     public function getSection(){
         return $this->section;
+    }
+
+    public function getStatus(){
+        return $this->status;
     }
 
 }

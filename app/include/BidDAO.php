@@ -15,7 +15,7 @@ class BidDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Bid($row['userid'], $row['amount'],$row['code'], $row['section']);
+            $result[] = new Bid($row['userid'], $row['amount'],$row['code'], $row['section'], $row['status']);
         }
         $stmt = null;
         $conn = null;
@@ -39,7 +39,7 @@ class BidDAO {
 
         $bid = null;        
         if($row = $stmt->fetch()) {
-            $bid = new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
+            $bid = new Bid($row['userid'],$row['amount'], $row['code'], $row['section'], $row['status']);
         }
         $stmt = null;
         $conn = null;
@@ -61,7 +61,7 @@ class BidDAO {
         $bids = array();
         
         while($row = $stmt->fetch()) {
-            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
+            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section'], $row['status']);
         }
         $stmt = null;
         $conn = null;
@@ -153,7 +153,7 @@ class BidDAO {
         $bids = array();
 
         while ($row = $stmt->fetch()) {
-            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
+            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section'], $row['status']);
         }
 
         $stmt = null;
@@ -180,7 +180,7 @@ class BidDAO {
         $bids = array();
 
         while ($row = $stmt->fetch()) {
-            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section']);
+            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section'], $row['status']);
         }
 
         $stmt = null;

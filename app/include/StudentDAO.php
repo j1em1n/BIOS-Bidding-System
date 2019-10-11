@@ -95,7 +95,7 @@ class StudentDAO {
         $stmt = $conn->prepare($sql); 
 
         $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
-        $stmt->bindParam(':edollar', $biddedAmount, PDO::PARAM_STR);
+        $stmt->bindParam(':biddedAmount', $biddedAmount, PDO::PARAM_STR);
 
         $isUpdateOK = $stmt->execute();
 

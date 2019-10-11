@@ -2,8 +2,8 @@
 
 class Admin{
     //property declaration
-    public $userid;
-    public $hashedpassword;
+    private $userid;
+    private $hashedpassword;
 
     public function __construct($userid, $hashedpassword){
         $this->userid = $userid;

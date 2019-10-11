@@ -2,8 +2,8 @@
 
 class Prerequisite{
     //property declaration
-    public $course;
-    public $prerequisite;
+    private $course;
+    private $prerequisite;
 
     public function __construct($course,$prerequisite) {
         $this->course = $course;

@@ -143,8 +143,11 @@
     if(isset($_SESSION['errors'])){
         header("Location: placebid.php");
     } else {
-        $thisBid = new Bid($userid, $edollar, $courseCode, $sectionNum);
+        // Create new bid object and add it to database
+        $thisBid = new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending");
         $bidDAO->add($thisBid);
+        // Update student's e-dollar balance
+        $studentDAO->updateEdollar($userid, ($student->getEdollar() - $edollar));
 
         echo "<head></head>
         <body>

@@ -2,8 +2,8 @@
 
 class CourseCompleted{
     //property declaration
-    public $userid;
-    public $code;
+    private $userid;
+    private $code;
 
     public function __construct($userid,$code) {
         $this->userid = $userid;

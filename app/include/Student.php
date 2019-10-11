@@ -2,11 +2,11 @@
 
 class Student{
     //property declaration
-    public $userid;
-    public $password;
-    public $name;
-    public $school;
-    public $edollar;
+    private $userid;
+    private $password;
+    private $name;
+    private $school;
+    private $edollar;
 
     public function __construct($userid, $password, $name, $school, $edollar){
         $this->userid = $userid;

@@ -2,14 +2,14 @@
 
 class Section{
     //property declaration
-    public $course;
-    public $section;
-    public $day;
-    public $start;
-    public $end;
-    public $instructor;
-    public $venue;
-    public $size;
+    private $course;
+    private $section;
+    private $day;
+    private $start;
+    private $end;
+    private $instructor;
+    private $venue;
+    private $size;
 
     public function __construct($course, $section, $day, $start, $end, $instructor, $venue, $size){
         $this->course = $course;

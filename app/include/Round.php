@@ -2,8 +2,8 @@
 
 class Round{
     //property declaration
-    public $round_num;
-    public $status;
+    private $round_num;
+    private $status;
  
 
     public function __construct($round_num, $status){
