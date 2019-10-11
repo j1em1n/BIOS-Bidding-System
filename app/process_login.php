@@ -1,6 +1,12 @@
 <?php
     require_once 'include/common.php';
 
+    if(!isset($_POST['userid']) || !isset($_POST['password'])) {
+        $_SESSION['errors'] = "Please enter your login details";
+        header("Location: login.php");
+        exit();
+    }
+
     $userid = $_POST['userid'];
     $password = $_POST['password'];
 

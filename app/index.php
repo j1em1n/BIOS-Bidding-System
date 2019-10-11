@@ -1,8 +1,6 @@
 <?php
-
-require_once 'include/common.php';
 require_once 'include/protect.php';
-require_once './include/studentDAO.php';
+require_once 'include/common.php';
     
 if(isset($_SESSION['userid'])){
     $userid = $_SESSION['userid'];

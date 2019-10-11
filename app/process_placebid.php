@@ -51,6 +51,7 @@
     // If inputs do not pass field and data validations, redirect user back to placebid.php immediately
     if (isset($_SESSION['errors'])) {
         header("Location: placebid.php");
+        exit();
     }
 
     // Initialise the rest of the DAOs and objects needed if data validations are passed
@@ -142,6 +143,7 @@
     // Else, display success message
     if(isset($_SESSION['errors'])){
         header("Location: placebid.php");
+        exit();
     } else {
         // Create new bid object and add it to database
         $thisBid = new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending");
