@@ -21,7 +21,7 @@ function doBootstrap() {
 
 	# check file size
 	if ($_FILES["bootstrap-file"]["size"] <= 0)
-		$_SESSION['errors'][] = "input files not found";
+		$errors[] = "input files not found";
 
 	else {
 		
@@ -47,7 +47,7 @@ function doBootstrap() {
 			$bid = @fopen($bid_path, "r");
 
 			if (empty($student) || empty($section) || empty($course) || empty($course_completed) || empty($prerequisite) || empty($bid) ){
-				$_SESSION['errors'][] = "input files not found";
+				$errors[] = "input files not found";
 				if (!empty($student)){
 					fclose($student);
 					@unlink($student_path);
@@ -113,6 +113,7 @@ function doBootstrap() {
 				$checkDupUserId[] = $userId;
 				while ( ($data = fgetcsv($student) ) !== false){
 					$countStud = 1;
+					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userId = trim($data[0]);
 					$pwd = trim($data[1]);
@@ -124,58 +125,58 @@ function doBootstrap() {
 						//pass the line in the file 
 						//Print out all the errors for user
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - blank userid";
+							$rowErrors[] = "student.csv - row $countStud - blank userid";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - blank password";
+							$rowErrors[] = "student.csv - row $countStud - blank password";
 						}
 						if(empty($data[2])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - blank name";
+							$rowErrors[] = "student.csv - row $countStud - blank name";
 						}
 						if(empty($data[3])){
-							$_SESSION['errors'][] = "student.csv - row $countStud -  blank school";
+							$rowErrors[] = "student.csv - row $countStud -  blank school";
 						}
 						if(empty($data[4])){
-							$_SESSION['errors'][] = "student.csv - row $countStud - blank e-dollar";
+							$rowErrors[] = "student.csv - row $countStud - blank e-dollar";
 						}
 					} else {
 						//Checking if the userid field is > 128 characters
 						if (strlen($userId) > 128) {
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid userid";
+							$rowErrors[] = "student.csv - row $countStud - invalid userid";
 						}
 						
 						// Checking for duplicate user IDs
 						if(in_array($userId, $checkDupUserId)){
-							$_SESSION['errors'][] = "student.csv - row $countStud - duplicate userid";
+							$rowErrors[] = "student.csv - row $countStud - duplicate userid";
 						} else {
 							$checkDupUserId[] = $userId;
 						}
 						
 						//Checking if edollar is a non-negative numeric value
 						if(!(isNonNegativeInt($edollar) || isNonNegativeFloat($edollar))){
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+							$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
 						} else {
 							//If edollar is a float, check if it has more than 2 decimal places
 							if (is_float($edollar)) {
 								$checkedollar = strval($edollar);
 								$edollarArr = explode(".", $checkedollar);
 								if(strlen($edollarArr[1]) > 2){
-									$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+									$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
 								}
 							} 
 						}
 						//Checking if the password field has > 128 characters
 						if(strlen($pwd) > 128){
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid password";
+							$rowErrors[] = "student.csv - row $countStud - invalid password";
 						}
 						//Checking if the name field has > 100 characters
 						if(strlen($name) > 100){
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid name";
+							$rowErrors[] = "student.csv - row $countStud - invalid name";
 						}
 					} 
 					// Check if row has any errors and if no, create Student object and add to database
-					if(isset($_SESSION['errors'])){
-						printErrors();
+					if(!empty($rowErrors)){
+						$errors = array_merge($errors, $rowErrors);
 					} else {
 						$studentObj = new Student($userId, $pwd, $name, $school, $edollar);
 							$studentDAO->add($studentObj);
@@ -194,6 +195,7 @@ function doBootstrap() {
 
 				while ( ($data = fgetcsv($course) ) !== false){
 					$countCourse = 1;
+					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string
 					$coursecode = trim($data[0]);
 					$school = trim($data[1]);
@@ -206,61 +208,61 @@ function doBootstrap() {
 					//Check for any empty field 
 					if (empty($coursecode) || empty($school) || empty($title) || empty($description) || empty($exam_date) || empty($exam_start) || empty($exam_end)) {
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - blank course";
+							$rowErrors[] = "course.csv - row $countCourse - blank course";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - blank school";
+							$rowErrors[] = "course.csv - row $countCourse - blank school";
 						}
 						if(empty($data[2])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - blank title";
+							$rowErrors[] = "course.csv - row $countCourse - blank title";
 						}
 						if(empty($data[3])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - blank description";
+							$rowErrors[] = "course.csv - row $countCourse - blank description";
 						}
 						if(empty($data[4])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - blank exam date";
+							$rowErrors[] = "course.csv - row $countCourse - blank exam date";
 						}
 						if(empty($data[5])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - blank exam start";
+							$rowErrors[] = "course.csv - row $countCourse - blank exam start";
 						}
 						if(empty($data[6])){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - blank exam end";
+							$rowErrors[] = "course.csv - row $countCourse - blank exam end";
 						}
 					} else {
 						//Checking if the title field is > 100 characters
 						if(strlen($title) > 100){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid title";
+							$rowErrors[] = "course.csv - row $countCourse - invalid title";
 						} 
 						//Checking if the description field has > 1000 characters
 						if(strlen($description) > 1000){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid description";
+							$rowErrors[] = "course.csv - row $countCourse - invalid description";
 						}
 						//Checking if the date field is in ymd format
 						if(validateDate($exam_date, "Ymd") == FALSE){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam date";
+							$rowErrors[] = "course.csv - row $countCourse - invalid exam date";
 						}
 						
 						if (!(validateDate($exam_start) && validateDate($exam_end))) {
 							//Checking if exam_start is in H:mm format
 							if(!validateDate($exam_start, "H:mm")){
-								$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam start";
+								$rowErrors[] = "course.csv - row $countCourse - invalid exam start";
 							}
 							//Checking if exam_end is in H:mm format
 							if(!validateDate($exam_end, "H:mm")){
-								$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam end";
+								$rowErrors[] = "course.csv - row $countCourse - invalid exam end";
 							}
 						} else {
 							//Check if exam_end is later than exam_start (only if both times are valid)
 							$exam_start_datetime = DateTime::createFromFormat("H:mm", $exam_start);
 							$exam_end_datetime = DateTime::createFromFormat("H:mm", $exam_end);
 							if($exam_end_datetime < $exam_start_datetime) {
-								$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam end";
+								$rowErrors[] = "course.csv - row $countCourse - invalid exam end";
 							}
 						}
 					}
 					//Check if row has any errors and if no, create Course object and add to database
-					if(isset($_SESSION['errors'])){
-						printErrors();
+					if(!empty($rowErrors)){
+						$errors = array_merge($errors, $rowErrors);
 					} else {
 						$courseObj = new Course($getCourse, $school, $title, $description, $exam_date, $exam_start, $exam_end);
 						$courseDAO->add($courseObj);
@@ -277,7 +279,8 @@ function doBootstrap() {
 				// Skip table headings
         		$data = fgetcsv($section);
         		while ( ($data = fgetcsv($section) ) !== false){
-          			$countSect = 1;
+					$countSect = 1;
+					$rowErrors = array();
           			//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$coursecode = trim($data[0]);
 					$sectionid = trim($data[1]);
@@ -291,81 +294,81 @@ function doBootstrap() {
 					//Check for any empty fields
 					if (empty($coursecode) || empty($sectionid) || empty($day) || empty($start) || empty($end) || empty($instructor) || empty($venue)|| empty($size)) {
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "section.csv - row $countSect - blank course";
+							$rowErrors[] = "section.csv - row $countSect - blank course";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "section.csv - row $countSect - blank section";
+							$rowErrors[] = "section.csv - row $countSect - blank section";
 						}
 						if(empty($data[2])){
-							$_SESSION['errors'][] = "section.csv - row $countSect - blank day";
+							$rowErrors[] = "section.csv - row $countSect - blank day";
 						}
 						if(empty($data[3])){
-							$_SESSION['errors'][] = "section.csv - row $countSect - blank start time";
+							$rowErrors[] = "section.csv - row $countSect - blank start time";
 						}
 						if(empty($data[4])){
-							$_SESSION['errors'][] = "section.csv - row $countSect - blank end time";
+							$rowErrors[] = "section.csv - row $countSect - blank end time";
 						}
 						if(empty($data[5])){
-							$_SESSION['errors'][] = "section.csv - row $countSect - blank instructor";
+							$rowErrors[] = "section.csv - row $countSect - blank instructor";
 						}
 						if(empty($data[6])){
-							$_SESSION['errors'][] = "section.csv - row $countSect - blank venue";
+							$rowErrors[] = "section.csv - row $countSect - blank venue";
 						}
 						if(empty($data[7])){
-							$_SESSION['errors'][] = "section.csv - row $countSect - blank size";
+							$rowErrors[] = "section.csv - row $countSect - blank size";
 						}
 					} else {
 						//check if course is in course.csv
 						if(!($courseDAO->retrieve($coursecode))) {
-							$_SESSION['errors'][] = "section.csv - row $countSect - invalid course";
+							$rowErrors[] = "section.csv - row $countSect - invalid course";
 						} else {
 							//intval returns 0 if the parameter cannot be converted to int successfully.
 							$sectionNum = intval(substr($sectionid, 1));
 							//check if the first character should be an S followed by a positive numeric number (1-99). Check only if course is valid.
 							if($sectionid[0] !== 'S' || !($sectionNum >= 1 && $sectionNum <= 99)){
-								$_SESSION['errors'][] = "section.csv - row $countSect - invalid section";
+								$rowErrors[] = "section.csv - row $countSect - invalid section";
 							}
 						}
 
 						// Check if the day field is a number between 1(inclusive) and 7 (inclusive). 1 - Monday, 2 - Tuesday, ... , 7 - Sunday.
 						if($day < 1 && $day > 7){
-							$_SESSION['errors'][] = "section.csv - row $countSect - invalid day";
+							$rowErrors[] = "section.csv - row $countSect - invalid day";
 						} 
 						//Checking if start is in H:mm format
 
 						if (!(validateDate($start) && validateDate($end))) {
 							//Checking if start is in H:mm format
 							if(!validateDate($start, "H:mm")){
-								$_SESSION['errors'][] = "section.csv - row $countSect - invalid start";
+								$rowErrors[] = "section.csv - row $countSect - invalid start";
 							}
 							//Checking if end is in H:mm format
 							if(!validateDate($end, "H:mm")){
-								$_SESSION['errors'][] = "section.csv - row $countSect - invalid end";
+								$rowErrors[] = "section.csv - row $countSect - invalid end";
 							}
 						} else {
 							//Check if exam_end is later than exam_start (only if both times are valid)
 							$start_datetime = DateTime::createFromFormat("H:mm", $start);
 							$end_datetime = DateTime::createFromFormat("H:mm", $end);
 							if($end_datetime < $start_datetime) {
-								$_SESSION['errors'][] = "section.csv - row $countSect - invalid end";
+								$rowErrors[] = "section.csv - row $countSect - invalid end";
 							}
 						}
 
 						//Checking if the instructor field > 100 characters using strlen()
 						if(strlen($instructor) > 100){
-							$_SESSION['errors'][] = "section.csv - row $countSect - invalid instructor";
+							$rowErrors[] = "section.csv - row $countSect - invalid instructor";
 						}
 						//Checking if the venue field has > 100 characters using strlen()
 						if(strlen($venue) > 100){
-							$_SESSION['errors'][] = "section.csv - row $countSect - invalid venue";
+							$rowErrors[] = "section.csv - row $countSect - invalid venue";
 						}
 						// Check if the size field is a positive numeric number.
 						if(!isNonNegativeInt($size)) {
-							$_SESSION['errors'][] = "section.csv - row $countSect - invalid size";
+							$rowErrors[] = "section.csv - row $countSect - invalid size";
 						}
 				} 
-				if(isset($_SESSION['errors'])){
-					printErrors();
+				if(!empty($rowErrors)){
+					$errors = array_merge($errors, $rowErrors);
 				} else {
 					$sectionObj = new Section($coursecode, $sectionid, $day, $start, $end, $instructor, $venue, $size);
 					$sectionDAO->add($sectionObj);
@@ -383,6 +386,7 @@ function doBootstrap() {
 				$data = fgetcsv($prerequisite);
 				while ( ($data = fgetcsv($prerequisite) ) !== false){ 
 					$countPrereq = 1;
+					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$coursecode = trim($data[0]);
 					$prerequisiteid = trim($data[1]);
@@ -390,24 +394,24 @@ function doBootstrap() {
 					//Check for any empty fields
 					if(empty($coursecode) || empty($prerequisiteid)) {
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - blank course";
+							$rowErrors[] = "prerequisite.csv - row $countPrereq - blank course";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - blank prerequisite";
+							$rowErrors[] = "prerequisite.csv - row $countPrereq - blank prerequisite";
 						}
 					} else {
 						// Check if course code is found in the course.csv
 						// Check if prerequisite course code is found in the course.csv
 
 						if(!($courseDAO->retrieve($coursecode))) {
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - invalid course";
+							$rowErrors[] = "prerequisite.csv - row $countPrereq - invalid course";
 						}
 						if(!($courseDAO->retrieve($prerequisiteid))) {
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - invalid prerequisite";
+							$rowErrors[] = "prerequisite.csv - row $countPrereq - invalid prerequisite";
 						}
 					}
-					if(isset($_SESSION['errors'])){
-						printErrors();
+					if(!empty($rowErrors)){
+						$errors = array_merge($errors, $rowErrors);
 					} else {
 						$prerequisiteObj = new Prerequisite($coursecode, $prerequisiteid);
 						$prerequisiteDAO->add($prerequisiteObj);
@@ -425,6 +429,7 @@ function doBootstrap() {
 				$data = fgetcsv($course_completed);
 				while ( ($data = fgetcsv($course_completed) ) !== false){
 					$countCourseCompleted = 1;
+					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userid = trim($data[0]);
 					$code = trim($data[1]);
@@ -432,32 +437,32 @@ function doBootstrap() {
 					//Check for any empty fields
 					if (empty($userid) || empty($code)) {
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - blank userid";
+							$rowErrors[] = "course_completed.csv - row $countCourseCompleted - blank userid";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - blank code";
+							$rowErrors[] = "course_completed.csv - row $countCourseCompleted - blank code";
 						}
 					} else {
 						// Check if userid is found in the student.csv
 						// Check if course code is found in the course.csv
 
 						if(!($studentDAO->retrieve($userid))) {
-							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid userid";
+							$rowErrors[] = "course_completed.csv - row $countCourseCompleted - invalid userid";
 						}
 						if(!($courseDAO->retrieve($code))) {
-							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid code";
+							$rowErrors[] = "course_completed.csv - row $countCourseCompleted - invalid code";
 						}
 						// Check if the completed course has a prerequisite
 						if($prerequisiteDAO->retrieve($code)) {
 							$prereqcourse = $prerequisiteDAO->retrieve($code);
 							// Check if the student has completed the prerequisite (row with userid and prerequisite code exists)
 							if(!($courseCompletedDAO->retrieve($userid, $prereqcourse->getPrerequisite()))){
-								$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid course completed";
+								$rowErrors[] = "course_completed.csv - row $countCourseCompleted - invalid course completed";
 							}
 						}
 					}
-					if(count($_SESSION['errors']) == 0){
-						printErrors();
+					if(!empty($rowErrors)){
+						$errors = array_merge($errors, $rowErrors);
 					} else {
 						$courseCompletedObj = new Prerequisite($userid, $code);
 						$courseCompletedDAO->add($courseCompletedObj);
@@ -475,6 +480,7 @@ function doBootstrap() {
 				$data = fgetcsv($bid);
 				while ( ($data = fgetcsv($bid) ) !== false){
 					$countBid = 1;
+					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userid = trim($data[0]);
 					$amount = trim($data[1]);
@@ -484,50 +490,50 @@ function doBootstrap() {
 					//Check for any empty fields
 					if (empty($userid) || empty($amount) || empty($code) || empty($section)) {
 						if(empty($data[0])){
-							$_SESSION['errors'][] = "bid.csv - row $countBid - blank userid";
+							$rowErrors[] = "bid.csv - row $countBid - blank userid";
 						} 
 						if(empty($data[1])){
-							$_SESSION['errors'][] = "bid.csv - row $countBid - blank amount";
+							$rowErrors[] = "bid.csv - row $countBid - blank amount";
 						}
 						if(empty($data[2])){
-							$_SESSION['errors'][] = "bid.csv - row $countBid - blank code";
+							$rowErrors[] = "bid.csv - row $countBid - blank code";
 						}
 						if(empty($data[3])){
-							$_SESSION['errors'][] = "bid.csv - row $countBid - blank section";
+							$rowErrors[] = "bid.csv - row $countBid - blank section";
 						}
 					} else {
 						// Data validations
 
 						// Check if userid is found in the student.csv
 						if(!($studentDAO->retrieve($userid))) {
-							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid userid";
+							$rowErrors[] = "bid.csv - row $countBid - invalid userid";
 						}
 
 						// Check if bidding amount is a numeric value
 						if(!(isNonNegativeInt($edollar) || isNonNegativeFloat($edollar))){
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+							$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
 						} elseif (is_float($edollar)) {
 							//If edollar is a float, check if it has more than 2 decimal places
 							$checkedollar = strval($edollar);
 							$edollarArr = explode(".", $checkedollar);
 							if(strlen($edollarArr[1]) > 2){
-								$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+								$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
 							}
 						} elseif ($edollar < 10.0) {
 							// Check if bidding amount >= 10.0
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+							$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
 						}
 
 						// Check if course code is found in the course.csv
 						if(!($courseDAO->retrieve($code))) {
-							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid code";
+							$rowErrors[] = "bid.csv - row $countBid - invalid code";
 						} elseif (!($sectionDAO->retrieve($sectionid))) {
 							// Check if section code is found in section.csv (only for valid course code)
-							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid section";
+							$rowErrors[] = "bid.csv - row $countBid - invalid section";
 						}
 
 						// Logic validations, only if data validations are passed
-						if (!isset($_SESSION['errors'])) {
+						if (!isset($rowErrors)) {
 							$bidStud = $studentDAO->retrieve($userid);
 							$bidCourse = $courseDAO->retrieve($code);
 							$bidSection = $sectionDAO->retrieve($sectionid);
@@ -550,7 +556,7 @@ function doBootstrap() {
 								
 								// Check if student has enough e-dollars
 								if ($amount > $bidStud->getEdollar()) { // Check if student has enough e-dollars
-									$_SESSION['errors'][] = "bid.csv - row $countBid - not enough e-dollar";
+									$rowErrors[] = "bid.csv - row $countBid - not enough e-dollar";
 								}
 
 								// Check for class timetable clash
@@ -560,18 +566,18 @@ function doBootstrap() {
 									$bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
 									// Check if classes are on the same day and if yes, check for timing clashes
 									if (($bSection->getDay() == $bidSection->getDay()) && ($bSection->getStart() == $bidSection->getStart())) {
-										$_SESSION['errors'][] = "bid.csv - row $countBid - class timetable clash";
+										$rowErrors[] = "bid.csv - row $countBid - class timetable clash";
 									}
 								}
 							} else {
 								// Check if course is offered by student's school
 								if (!($bidStud->getSchool() == $bidCourse->getSchool())) {
-									$_SESSION['errors'][] = "bid.csv - row $countBid - not own school course";
+									$rowErrors[] = "bid.csv - row $countBid - not own school course";
 								}
 
 								// Check if student has enough e-dollars
 								if ($amount > $bidStud->getEdollar()) { // Check if student has enough e-dollars
-									$_SESSION['errors'][] = "bid.csv - row $countBid - not enough e-dollar";
+									$rowErrors[] = "bid.csv - row $countBid - not enough e-dollar";
 								}
 
 								// Check for class timetable clash
@@ -581,7 +587,7 @@ function doBootstrap() {
 									$bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
 									// Check if classes are on the same day and if yes, check for timing clashes
 									if (($bSection->getDay() == $bidSection->getDay()) && ($bSection->getStart() == $bidSection->getStart())) {
-										$_SESSION['errors'][] = "bid.csv - row $countBid - class timetable clash";
+										$rowErrors[] = "bid.csv - row $countBid - class timetable clash";
 									}
 								}
 
@@ -592,7 +598,7 @@ function doBootstrap() {
 									$bCourse = $courseDAO->retrieve($b->getCode());
 									// Check if exams are on the same date and if yes, check for timing clashes
 									if (($bCourse->getExamDate() == $bidCourse->getExamDate()) && ($bCourse->getExamStart() == $bidCourse->getExamStart())) {
-										$_SESSION['errors'][] = "bid.csv - row $countBid - exam timetable clash";
+										$rowErrors[] = "bid.csv - row $countBid - exam timetable clash";
 									}
 								}
 
@@ -600,24 +606,24 @@ function doBootstrap() {
 								if ($prerequisiteDAO->retrieve($code)) {
 									$prerequisiteid = $prerequisiteDAO->retrieve($code)->getPrerequisite();
 									if(!($courseCompletedDAO->retrieve($userid, $prerequisiteid))){
-										$_SESSION['errors'][] = "bid.csv - row $countBid - incomplete prerequisites";
+										$rowErrors[] = "bid.csv - row $countBid - incomplete prerequisites";
 									}
 								}
 
 								// Check if student has already completed the course
 								if ($courseCompletedDAO->retrieve($userid,$code)) {
-									$_SESSION['errors'][] = "bid.csv - row $countBid - course completed";
+									$rowErrors[] = "bid.csv - row $countBid - course completed";
 								}
 
 								// Check if student already has 5 bids
 								if (count($studentBids) == 5) {
-									$_SESSION['errors'][] = "bid.csv - row $countBid - section limit reached";
+									$rowErrors[] = "bid.csv - row $countBid - section limit reached";
 								}
 							}
 						}
 					}
-					if(isset($_SESSION['errors'])){
-						printErrors();
+					if(!empty($rowErrors)){
+						$errors = array_merge($errors, $rowErrors);
 					} else {
 						$bidObj = new Bid($userid, $amount, $code, $section);
 						$bidDAO->add($bidObj);
@@ -632,31 +638,38 @@ function doBootstrap() {
 		}
 	}
 
-	# Sample code for returning JSON format errors. remember this is only for the JSON API. Humans should not get JSON errors.
+	// Start round 1 automatically
+	$roundDAO = new RoundDAO();
+	$roundDAO->updateRoundNumber(1);
+	$roundDAO->updateRoundStatus("open");
 
-	if (!isEmpty($errors))
-	{	
-		$sortclass = new Sort();
-		$errors = $sortclass->sort_it($errors,"bootstrap");
-		$result = [ 
-			"status" => "error",
-			"messages" => $errors
-		];
-	}
-
-	else
-	{	
-		$result = [ 
-			"status" => "success",
-			"num-record-loaded" => [
-				"pokemon.csv" => $pokemon_processed,
-				"pokemon_type.csv" => $pokemon_type_processed,
-				"User.csv" => $User_processed
-			]
-		];
-	}
-	header('Content-Type: application/json');
-	echo json_encode($result, JSON_PRETTY_PRINT);
+	return $errors;
 
 }
+
+# Sample code for returning JSON format errors. remember this is only for the JSON API. Humans should not get JSON errors.
+
+// if (!isEmpty($errors))
+// {	
+// 	$sortclass = new Sort();
+// 	$errors = $sortclass->sort_it($errors,"bootstrap");
+// 	$result = [ 
+// 		"status" => "error",
+// 		"messages" => $errors
+// 	];
+// }
+
+// else
+// {	
+// 	$result = [ 
+// 		"status" => "success",
+// 		"num-record-loaded" => [
+// 			"pokemon.csv" => $pokemon_processed,
+// 			"pokemon_type.csv" => $pokemon_type_processed,
+// 			"User.csv" => $User_processed
+// 		]
+// 	];
+// }
+// header('Content-Type: application/json');
+// echo json_encode($result, JSON_PRETTY_PRINT);
 ?>
