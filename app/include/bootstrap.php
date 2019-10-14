@@ -469,57 +469,20 @@ function doBootstrap() {
 				fclose($course_completed); // close the file handle
 				unlink($course_completed_path); // delete the temp file
 
-				// COURSE COMPLETED
+				// BID
 
-				#skip header
-				$data = fgetcsv($bid); #will get array in data (2 fields cause csv files only have 2 columns)
-				#give a file to read  
-				while ( ($data = fgetcsv($bid) ) !== false){ #double == to check for boolean also. 
+				// Skip table headings
+				$data = fgetcsv($bid);
+				while ( ($data = fgetcsv($bid) ) !== false){
 					$countBid = 1;
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userid = trim($data[0]);
 					$amount = trim($data[1]);
 					$code = trim($data[2]);
-					$section = trim($data[3]);
+					$sectionid = trim($data[3]);
 				
-					//Check for any field 
-					if(!(empty($userid) || empty($amount) || empty($code) || empty($section))){
-						// Check if userid is found in the student.csv
-						if(!($studentDAO->retrieve($userid))) {
-							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid userid";
-						}
-						// Check if bidding amount is a numeric value and >= 10.0
-						if((is_numeric($amount) || is_float($amount)) && $amount >= 10.0){
-							//Check whether the double has more than 2 decimal places 
-							$checkedamount = strval($amount);
-							$amountArr = explode(".", $checkedamount);
-							if(strlen($amountArr[1]) > 2){
-								$_SESSION['errors'][] = "bid.csv - row $countBid - invalid amount";
-							} 
-						} else {
-							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid amount";
-						}
-						// Check if course code is found in the course.csv
-						if(!($courseDAO->retrieve($code))) {
-							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid code";
-						} elseif (!($sectionDAO->retrieve($section))) {
-							// Check if section code is found in section.csv (only for valid course code)
-							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid section";
-						}
-						
-						if(count($_SESSION['errors']) == 0){
-							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
-							$bidObj = new Bid($userid, $amount, $code, $section);
-							$bidDAO->add($bidObj);
-							$bid_processed++; #line added successfully  
-						} else {
-						//Print out all the errors for user
-						//print error for blank fields? CHECK!
-						printErrors();
-						}
-					} else {
-						//pass the line in the file (apparently dun need to write any code?? try try)
-						//Print out all the errors for user
+					//Check for any empty fields
+					if (empty($userid) || empty($amount) || empty($code) || empty($section)) {
 						if(empty($data[0])){
 							$_SESSION['errors'][] = "bid.csv - row $countBid - blank userid";
 						} 
@@ -532,7 +495,133 @@ function doBootstrap() {
 						if(empty($data[3])){
 							$_SESSION['errors'][] = "bid.csv - row $countBid - blank section";
 						}
+					} else {
+						// Data validations
+
+						// Check if userid is found in the student.csv
+						if(!($studentDAO->retrieve($userid))) {
+							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid userid";
+						}
+
+						// Check if bidding amount is a numeric value
+						if(!(isNonNegativeInt($edollar) || isNonNegativeFloat($edollar))){
+							$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+						} elseif (is_float($edollar)) {
+							//If edollar is a float, check if it has more than 2 decimal places
+							$checkedollar = strval($edollar);
+							$edollarArr = explode(".", $checkedollar);
+							if(strlen($edollarArr[1]) > 2){
+								$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+							}
+						} elseif ($edollar < 10.0) {
+							// Check if bidding amount >= 10.0
+							$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+						}
+
+						// Check if course code is found in the course.csv
+						if(!($courseDAO->retrieve($code))) {
+							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid code";
+						} elseif (!($sectionDAO->retrieve($sectionid))) {
+							// Check if section code is found in section.csv (only for valid course code)
+							$_SESSION['errors'][] = "bid.csv - row $countBid - invalid section";
+						}
+
+						// Logic validations, only if data validations are passed
+						if (!isset($_SESSION['errors'])) {
+							$bidStud = $studentDAO->retrieve($userid);
+							$bidCourse = $courseDAO->retrieve($code);
+							$bidSection = $sectionDAO->retrieve($sectionid);
+							$studentBids = $bidDAO->retrieveByUserid($userid);
+							// Check if student has already bidded for this course and update bid if yes
+							$alreadyBidded = FALSE;
+							foreach($studentBids as $b) {
+								if ($b->getCode() == $code) {
+									$alreadyBidded = TRUE;
+								}
+							}
+							if ($alreadyBidded) {
+								/* if the student's bid for this course exists, we can assume that:
+									1. There is no exam timetable clash
+									2. The course is offered by the student's school
+									3. The student has completed the prerequisites
+									4. The student has not completed the course
+									5. Since the bid is being updated, the student has <= 5 bids, so there is no need to check for the section limit
+								*/
+								
+								// Check if student has enough e-dollars
+								if ($amount > $bidStud->getEdollar()) { // Check if student has enough e-dollars
+									$_SESSION['errors'][] = "bid.csv - row $countBid - not enough e-dollar";
+								}
+
+								// Check for class timetable clash
+								// Iterate through each of the student's current bids
+								foreach ($studentBids as $b) {
+									// Retrieve the section corresponding to the bid
+									$bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
+									// Check if classes are on the same day and if yes, check for timing clashes
+									if (($bSection->getDay() == $bidSection->getDay()) && ($bSection->getStart() == $bidSection->getStart())) {
+										$_SESSION['errors'][] = "bid.csv - row $countBid - class timetable clash";
+									}
+								}
+							} else {
+								// Check if course is offered by student's school
+								if (!($bidStud->getSchool() == $bidCourse->getSchool())) {
+									$_SESSION['errors'][] = "bid.csv - row $countBid - not own school course";
+								}
+
+								// Check if student has enough e-dollars
+								if ($amount > $bidStud->getEdollar()) { // Check if student has enough e-dollars
+									$_SESSION['errors'][] = "bid.csv - row $countBid - not enough e-dollar";
+								}
+
+								// Check for class timetable clash
+								// Iterate through each of the student's current bids
+								foreach ($studentBids as $b) {
+									// Retrieve the section corresponding to the bid
+									$bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
+									// Check if classes are on the same day and if yes, check for timing clashes
+									if (($bSection->getDay() == $bidSection->getDay()) && ($bSection->getStart() == $bidSection->getStart())) {
+										$_SESSION['errors'][] = "bid.csv - row $countBid - class timetable clash";
+									}
+								}
+
+								// Check for exam timetable clash
+								// Iterate through each of the student's current bids
+								foreach ($studentBids as $b) {
+									// Retrieve the course corresponding to the bid
+									$bCourse = $courseDAO->retrieve($b->getCode());
+									// Check if exams are on the same date and if yes, check for timing clashes
+									if (($bCourse->getExamDate() == $bidCourse->getExamDate()) && ($bCourse->getExamStart() == $bidCourse->getExamStart())) {
+										$_SESSION['errors'][] = "bid.csv - row $countBid - exam timetable clash";
+									}
+								}
+
+								// Check if course has a prerequisite, and if the student has completed it
+								if ($prerequisiteDAO->retrieve($code)) {
+									$prerequisiteid = $prerequisiteDAO->retrieve($code)->getPrerequisite();
+									if(!($courseCompletedDAO->retrieve($userid, $prerequisiteid))){
+										$_SESSION['errors'][] = "bid.csv - row $countBid - incomplete prerequisites";
+									}
+								}
+
+								// Check if student has already completed the course
+								if ($courseCompletedDAO->retrieve($userid,$code)) {
+									$_SESSION['errors'][] = "bid.csv - row $countBid - course completed";
+								}
+
+								// Check if student already has 5 bids
+								if (count($studentBids) == 5) {
+									$_SESSION['errors'][] = "bid.csv - row $countBid - section limit reached";
+								}
+							}
+						}
+					}
+					if(isset($_SESSION['errors'])){
 						printErrors();
+					} else {
+						$bidObj = new Bid($userid, $amount, $code, $section);
+						$bidDAO->add($bidObj);
+						$bid_processed++; #line added successfully  
 					}
 					$countBid++;
 				}
