@@ -103,17 +103,15 @@ function doBootstrap() {
                 $bidDAO = new BidDAO();
                 $bidDAO->removeAll();
 
-				# then read each csv file line by line (remember to skip the header)
-				# $data = fgetcsv($file) gets you the next line of the CSV file which will be stored 
-				# in the array $data
-				# $data[0] is the first element in the csv row, $data[1] is the 2nd, ....
 				
 				// STUDENT 
 
-				#skip header
-				$data = fgetcsv($student); #will get array in data (2 fields cause csv files only have 2 columns)
-				#give a file to read  
-				while ( ($data = fgetcsv($student) ) !== false){ #double == to check for boolean also. 
+				// Skip table headings
+				$data = fgetcsv($student); 
+
+				//An indexed array to store all the existing userid in, to check for duplicate userid
+				$checkDupUserId[] = $userId;
+				while ( ($data = fgetcsv($student) ) !== false){
 					$countStud = 1;
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userId = trim($data[0]);
@@ -122,47 +120,7 @@ function doBootstrap() {
 					$school = trim($data[3]);
 					$edollar = trim($data[4]);
 					//Check for any empty field 
-					if(!(empty($userId) || empty($pwd) || empty($name) || empty($school) || empty($edollar))){
-						//An indexed array to store all the exisiting userid in, to check for duplicate userid
-						$checkDupUserId[] = $userId;
-						//Checking if the userid field is > 128 characters using strlen()
-						if(strlen($userId) <= 128){
-							//Checking for any duplicate userId
-							if(in_array($userId, $checkDupUserId)){
-								$_SESSION['errors'][] = "student.csv - row $countStud - duplicate userid";
-							}
-						} else {
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid userid";
-						}
-						//Checking if edollar is a numeric value and >= 0.0
-						if((is_numeric($edollar) || is_float($edollar)) && $edollar >= 0.0){
-							//Check whether the double has more than 2 decimal place 
-							$checkedollar = strval($edollar);
-							$edollarArr = explode(".", $checkedollar);
-							if(strlen($edollarArr[1]) > 2){
-								$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
-							} 
-						} else {
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
-						}
-						//Checking if the password field has > 128 characters using strlen()
-						if(strlen($pwd) > 128){
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid password";
-						}
-						//Checking if the name field has > 100 characters using strlen()
-						if(strlen($name) > 100){
-							$_SESSION['errors'][] = "student.csv - row $countStud - invalid name";
-						}
-						if(count($_SESSION['errors']) == 0){
-							$studentObj = new Student($userId, $pwd, $name, $school, $edollar);
-							$studentDAO->add($studentObj);
-							$student_processed++; #line added successfully	
-						} else {
-							//Print out all the errors for user
-							//print error for blank fields? CHECK!
-							printErrors();
-						}
-					} else {
+					if (empty($userId) || empty($pwd) || empty($name) || empty($school) || empty($edollar)) {
 						//pass the line in the file 
 						//Print out all the errors for user
 						if(empty($data[0])){
@@ -180,7 +138,48 @@ function doBootstrap() {
 						if(empty($data[4])){
 							$_SESSION['errors'][] = "student.csv - row $countStud - blank e-dollar";
 						}
+					} else {
+						//Checking if the userid field is > 128 characters
+						if (strlen($userId) > 128) {
+							$_SESSION['errors'][] = "student.csv - row $countStud - invalid userid";
+						}
+						
+						// Checking for duplicate user IDs
+						if(in_array($userId, $checkDupUserId)){
+							$_SESSION['errors'][] = "student.csv - row $countStud - duplicate userid";
+						} else {
+							$checkDupUserId[] = $userId;
+						}
+						
+						//Checking if edollar is a non-negative numeric value
+						if(!(isNonNegativeInt($edollar) || isNonNegativeFloat($edollar))){
+							$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+						} else {
+							//If edollar is a float, check if it has more than 2 decimal places
+							if (is_float($edollar)) {
+								$checkedollar = strval($edollar);
+								$edollarArr = explode(".", $checkedollar);
+								if(strlen($edollarArr[1]) > 2){
+									$_SESSION['errors'][] = "student.csv - row $countStud - invalid e-dollar";
+								}
+							} 
+						}
+						//Checking if the password field has > 128 characters
+						if(strlen($pwd) > 128){
+							$_SESSION['errors'][] = "student.csv - row $countStud - invalid password";
+						}
+						//Checking if the name field has > 100 characters
+						if(strlen($name) > 100){
+							$_SESSION['errors'][] = "student.csv - row $countStud - invalid name";
+						}
+					} 
+					// Check if row has any errors and if no, create Student object and add to database
+					if(isset($_SESSION['errors'])){
 						printErrors();
+					} else {
+						$studentObj = new Student($userId, $pwd, $name, $school, $edollar);
+							$studentDAO->add($studentObj);
+							$student_processed++; //Line added successfully	
 					}
 					$countStud++;
 				}
