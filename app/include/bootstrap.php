@@ -367,7 +367,7 @@ function doBootstrap() {
 				if(isset($_SESSION['errors'])){
 					printErrors();
 				} else {
-					$sectionObj = new Section($courseid, $sectionid, $day, $start, $end, $instructor, $venue, $size);
+					$sectionObj = new Section($coursecode, $sectionid, $day, $start, $end, $instructor, $venue, $size);
 					$sectionDAO->add($sectionObj);
 					$section_processed++; #line added successfully  
 				}
@@ -379,47 +379,39 @@ function doBootstrap() {
 				
 				// PRE-REQUISITE 
 
-				#skip header
-				$data = fgetcsv($prerequisite); #will get array in data (2 fields cause csv files only have 2 columns)
-				#give a file to read  
-				while ( ($data = fgetcsv($prerequisite) ) !== false){ #double == to check for boolean also. 
+				//Skip table headings
+				$data = fgetcsv($prerequisite);
+				while ( ($data = fgetcsv($prerequisite) ) !== false){ 
 					$countPrereq = 1;
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
-					$courseid = trim($data[0]);
+					$coursecode = trim($data[0]);
 					$prerequisiteid = trim($data[1]);
 				
-					//Check for any field 
-					if(!(empty($courseid) || empty($prerequisiteid))){
-						// Check if course code is found in the course.csv
-						// Check if prerequisite course code is found in the course.csv
-
-						if(!($courseDAO->retrieve($courseid))) {
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - invalid course";
-						}
-						if(!($courseDAO->retrieve($prerequisiteid))) {
-							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - invalid prerequisite";
-						}
-					
-						if(count($_SESSION['errors']) == 0){
-							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
-							$prerequisiteObj = new Prerequisite($courseid, $prerequisiteid);
-							$prerequisiteDAO->add($prerequisiteObj);
-							$prerequisite_processed++; #line added successfully  
-						} else {
-						//Print out all the errors for user
-						//print error for blank fields? CHECK!
-						printErrors();
-						}
-					} else {
-						//pass the line in the file (apparently dun need to write any code?? try try)
-						//Print out all the errors for user
+					//Check for any empty fields
+					if(empty($coursecode) || empty($prerequisiteid)) {
 						if(empty($data[0])){
 							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - blank course";
 						} 
 						if(empty($data[1])){
 							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - blank prerequisite";
 						}
+					} else {
+						// Check if course code is found in the course.csv
+						// Check if prerequisite course code is found in the course.csv
+
+						if(!($courseDAO->retrieve($coursecode))) {
+							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - invalid course";
+						}
+						if(!($courseDAO->retrieve($prerequisiteid))) {
+							$_SESSION['errors'][] = "prerequisite.csv - row $countPrereq - invalid prerequisite";
+						}
+					}
+					if(isset($_SESSION['errors'])){
 						printErrors();
+					} else {
+						$prerequisiteObj = new Prerequisite($coursecode, $prerequisiteid);
+						$prerequisiteDAO->add($prerequisiteObj);
+						$prerequisite_processed++; #line added successfully  
 					}
 					$countPrereq++;
 				}
@@ -429,17 +421,23 @@ function doBootstrap() {
 
 				// COURSE COMPLETED
 
-				#skip header
-				$data = fgetcsv($course_completed); #will get array in data (2 fields cause csv files only have 2 columns)
-				#give a file to read  
-				while ( ($data = fgetcsv($course_completed) ) !== false){ #double == to check for boolean also. 
+				// Skip table headings
+				$data = fgetcsv($course_completed);
+				while ( ($data = fgetcsv($course_completed) ) !== false){
 					$countCourseCompleted = 1;
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userid = trim($data[0]);
 					$code = trim($data[1]);
 				
-					//Check for any field 
-					if(!(empty($userid) || empty($code))){
+					//Check for any empty fields
+					if (empty($userid) || empty($code)) {
+						if(empty($data[0])){
+							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - blank userid";
+						} 
+						if(empty($data[1])){
+							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - blank code";
+						}
+					} else {
 						// Check if userid is found in the student.csv
 						// Check if course code is found in the course.csv
 
@@ -457,27 +455,13 @@ function doBootstrap() {
 								$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - invalid course completed";
 							}
 						}
-					
-						if(count($_SESSION['errors']) == 0){
-							//Convert edollar to string before storing it into database as pdo dun have double. :/ need to change database? 
-							$courseCompletedObj = new Prerequisite($userid, $code);
-							$courseCompletedDAO->add($courseCompletedObj);
-							$course_completed_processed++; #line added successfully  
-						} else {
-						//Print out all the errors for user
-						//print error for blank fields? CHECK!
+					}
+					if(count($_SESSION['errors']) == 0){
 						printErrors();
-						}
 					} else {
-						//pass the line in the file (apparently dun need to write any code?? try try)
-						//Print out all the errors for user
-						if(empty($data[0])){
-							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - blank userid";
-						} 
-						if(empty($data[1])){
-							$_SESSION['errors'][] = "course_completed.csv - row $countCourseCompleted - blank code";
-						}
-						printErrors();
+						$courseCompletedObj = new Prerequisite($userid, $code);
+						$courseCompletedDAO->add($courseCompletedObj);
+						$course_completed_processed++; #line added successfully  
 					}
 					$countCourseCompleted++;
 				}
