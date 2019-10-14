@@ -189,64 +189,22 @@ function doBootstrap() {
 
 				// COURSE 
 
-				#skip header
-				$data = fgetcsv($course); #will get array in data (2 fields cause csv files only have 2 columns)
-				#give a file to read  
-				while ( ($data = fgetcsv($course) ) !== false){ #double == to check for boolean also. 
+				// Skip table headings
+				$data = fgetcsv($course);
+
+				while ( ($data = fgetcsv($course) ) !== false){
 					$countCourse = 1;
-					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
-					$getCourse = trim($data[0]);
+					//Trim all the variables to ensure that there's no whitespace from both sides of the string
+					$coursecode = trim($data[0]);
 					$school = trim($data[1]);
 					$title = trim($data[2]);
 					$description = trim($data[3]);
 					$exam_date = trim($data[4]);
 					$exam_start = trim($data[5]);
 					$exam_end = trim($data[6]);
-					//Check for any empty field 
-					if(!(empty($getCourse) || empty($school) || empty($title) || empty($description) || empty($exam_date) || empty($exam_start) || empty($exam_end))){
-						//Checking if the title field is > 100 characters using strlen()
-						if(strlen($title) > 100){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid title";
-						} 
-						//Checking if the description field has > 1000 characters using strlen()
-						if(strlen($description) > 1000){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid description";
-						}
-						//Checking if the date field is in ymd format
-						if((validateDate($exam_date, "Ymd") == FALSE){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam date";
-						}
-						//Checking if exam_start is in H:mm format
-						if((validateDate($exam_start, "H:mm")) == FALSE){
-							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam start";
-							if((validateDate($exam_end, "H:mm")) == FALSE){
-								$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam end";
-							}
-						} else {
-							//Checking if exam_end is in H:mm format & exam_end is later than exam_start
-							if((validateDate($exam_end, "H:mm")) == FALSE){
-								$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam end";
-							} else {
-								$exam_start_datetime = DateTime::createFromFormat("H:mm", $exam_start);
-								$exam_end_datetime = DateTime::createFromFormat("H:mm", $exam_end);
-								if($exam_end_datetime < $exam_start_datetime) {
-									$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam end";
-								}
-							}
-						}
 
-						if(count($_SESSION['errors']) == 0){
-							$courseObj = new Course($getCourse, $school, $title, $description, $exam_date, $exam_start, $exam_end);
-							$courseDAO->add($courseObj);
-							$course_processed++; #line added successfully	
-						} else {
-							//Print out all the errors for user
-							//print error for blank fields? CHECK!
-							printErrors();
-						}
-					} else {
-						//pass the line in the file 
-						//Print out all the errors for user
+					//Check for any empty field 
+					if (empty($coursecode) || empty($school) || empty($title) || empty($description) || empty($exam_date) || empty($exam_start) || empty($exam_end)) {
 						if(empty($data[0])){
 							$_SESSION['errors'][] = "course.csv - row $countCourse - blank course";
 						} 
@@ -268,7 +226,45 @@ function doBootstrap() {
 						if(empty($data[6])){
 							$_SESSION['errors'][] = "course.csv - row $countCourse - blank exam end";
 						}
+					} else {
+						//Checking if the title field is > 100 characters
+						if(strlen($title) > 100){
+							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid title";
+						} 
+						//Checking if the description field has > 1000 characters
+						if(strlen($description) > 1000){
+							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid description";
+						}
+						//Checking if the date field is in ymd format
+						if(validateDate($exam_date, "Ymd") == FALSE){
+							$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam date";
+						}
+						
+						if (!(validateDate($exam_start) && validateDate($exam_end))) {
+							//Checking if exam_start is in H:mm format
+							if(!validateDate($exam_start, "H:mm")){
+								$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam start";
+							}
+							//Checking if exam_end is in H:mm format
+							if(!validateDate($exam_end, "H:mm")){
+								$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam end";
+							}
+						} else {
+							//Check if exam_end is later than exam_start (only if both times are valid)
+							$exam_start_datetime = DateTime::createFromFormat("H:mm", $exam_start);
+							$exam_end_datetime = DateTime::createFromFormat("H:mm", $exam_end);
+							if($exam_end_datetime < $exam_start_datetime) {
+								$_SESSION['errors'][] = "course.csv - row $countCourse - invalid exam end";
+							}
+						}
+					}
+					//Check if row has any errors and if no, create Course object and add to database
+					if(isset($_SESSION['errors'])){
 						printErrors();
+					} else {
+						$courseObj = new Course($getCourse, $school, $title, $description, $exam_date, $exam_start, $exam_end);
+						$courseDAO->add($courseObj);
+						$course_processed++; #line added successfully	
 					}
 					$countCourse++;
 				}
