@@ -273,14 +273,13 @@ function doBootstrap() {
 				unlink($course_path); // delete the temp file
 
 				// SECTION 
-        		# sectionid is the individual sections like S1, S2, etc
-        		#skip header
-        		$data = fgetcsv($section); #will get array in data (2 fields cause csv files only have 2 columns)
-        		#give a file to read  
-        		while ( ($data = fgetcsv($section) ) !== false){ #double == to check for boolean also. 
+
+				// Skip table headings
+        		$data = fgetcsv($section);
+        		while ( ($data = fgetcsv($section) ) !== false){
           			$countSect = 1;
           			//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
-					$courseid = trim($data[0]);
+					$coursecode = trim($data[0]);
 					$sectionid = trim($data[1]);
 					$day = trim($data[2]);
 					$start = trim($data[3]);
@@ -288,45 +287,67 @@ function doBootstrap() {
 					$instructor = trim($data[5]);
 					$venue = trim($data[6]);
 					$size = trim($data[7]);
-					//Check for any field 
-          			if(!(empty($courseid) || empty($sectionid) || empty($day) || empty($start) || empty($end) || empty($instructor) || empty($venue)|| empty($size))){
+
+					//Check for any empty fields
+					if (empty($coursecode) || empty($sectionid) || empty($day) || empty($start) || empty($end) || empty($instructor) || empty($venue)|| empty($size)) {
+						if(empty($data[0])){
+							$_SESSION['errors'][] = "section.csv - row $countSect - blank course";
+						} 
+						if(empty($data[1])){
+							$_SESSION['errors'][] = "section.csv - row $countSect - blank section";
+						}
+						if(empty($data[2])){
+							$_SESSION['errors'][] = "section.csv - row $countSect - blank day";
+						}
+						if(empty($data[3])){
+							$_SESSION['errors'][] = "section.csv - row $countSect - blank start time";
+						}
+						if(empty($data[4])){
+							$_SESSION['errors'][] = "section.csv - row $countSect - blank end time";
+						}
+						if(empty($data[5])){
+							$_SESSION['errors'][] = "section.csv - row $countSect - blank instructor";
+						}
+						if(empty($data[6])){
+							$_SESSION['errors'][] = "section.csv - row $countSect - blank venue";
+						}
+						if(empty($data[7])){
+							$_SESSION['errors'][] = "section.csv - row $countSect - blank size";
+						}
+					} else {
 						//check if course is in course.csv
-						if(!($courseDAO->retrieve($courseid))) {
+						if(!($courseDAO->retrieve($coursecode))) {
 							$_SESSION['errors'][] = "section.csv - row $countSect - invalid course";
 						} else {
-							//check if the first character should be an S followed by a positive numeric number (1-99). Check only if course is valid.
 							//intval returns 0 if the parameter cannot be converted to int successfully.
 							$sectionNum = intval(substr($sectionid, 1));
+							//check if the first character should be an S followed by a positive numeric number (1-99). Check only if course is valid.
 							if($sectionid[0] !== 'S' || !($sectionNum >= 1 && $sectionNum <= 99)){
-								$_SESSION['errors'][] = "section.csv - row $countSect - invalid section";
-							# check if the integers after S in in range 1 - 99  
-							} else {
 								$_SESSION['errors'][] = "section.csv - row $countSect - invalid section";
 							}
 						}
 
 						// Check if the day field is a number between 1(inclusive) and 7 (inclusive). 1 - Monday, 2 - Tuesday, ... , 7 - Sunday.
-						//$day < 1 && $day > 7
 						if($day < 1 && $day > 7){
 							$_SESSION['errors'][] = "section.csv - row $countSect - invalid day";
 						} 
 						//Checking if start is in H:mm format
 
-						if((validateDate($start, "H:mm")) == FALSE){
-							$_SESSION['errors'][] = "section.csv - row $countSect - invalid start";
-							if((validateDate($end, "H:mm")) == FALSE){
+						if (!(validateDate($start) && validateDate($end))) {
+							//Checking if start is in H:mm format
+							if(!validateDate($start, "H:mm")){
+								$_SESSION['errors'][] = "section.csv - row $countSect - invalid start";
+							}
+							//Checking if end is in H:mm format
+							if(!validateDate($end, "H:mm")){
 								$_SESSION['errors'][] = "section.csv - row $countSect - invalid end";
 							}
 						} else {
-							//Checking if end is in H:mm format & end is later than start
-							if((validateDate($end, "H:mm")) == FALSE){
+							//Check if exam_end is later than exam_start (only if both times are valid)
+							$start_datetime = DateTime::createFromFormat("H:mm", $start);
+							$end_datetime = DateTime::createFromFormat("H:mm", $end);
+							if($end_datetime < $start_datetime) {
 								$_SESSION['errors'][] = "section.csv - row $countSect - invalid end";
-							} else {
-								$start_datetime = DateTime::createFromFormat("H:mm", $start);
-								$end_datetime = DateTime::createFromFormat("H:mm", $end);
-								if($end_datetime < $start_datetime) {
-									$_SESSION['errors'][] = "section.csv - row $countSect - invalid end";
-								}
 							}
 						}
 
@@ -338,47 +359,17 @@ function doBootstrap() {
 						if(strlen($venue) > 100){
 							$_SESSION['errors'][] = "section.csv - row $countSect - invalid venue";
 						}
-						// Check if the field is a positive numeric number.
-						if(!is_numeric($size) || $size < 0) {
+						// Check if the size field is a positive numeric number.
+						if(!isNonNegativeInt($size)) {
 							$_SESSION['errors'][] = "section.csv - row $countSect - invalid size";
 						}
-						if(count($_SESSION['errors']) == 0){
-							$sectionObj = new Section($courseid, $sectionid, $day, $start, $end, $instructor, $venue, $size);
-							$sectionDAO->add($sectionObj);
-							$section_processed++; #line added successfully  
-						} else {
-							//Print out all the errors for user
-							//print error for blank fields? CHECK!
-							printErrors();
-						}
-				} else {
-					//pass the line in the file 
-					//Print out all the errors for user
-					if(empty($data[0])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - blank course";
-					} 
-					if(empty($data[1])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - blank section";
-					}
-					if(empty($data[2])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - blank day";
-					}
-					if(empty($data[3])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - blank start time";
-					}
-					if(empty($data[4])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - blank end time";
-					}
-					if(empty($data[5])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - blank instructor";
-					}
-					if(empty($data[6])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - blank venue";
-					}
-					if(empty($data[7])){
-						$_SESSION['errors'][] = "section.csv - row $countSect - blank size";
-					}
+				} 
+				if(isset($_SESSION['errors'])){
 					printErrors();
+				} else {
+					$sectionObj = new Section($courseid, $sectionid, $day, $start, $end, $instructor, $venue, $size);
+					$sectionDAO->add($sectionObj);
+					$section_processed++; #line added successfully  
 				}
 				$countSect++;
 			}
