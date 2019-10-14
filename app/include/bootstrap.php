@@ -625,9 +625,13 @@ function doBootstrap() {
 					if(!empty($rowErrors)){
 						$errors = array_merge($errors, $rowErrors);
 					} else {
-						$bidObj = new Bid($userid, $amount, $code, $section, "Pending");
-						$bidDAO->add($bidObj);
-						$bid_processed++; #line added successfully  
+						if ($alreadyBidded) {
+							$bidDAO->updateBid($userid, $amount, $section);
+						} else {
+							$bidObj = new Bid($userid, $amount, $code, $section, "Pending");
+							$bidDAO->add($bidObj);
+							$bid_processed++; #line added successfully  
+						}
 					}
 					$countBid++;
 				}
