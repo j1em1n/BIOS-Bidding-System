@@ -625,7 +625,7 @@ function doBootstrap() {
 					if(!empty($rowErrors)){
 						$errors = array_merge($errors, $rowErrors);
 					} else {
-						$bidObj = new Bid($userid, $amount, $code, $section);
+						$bidObj = new Bid($userid, $amount, $code, $section, "Pending");
 						$bidDAO->add($bidObj);
 						$bid_processed++; #line added successfully  
 					}
@@ -640,8 +640,11 @@ function doBootstrap() {
 
 	// Start round 1 automatically
 	$roundDAO = new RoundDAO();
-	$roundDAO->updateRoundNumber(1);
-	$roundDAO->updateRoundStatus("open");
+	$updateRoundNum = $roundDAO->updateRoundNumber(1);
+	$updateRoundStat = $roundDAO->updateRoundStatus("open");
+	if(!($updateRoundNum && $updateRoundStat)) {
+		$errors[] = "error: could not start Round 1";
+	}
 
 	return $errors;
 
