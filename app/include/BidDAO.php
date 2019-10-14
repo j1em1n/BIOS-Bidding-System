@@ -188,5 +188,26 @@ class BidDAO {
 
         return $bids;
     }
+
+    public function updateBid($userid, $biddedAmount, $section){
+
+        $sql = 'UPDATE student SET amount=:biddedAmount, section=:section WHERE userid=:userid';
+
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->bindParam(':biddedAmount', $biddedAmount, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+
+        $isUpdateOK = $stmt->execute();
+
+        $stmt = null;
+        $conn = null;
+        
+        return $isUpdateOK;
+    }
 }
 ?>

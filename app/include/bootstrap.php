@@ -539,13 +539,17 @@ function doBootstrap() {
 							$bidSection = $sectionDAO->retrieve($sectionid);
 							$studentBids = $bidDAO->retrieveByUserid($userid);
 							// Check if student has already bidded for this course and update bid if yes
-							$alreadyBidded = FALSE;
+							$alreadyBiddedCourse = FALSE;
+							$alreadyBiddedCourse = FALSE;
 							foreach($studentBids as $b) {
 								if ($b->getCode() == $code) {
-									$alreadyBidded = TRUE;
+									$alreadyBiddedCourse = TRUE;
+								}
+								if ($b->getSection() == $sectionid) {
+									$alreadyBiddedSect = TRUE;
 								}
 							}
-							if ($alreadyBidded) {
+							if ($alreadyBiddedCourse) {
 								/* if the student's bid for this course exists, we can assume that:
 									1. There is no exam timetable clash
 									2. The course is offered by the student's school
@@ -559,16 +563,19 @@ function doBootstrap() {
 									$rowErrors[] = "bid.csv - row $countBid - not enough e-dollar";
 								}
 
-								// Check for class timetable clash
-								// Iterate through each of the student's current bids
-								foreach ($studentBids as $b) {
-									// Retrieve the section corresponding to the bid
-									$bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
-									// Check if classes are on the same day and if yes, check for timing clashes
-									if (($bSection->getDay() == $bidSection->getDay()) && ($bSection->getStart() == $bidSection->getStart())) {
-										$rowErrors[] = "bid.csv - row $countBid - class timetable clash";
+								// Check for class timetable clash only if student is bidding for another section
+								if ($alreadyBiddedSect) {
+									// Iterate through each of the student's current bids
+									foreach ($studentBids as $b) {
+										// Retrieve the section corresponding to the bid
+										$bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
+										// Check if classes are on the same day and if yes, check for timing clashes
+										if (($bSection->getDay() == $bidSection->getDay()) && ($bSection->getStart() == $bidSection->getStart())) {
+											$rowErrors[] = "bid.csv - row $countBid - class timetable clash";
+										}
 									}
 								}
+								
 							} else {
 								// Check if course is offered by student's school
 								if (!($bidStud->getSchool() == $bidCourse->getSchool())) {
@@ -625,9 +632,13 @@ function doBootstrap() {
 					if(!empty($rowErrors)){
 						$errors = array_merge($errors, $rowErrors);
 					} else {
-						$bidObj = new Bid($userid, $amount, $code, $section, "Pending");
-						$bidDAO->add($bidObj);
-						$bid_processed++; #line added successfully  
+						if ($alreadyBidded) {
+							$bidDAO->updateBid($userid, $amount, $section);
+						} else {
+							$bidObj = new Bid($userid, $amount, $code, $section, "Pending");
+							$bidDAO->add($bidObj);
+							$bid_processed++; #line added successfully  
+						}
 					}
 					$countBid++;
 				}
