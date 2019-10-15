@@ -47,7 +47,7 @@ class PrerequisiteDAO {
     }
         
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE prerequisite';
+        $sql = 'DELETE FROM prerequisite';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -63,14 +63,17 @@ class PrerequisiteDAO {
 
     public function add($prerequisite) {
         $sql = 'INSERT INTO prerequisite (course, prerequisite) VALUES (:course, :prerequisite)';
+
+        $course = $prerequisite->getCourse();
+        $prereq = $prerequisite->getPrerequisite();
         
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':course', $prerequisite->getCourse(), PDO::PARAM_STR);
-        $stmt->bindParam(':prerequisite', $prerequisite->getPrerequisite(), PDO::PARAM_STR);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':prerequisite', $prereq, PDO::PARAM_STR);
        
         $isAddOK = $stmt->execute();
 

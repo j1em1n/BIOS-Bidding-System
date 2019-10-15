@@ -70,7 +70,7 @@ class BidDAO {
     }
 
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE bid';
+        $sql = 'DELETE FROM bid';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();

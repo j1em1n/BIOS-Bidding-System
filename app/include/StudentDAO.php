@@ -49,7 +49,7 @@ class StudentDAO {
     }
     
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE student';
+        $sql = 'DELETE FROM student';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -66,16 +66,22 @@ class StudentDAO {
     public function add($student) {
         $sql = 'INSERT INTO student (userid, password, name, school, edollar) VALUES (:userid, :password, :name, :school, :edollar)';
         
+        $userid = $student->getUserid();
+        $password = $student->getPassword();
+        $name = $student->getName();
+        $school = $student->getSchool();
+        $edollar = $student->getEdollar();
+
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':userid', $student->getUserid(), PDO::PARAM_STR);
-        $stmt->bindParam(':password', $student->getPwd(), PDO::PARAM_STR);
-        $stmt->bindParam(':name', $student->getName(), PDO::PARAM_STR);
-        $stmt->bindParam(':school', $student->getSchool(), PDO::PARAM_STR);
-        $stmt->bindParam(':edollar', $student->getEdollar(), PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->bindParam(':school', $school, PDO::PARAM_STR);
+        $stmt->bindParam(':edollar', $edollar, PDO::PARAM_STR);
 
         $isAddOK = $stmt->execute();
 

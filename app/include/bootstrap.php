@@ -109,7 +109,7 @@ function doBootstrap() {
 				$data = fgetcsv($student); 
 
 				//An indexed array to store all the existing userid in, to check for duplicate userid
-				$checkDupUserId[] = $userId;
+				$checkDupUserId = array();
 				while ( ($data = fgetcsv($student) ) !== false){
 					$countStud = 1;
 					$rowErrors = array();
@@ -241,7 +241,7 @@ function doBootstrap() {
 							$rowErrors[] = "course.csv - row $countCourse - invalid exam date";
 						}
 						
-						if (!(validateDate($exam_start) && validateDate($exam_end))) {
+						if (!(validateDate($exam_start, "H:mm") && validateDate($exam_end, "H:mm"))) {
 							//Checking if exam_start is in H:mm format
 							if(!validateDate($exam_start, "H:mm")){
 								$rowErrors[] = "course.csv - row $countCourse - invalid exam start";
@@ -335,7 +335,7 @@ function doBootstrap() {
 						} 
 						//Checking if start is in H:mm format
 
-						if (!(validateDate($start) && validateDate($end))) {
+						if (!(validateDate($start, "H:mm") && validateDate($end, "H:mm"))) {
 							//Checking if start is in H:mm format
 							if(!validateDate($start, "H:mm")){
 								$rowErrors[] = "section.csv - row $countSect - invalid start";
