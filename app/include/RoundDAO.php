@@ -20,7 +20,7 @@ class RoundDAO {
     }
 
     public function updateRoundNumber($number_entered){
-        $sql = 'UPDATE round SET round_number=:number_entered';
+        $sql = 'UPDATE round SET round_num=:number_entered';
 
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();

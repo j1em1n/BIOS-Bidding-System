@@ -75,3 +75,10 @@ function validateDate($date, $format)
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
+
+function padZerosTime($time) {
+    if (strlen($time) == 4) {
+        $time = '0'.$time;
+    }
+    return $time;
+}
