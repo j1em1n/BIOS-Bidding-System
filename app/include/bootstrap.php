@@ -84,16 +84,7 @@ function doBootstrap() {
 
 				# start processing
 				# truncate current SQL tables
-				
-				$studentDAO = new StudentDAO();
-                $studentDAO->removeAll();
 
-                $courseDAO = new CourseDAO();
-                $courseDAO->removeAll();
-
-                $sectionDAO = new SectionDAO();
-                $sectionDAO->removeAll();
-                
                 $prerequisiteDAO = new PrerequisiteDAO();
                 $prerequisiteDAO->removeAll();
                 
@@ -101,18 +92,27 @@ function doBootstrap() {
                 $courseCompletedDAO->removeAll();
 
                 $bidDAO = new BidDAO();
-                $bidDAO->removeAll();
+				$bidDAO->removeAll();
 
+				$sectionDAO = new SectionDAO();
+                $sectionDAO->removeAll();
+				
+				$studentDAO = new StudentDAO();
+                $studentDAO->removeAll();
+
+                $courseDAO = new CourseDAO();
+                $courseDAO->removeAll();
 				
 				// STUDENT 
 
 				// Skip table headings
 				$data = fgetcsv($student); 
+				$countStud = 1;
 
 				//An indexed array to store all the existing userid in, to check for duplicate userid
-				$checkDupUserId[] = $userId;
+				$checkDupUserId = array();
 				while ( ($data = fgetcsv($student) ) !== false){
-					$countStud = 1;
+					
 					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userId = trim($data[0]);
@@ -192,9 +192,9 @@ function doBootstrap() {
 
 				// Skip table headings
 				$data = fgetcsv($course);
+				$countCourse = 1;
 
 				while ( ($data = fgetcsv($course) ) !== false){
-					$countCourse = 1;
 					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string
 					$coursecode = trim($data[0]);
@@ -242,7 +242,9 @@ function doBootstrap() {
 							$rowErrors[] = "course.csv - row $countCourse - invalid exam date";
 						}
 						
-						if (!(validateDate($exam_start) && validateDate($exam_end))) {
+						$exam_start = padZerosTime($exam_start);
+						$exam_end = padZerosTime($exam_end);
+						if (!(validateDate($exam_start, "H:mm") && validateDate($exam_end, "H:mm"))) {
 							//Checking if exam_start is in H:mm format
 							if(!validateDate($exam_start, "H:mm")){
 								$rowErrors[] = "course.csv - row $countCourse - invalid exam start";
@@ -277,9 +279,11 @@ function doBootstrap() {
 				// SECTION 
 
 				// Skip table headings
-        		$data = fgetcsv($section);
+				$data = fgetcsv($section);
+				$countSect = 1;
+
         		while ( ($data = fgetcsv($section) ) !== false){
-					$countSect = 1;
+					
 					$rowErrors = array();
           			//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$coursecode = trim($data[0]);
@@ -336,7 +340,9 @@ function doBootstrap() {
 						} 
 						//Checking if start is in H:mm format
 
-						if (!(validateDate($start) && validateDate($end))) {
+						$start = padZerosTime($exam_start);
+						$end = padZerosTime($exam_end);
+						if (!(validateDate($start, "H:mm") && validateDate($end, "H:mm"))) {
 							//Checking if start is in H:mm format
 							if(!validateDate($start, "H:mm")){
 								$rowErrors[] = "section.csv - row $countSect - invalid start";
@@ -384,8 +390,10 @@ function doBootstrap() {
 
 				//Skip table headings
 				$data = fgetcsv($prerequisite);
+				$countPrereq = 1;
+
 				while ( ($data = fgetcsv($prerequisite) ) !== false){ 
-					$countPrereq = 1;
+					
 					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$coursecode = trim($data[0]);
@@ -427,8 +435,10 @@ function doBootstrap() {
 
 				// Skip table headings
 				$data = fgetcsv($course_completed);
+				$countCourseCompleted = 1;
+				
 				while ( ($data = fgetcsv($course_completed) ) !== false){
-					$countCourseCompleted = 1;
+					
 					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userid = trim($data[0]);
@@ -478,8 +488,10 @@ function doBootstrap() {
 
 				// Skip table headings
 				$data = fgetcsv($bid);
+				$countBid = 1;
+				
 				while ( ($data = fgetcsv($bid) ) !== false){
-					$countBid = 1;
+					
 					$rowErrors = array();
 					//Trim all the variables to ensure that there's no whitespace from both sides of the string using trim()
 					$userid = trim($data[0]);
