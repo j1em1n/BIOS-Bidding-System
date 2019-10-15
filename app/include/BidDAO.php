@@ -70,7 +70,7 @@ class BidDAO {
     }
 
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE bid';
+        $sql = 'DELETE FROM bid';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -112,11 +112,16 @@ class BidDAO {
 
     public function delete($bid){
         $userid = $bid->getUserid();
-        $amount = $bid->getAmount();
+        // $amount = $bid->getAmount();
         $code = $bid->getCode();
         $section = $bid->getSection();
+        // $status = $bid->getStatus();
 
+<<<<<<< HEAD
         $sql = 'DELETE FROM bid WHERE userid=:userid AND amount=:amount AND code=:code AND section=:section';
+=======
+        $sql = 'DELETE FROM bid WHERE userid = :userid AND code=:code AND section=:section';
+>>>>>>> 6244b465f531eb94835b7b3de2f65f510c32c0c2
         
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
@@ -124,11 +129,12 @@ class BidDAO {
         $stmt = $conn->prepare($sql); 
 
         $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
+        // $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
         $stmt->bindParam(':code', $code, PDO::PARAM_STR);
         $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        // $stmt->bindParam(':status', $status, PDO::PARAM_STR);
 
-        $isDeleteOK = $stmt->execute();
+        $isDeleteOK = $stmt->execute(); 
 
         $stmt = null;
         $conn = null;
