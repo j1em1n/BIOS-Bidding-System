@@ -116,7 +116,7 @@ class BidDAO {
         $code = $bid->getCode();
         $section = $bid->getSection();
 
-        $sql = 'DELETE FROM bid (userid, amount, code, section) VALUES (:userid, :amount, :code, :section)';
+        $sql = 'DELETE FROM bid WHERE userid=:userid AND amount=:amount AND code=:code AND section=:section';
         
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
