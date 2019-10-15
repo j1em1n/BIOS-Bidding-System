@@ -84,16 +84,7 @@ function doBootstrap() {
 
 				# start processing
 				# truncate current SQL tables
-				
-				$studentDAO = new StudentDAO();
-                $studentDAO->removeAll();
 
-                $courseDAO = new CourseDAO();
-                $courseDAO->removeAll();
-
-                $sectionDAO = new SectionDAO();
-                $sectionDAO->removeAll();
-                
                 $prerequisiteDAO = new PrerequisiteDAO();
                 $prerequisiteDAO->removeAll();
                 
@@ -101,8 +92,16 @@ function doBootstrap() {
                 $courseCompletedDAO->removeAll();
 
                 $bidDAO = new BidDAO();
-                $bidDAO->removeAll();
+				$bidDAO->removeAll();
 
+				$sectionDAO = new SectionDAO();
+                $sectionDAO->removeAll();
+				
+				$studentDAO = new StudentDAO();
+                $studentDAO->removeAll();
+
+                $courseDAO = new CourseDAO();
+                $courseDAO->removeAll();
 				
 				// STUDENT 
 
