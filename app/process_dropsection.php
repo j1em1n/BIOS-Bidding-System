@@ -41,31 +41,37 @@
                     header("Location: dropsection.php");
                     exit();
 
-                    // section in course
                 } else { // course and section exist
-
+                
                     // now check against USER's BID INFO
                     $student = $studentDAO->retrieve($userid);
                     $currentedollars = $student->getEdollar();
                     $updatedamount = 0.0;
                     // get all bids from this user 
-                    $listofbids = $bidDAO->retrieveByUserid($userid);
-                    var_dump($listofbids);
-
+                    $listofbids = $bidDAO->getBidsBySectionStatus($coursecode, $sectionnum, 'enrolled');
+                    
+                    //assuming that user has more than 1 enrolled course
                     foreach($listofbids as $eachbid){
-                        if($eachbid->getCode() == $coursecode && $eachbid->getSection() == $sectionnum ){
-                            $bidamount = $eachbid->getAmount();
-                            var_dump($bidamount);
+                        $bidamount = $eachbid->getAmount();
+                        $updatedamount = $currentedollars + $bidamount;
 
-                            //drop section
-                            
+                        //update edollars
+                        $studentDAO->updateEdollar($userid, $updatedamount);
 
-                            //update E dollars
-                            $updatedamount = $currentedollars + $bidamount;
-                            var_dump($updatedamount);
+                        //update student entry in bid table
+                        $bidDAO->delete($eachbid);
+
+                        echo "<head></head>
+                        <body>
+                        <h2>Drop section for Course $coursecode, Section $sectionnum was dropped successfully!</h2>
+                        <a href=\"dropbid.php\">Drop another bid | </a>
+                        <a href=\"index.php\">Home</a>
+                        </body>";
                         
-                        }
                     }
+
+          
+                        
                 }
             } 
 
