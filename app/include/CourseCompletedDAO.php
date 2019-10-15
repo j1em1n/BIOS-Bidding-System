@@ -48,7 +48,7 @@ class CourseCompletedDAO {
     }
 
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE course_completed';
+        $sql = 'DELETE FROM course_completed';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -65,13 +65,16 @@ class CourseCompletedDAO {
     public function add($courseCompleted) {
         $sql = 'INSERT INTO course_completed (userid, code) VALUES (:userid, :code)';
         
+        $userid = $courseCompleted->getUserid();
+        $code = $courseCompleted->getCode();
+
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':userid', $courseCompleted->getUserid(), PDO::PARAM_STR);
-        $stmt->bindParam(':code', $courseCompleted->getCode(), PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':code', $code, PDO::PARAM_STR);
 
         $isAddOK = $stmt->execute();
         return $isAddOK;
