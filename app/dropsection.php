@@ -23,7 +23,7 @@
                 </tr>
                
                 <tr>
-                    <td colspan='2'><input type='submit' value='Drop Bid'></td>
+                    <td colspan='2'><input type='submit' value='Drop Section'></td>
                 </tr>
             </table>
         </form>
