@@ -10,11 +10,9 @@ spl_autoload_register(function($class) {
   
 });
 
-
 // session related stuff
 
 session_start();
-
 
 function printErrors() {
     if(isset($_SESSION['errors'])){
@@ -28,8 +26,6 @@ function printErrors() {
         unset($_SESSION['errors']);
     }    
 }
-
-
 
 function isMissingOrEmpty($user) {
     if (!isset($_REQUEST[$user])) {
@@ -81,4 +77,13 @@ function padZerosTime($time) {
         $time = '0'.$time;
     }
     return $time;
+}
+
+function printSuccess() {
+    if(isset($_SESSION['success'])){
+        echo "<h2 id='success' style='color:DarkGreen;'>
+        {$_SESSION['success']}
+        </h2>";   
+        unset($_SESSION['success']);
+    }    
 }

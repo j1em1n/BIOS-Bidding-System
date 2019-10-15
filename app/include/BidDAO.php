@@ -112,11 +112,12 @@ class BidDAO {
 
     public function delete($bid){
         $userid = $bid->getUserid();
-        $amount = $bid->getAmount();
+        // $amount = $bid->getAmount();
         $code = $bid->getCode();
         $section = $bid->getSection();
+        // $status = $bid->getStatus();
 
-        $sql = 'DELETE FROM bid (userid, amount, code, section) VALUES (:userid, :amount, :code, :section)';
+        $sql = 'DELETE FROM bid WHERE userid = :userid AND code=:code AND section=:section';
         
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
@@ -124,11 +125,12 @@ class BidDAO {
         $stmt = $conn->prepare($sql); 
 
         $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
+        // $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
         $stmt->bindParam(':code', $code, PDO::PARAM_STR);
         $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        // $stmt->bindParam(':status', $status, PDO::PARAM_STR);
 
-        $isDeleteOK = $stmt->execute();
+        $isDeleteOK = $stmt->execute(); 
 
         $stmt = null;
         $conn = null;

@@ -7,20 +7,16 @@ if(isset($_SESSION['userid'])){
     ///echo $userid;
 }
 
-$dao = new StudentDAO();
-$student = $dao->retrieve($userid);
-// var_dump($userid);
-// var_dump($student); 
+$studentDAO = new StudentDAO();
+$student = $studentDAO->retrieve($userid);
 $name = $student->getName();
 $edollar = $student->getEdollar();
 
-$biddao = new BidDAO();
-$allbid = $biddao->retrieveAll(); // CREATE retrieve function for BidDAO, CourseDAO just as shown on StudentDAO
-// $studentbid = 
+$bidDAO = new BidDAO();
+$bids = $bidDAO->retrieveByUserid($userid);
 
-$coursedao = new CourseDAO();
-$allcourse = $coursedao->retrieveAll();
-//var_dump($allcourse);
+$courseDAO = new CourseDAO();
+
 ?>
 
 <html>
@@ -41,32 +37,20 @@ $allcourse = $coursedao->retrieveAll();
                 <th>Course Name</th>
                 <th>Section</th>
                 <th>Bid amount (e$)</th>
+                <th>Result</th>
                 </b>
             </tr>
 
         <?php
-            foreach ($allbid as $eachbid){
-                foreach($eachbid as $eachuserbid){
-                    if($eachuserbid == $userid){
-                        echo "
-                        <tr>
-                            <td>$eachbid->code</td>";
-
-                            foreach($allcourse as $eachcourse) {
-                                foreach($eachcourse as $eachcoursecode){
-                       
-                                    if($eachcoursecode == $eachbid->code){
-                                        // var_dump($eachcoursecode);
-                                        echo "<td>$eachcourse->title</td>";
-                                    }
-                                }
-                            }
-                            echo "
-                            <td>$eachbid->section</td>
-                            <td>$eachbid->amount</td>
-                        </tr>";
-                    }
-                }
+            foreach ($bids as $bid){
+                echo "
+                <tr>
+                    <td>{$bid->getCode()}</td>
+                    <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+                    <td>{$bid->getSection()}</td>
+                    <td>{$bid->getAmount()}</td>
+                    <td>{$bid->getStatus()}</td>
+                </tr>";
             }
         ?>
 
@@ -74,26 +58,16 @@ $allcourse = $coursedao->retrieveAll();
 
         <table>
             <tr>
-                <th>E_Balance: $<?=$edollar?></th>
+                <th>Your E-Dollar Balance: $<?=$edollar?></th>
             </tr>
-
-            <tr> 
-                <th>Amount left for bidding: $</th>
-
         
         </table>
-
         
         <p>
         <a id="add" href="placebid.php">Plan & Bid</a><br>
-        <a id="add" href="dropbid.php">Drop Bid</a><b>
-        <a id="add" href="dropsection.php">Drop Section</a><br>
-
+        <a id="add" href="dropbid.php">Drop Bid</a>
 
     </body>
-
-
-
 
 </html>
 
