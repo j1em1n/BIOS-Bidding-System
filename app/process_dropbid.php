@@ -34,7 +34,7 @@
             } else {
 
                 $student = $studentDAO->retrieve($userid);
-                $currentedollars = $student->edollar;
+                $currentedollars = $student->getEdollar();
                 $updatedamount = 0.0;
                 // get all bids from this user 
                 $listofbids = $bidDAO->retrieveByUserid($userid);
@@ -42,9 +42,9 @@
                 var_dump($currentedollars);
 
                 //specifiy which bid want to drop based on userid and coursecode and sectionnum
-                //foreach($listofbids as $eachbid){
-                    if($listofbids->userid == $userid && $listofbids->code == $coursecode 
-                        && $listofbids->section == $sectionnum){
+                foreach($listofbids as $eachbid){
+                    if($eachbid->userid == $userid && $eachbid->code == $coursecode 
+                        && $eachbid->section == $sectionnum && $eachbid->getStatus() == 'pending'){
                         // update edollars by subtraction
                         $biddedamount = $listofbids->amount;                        
                         $updatedamount =  strval($currentedollars - $biddedamount);
