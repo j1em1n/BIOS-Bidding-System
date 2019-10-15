@@ -50,7 +50,7 @@ class AdminDAO {
     }
     
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE admin';
+        $sql = 'DELETE FROM admin';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
