@@ -30,12 +30,10 @@
         </form>
 
         <p>
-            <?=printSuccess()?>
             <?=printErrors()?>
+            <?=printSuccess()?>
         </p>
-        <p>
-            <a href='index.php'>Home</a>
-        </p>
+        <p><a href="index.php">Home</a></p>
     </body>
 
 </html>

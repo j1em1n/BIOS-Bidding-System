@@ -35,12 +35,12 @@
     }
 
     // Check if e-dollar is numeric
-    if (!(is_numeric($edollar) || is_float($edollar))) {
+    if (!(isNonNegativeInt($edollar) || isNonNegativeFloat($edollar))) {
         $_SESSION['errors'][] = "Please enter a valid number for E-dollar";
     }
 
     // Check if e-dollar has <= 2 dp
-    if (is_float($edollar)) {
+    if (isNonNegativeFloat($edollar)) {
         $checkedEdollar = strval($edollar);
         $edollarArr = explode(".", $checkedEdollar);
         if(strlen($edollarArr[1]) > 2){
@@ -69,6 +69,7 @@
     // Perform logic validations only if input data validations are passed
 
     // Check if bid is above min bid
+    $minBid = 10.0;
     if (($currentRound == 1 && $edollar < 10.0) || ($currentRound == 2 && $edollar < $minBid)) {
         $_SESSION['errors'][] = "Your bid is less than the minimum bid";
     }
@@ -149,11 +150,13 @@
         $thisBid = new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending");
         $bidDAO->add($thisBid);
         // Update student's e-dollar balance
-        $studentDAO->updateEdollar($userid, ($student->getEdollar() - $edollar));
+        $updatedAmount = $student->getEdollar() - $edollar;
+        $studentDAO->updateEdollar($userid, $updatedAmount);
 
         echo "<head></head>
         <body>
         <h2>Your bid for $courseCode {$course->getTitle()}, Section $sectionNum was placed successfully!</h2>
+        <h2>You have $$updatedAmount left in your balance.</h2>
         <a href=\"placebid.php\">Place another bid | </a>
         <a href=\"index.php\">Home</a>
         </body>";
