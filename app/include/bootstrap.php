@@ -153,11 +153,11 @@ function doBootstrap() {
 						}
 						
 						//Checking if edollar is a non-negative numeric value
-						if(!(isNonNegativeInt($edollar) || isNonNegativeFloat($edollar))){
+						if(!isNonNegativeFloat($edollar)){
 							$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
 						} else {
 							//If edollar is a float, check if it has more than 2 decimal places
-							if (is_float($edollar)) {
+							if (!isNonNegativeInt($edollar)) {
 								$checkedollar = strval($edollar);
 								$edollarArr = explode(".", $checkedollar);
 								if(strlen($edollarArr[1]) > 2){
@@ -242,21 +242,19 @@ function doBootstrap() {
 							$rowErrors[] = "course.csv - row $countCourse - invalid exam date";
 						}
 						
-						$exam_start = padZerosTime($exam_start);
-						$exam_end = padZerosTime($exam_end);
-						if (!(validateDate($exam_start, "H:mm") && validateDate($exam_end, "H:mm"))) {
+						if (!(validateDate($exam_start, "G:i") && validateDate($exam_end, "G:i"))) {
 							//Checking if exam_start is in H:mm format
-							if(!validateDate($exam_start, "H:mm")){
+							if(!validateDate($exam_start, "G:i")){
 								$rowErrors[] = "course.csv - row $countCourse - invalid exam start";
 							}
 							//Checking if exam_end is in H:mm format
-							if(!validateDate($exam_end, "H:mm")){
+							if(!validateDate($exam_end, "G:i")){
 								$rowErrors[] = "course.csv - row $countCourse - invalid exam end";
 							}
 						} else {
 							//Check if exam_end is later than exam_start (only if both times are valid)
-							$exam_start_datetime = DateTime::createFromFormat("H:mm", $exam_start);
-							$exam_end_datetime = DateTime::createFromFormat("H:mm", $exam_end);
+							$exam_start_datetime = DateTime::createFromFormat("G:i", $exam_start);
+							$exam_end_datetime = DateTime::createFromFormat("G:i", $exam_end);
 							if($exam_end_datetime < $exam_start_datetime) {
 								$rowErrors[] = "course.csv - row $countCourse - invalid exam end";
 							}
@@ -266,7 +264,7 @@ function doBootstrap() {
 					if(!empty($rowErrors)){
 						$errors = array_merge($errors, $rowErrors);
 					} else {
-						$courseObj = new Course($getCourse, $school, $title, $description, $exam_date, $exam_start, $exam_end);
+						$courseObj = new Course($coursecode, $school, $title, $description, $exam_date, $exam_start, $exam_end);
 						$courseDAO->add($courseObj);
 						$course_processed++; #line added successfully	
 					}
@@ -335,26 +333,24 @@ function doBootstrap() {
 						}
 
 						// Check if the day field is a number between 1(inclusive) and 7 (inclusive). 1 - Monday, 2 - Tuesday, ... , 7 - Sunday.
-						if($day < 1 && $day > 7){
+						if($day < 1 || $day > 7){
 							$rowErrors[] = "section.csv - row $countSect - invalid day";
 						} 
 						//Checking if start is in H:mm format
 
-						$start = padZerosTime($exam_start);
-						$end = padZerosTime($exam_end);
-						if (!(validateDate($start, "H:mm") && validateDate($end, "H:mm"))) {
+						if (!(validateDate($start, "G:i") && validateDate($end, "G:i"))) {
 							//Checking if start is in H:mm format
-							if(!validateDate($start, "H:mm")){
+							if(!validateDate($start, "G:i")){
 								$rowErrors[] = "section.csv - row $countSect - invalid start";
 							}
 							//Checking if end is in H:mm format
-							if(!validateDate($end, "H:mm")){
+							if(!validateDate($end, "G:i")){
 								$rowErrors[] = "section.csv - row $countSect - invalid end";
 							}
 						} else {
 							//Check if exam_end is later than exam_start (only if both times are valid)
-							$start_datetime = DateTime::createFromFormat("H:mm", $start);
-							$end_datetime = DateTime::createFromFormat("H:mm", $end);
+							$start_datetime = DateTime::createFromFormat("G:i", $start);
+							$end_datetime = DateTime::createFromFormat("G:i", $end);
 							if($end_datetime < $start_datetime) {
 								$rowErrors[] = "section.csv - row $countSect - invalid end";
 							}
@@ -474,7 +470,7 @@ function doBootstrap() {
 					if(!empty($rowErrors)){
 						$errors = array_merge($errors, $rowErrors);
 					} else {
-						$courseCompletedObj = new Prerequisite($userid, $code);
+						$courseCompletedObj = new CourseCompleted($userid, $code);
 						$courseCompletedDAO->add($courseCompletedObj);
 						$course_completed_processed++; #line added successfully  
 					}
@@ -489,7 +485,7 @@ function doBootstrap() {
 				// Skip table headings
 				$data = fgetcsv($bid);
 				$countBid = 1;
-				
+
 				while ( ($data = fgetcsv($bid) ) !== false){
 					
 					$rowErrors = array();
@@ -522,45 +518,50 @@ function doBootstrap() {
 						}
 
 						// Check if bidding amount is a numeric value
-						if(!(isNonNegativeInt($edollar) || isNonNegativeFloat($edollar))){
-							$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
-						} elseif (is_float($edollar)) {
+						if(!isNonNegativeFloat($amount)){
+							$rowErrors[] = "bid.csv - row $countBid - invalid e-dollar";
+						} elseif (!isNonNegativeInt($amount)) {
 							//If edollar is a float, check if it has more than 2 decimal places
-							$checkedollar = strval($edollar);
+							$checkedollar = strval($amount);
 							$edollarArr = explode(".", $checkedollar);
 							if(strlen($edollarArr[1]) > 2){
-								$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
+								$rowErrors[] = "bid.csv - row $countBid - invalid e-dollar";
 							}
-						} elseif ($edollar < 10.0) {
+						} elseif ($amount < 10.0) {
 							// Check if bidding amount >= 10.0
-							$rowErrors[] = "student.csv - row $countStud - invalid e-dollar";
+							$rowErrors[] = "bid.csv - row $countBid - invalid e-dollar";
 						}
 
 						// Check if course code is found in the course.csv
 						if(!($courseDAO->retrieve($code))) {
 							$rowErrors[] = "bid.csv - row $countBid - invalid code";
-						} elseif (!($sectionDAO->retrieve($sectionid))) {
+						} elseif (!($sectionDAO->retrieve($code, $sectionid))) {
 							// Check if section code is found in section.csv (only for valid course code)
 							$rowErrors[] = "bid.csv - row $countBid - invalid section";
 						}
 
 						// Logic validations, only if data validations are passed
-						if (!isset($rowErrors)) {
+						if (empty($rowErrors)) {
 							$bidStud = $studentDAO->retrieve($userid);
 							$bidCourse = $courseDAO->retrieve($code);
-							$bidSection = $sectionDAO->retrieve($sectionid);
+							$bidSection = $sectionDAO->retrieve($code, $sectionid);
 							$studentBids = $bidDAO->retrieveByUserid($userid);
+							// var_dump($studentBids);
 							// Check if student has already bidded for this course and update bid if yes
 							$alreadyBiddedCourse = FALSE;
-							$alreadyBiddedCourse = FALSE;
+							$sameSection = FALSE;
+							$previousBid = null;
+
 							foreach($studentBids as $b) {
 								if ($b->getCode() == $code) {
 									$alreadyBiddedCourse = TRUE;
-								}
-								if ($b->getSection() == $sectionid) {
-									$alreadyBiddedSect = TRUE;
+									$previousBid = $b;
+									if ($b->getSection() == $sectionid) {
+										$sameSection = TRUE;
+									}
 								}
 							}
+							// echo $alreadyBiddedCourse.'<br'.$sameSection.'<br>';
 							if ($alreadyBiddedCourse) {
 								/* if the student's bid for this course exists, we can assume that:
 									1. There is no exam timetable clash
@@ -576,7 +577,7 @@ function doBootstrap() {
 								}
 
 								// Check for class timetable clash only if student is bidding for another section
-								if ($alreadyBiddedSect) {
+								if (!$sameSection) {
 									// Iterate through each of the student's current bids
 									foreach ($studentBids as $b) {
 										// Retrieve the section corresponding to the bid
@@ -601,9 +602,12 @@ function doBootstrap() {
 
 								// Check for class timetable clash
 								// Iterate through each of the student's current bids
+								echo $countBid."<br>";
 								foreach ($studentBids as $b) {
 									// Retrieve the section corresponding to the bid
-									$bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
+									$bCode = $b->getCode();
+									$bSectId = $b->getSection();
+									$bSection = $sectionDAO->retrieve($bCode, $bSectId);
 									// Check if classes are on the same day and if yes, check for timing clashes
 									if (($bSection->getDay() == $bidSection->getDay()) && ($bSection->getStart() == $bidSection->getStart())) {
 										$rowErrors[] = "bid.csv - row $countBid - class timetable clash";
@@ -641,13 +645,23 @@ function doBootstrap() {
 							}
 						}
 					}
+
 					if(!empty($rowErrors)){
 						$errors = array_merge($errors, $rowErrors);
 					} else {
-						if ($alreadyBidded) {
-							$bidDAO->updateBid($userid, $amount, $section);
+						if (isset($alreadyBiddedCourse) && $alreadyBiddedCourse) {
+						
+							// Store the previously bidded amount
+							$previousAmount = $previousBid->getAmount();
+							// Update the student's previous bid
+							$bidDAO->updateBid($userid, $amount, $sectionid);
+							// Refund amount for previous bid and charge edollars for current bid
+							$thisStud = $studentDAO->retrieve($userid);
+							$balance = $thisStud->getEdollar() + $previousAmount - $amount;
+							$studentDAO->updateEdollar($userid, $balance);
+						
 						} else {
-							$bidObj = new Bid($userid, $amount, $code, $section, "Pending");
+							$bidObj = new Bid($userid, $amount, $code, $sectionid, "Pending");
 							$bidDAO->add($bidObj);
 							$bid_processed++; #line added successfully  
 						}
@@ -664,7 +678,7 @@ function doBootstrap() {
 	// Start round 1 automatically
 	$roundDAO = new RoundDAO();
 	$updateRoundNum = $roundDAO->updateRoundNumber(1);
-	$updateRoundStat = $roundDAO->updateRoundStatus("open");
+	$updateRoundStat = $roundDAO->updateRoundStatus("opened");
 	if(!($updateRoundNum && $updateRoundStat)) {
 		$errors[] = "error: could not start Round 1";
 	}
