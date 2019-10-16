@@ -47,7 +47,7 @@ class CourseDAO {
     }
 
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE course';
+        $sql = 'DELETE FROM course';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -64,18 +64,26 @@ class CourseDAO {
     public function add($course) {
         $sql = 'INSERT INTO course (course, school, title, description, exam_date, exam_start, exam_end) VALUES (:course, :school, :title, :description, :exam_date, :exam_start, :exam_end)';
         
+        $coursecode = $course->getCourse();
+        $school = $course->getSchool();
+        $title = $course->getTitle();
+        $description = $course->getDescription();
+        $date = $course->getExamDate();
+        $start = $course->getExamStart();
+        $end = $course->getExamEnd();
+
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':course', $course->getCourse(), PDO::PARAM_STR);
-        $stmt->bindParam(':school', $course->getSchool(), PDO::PARAM_STR);
-        $stmt->bindParam(':title', $course->getTitle(), PDO::PARAM_STR);
-        $stmt->bindParam(':description', $course->getDescription(), PDO::PARAM_STR);
-        $stmt->bindParam(':exam_date', $course->getExamDate(), PDO::PARAM_STR);
-        $stmt->bindParam(':exam_start', $course->getExamStart(), PDO::PARAM_STR);
-        $stmt->bindParam(':exam_end', $course->getExamEnd(), PDO::PARAM_STR);
+        $stmt->bindParam(':course', $coursecode, PDO::PARAM_STR);
+        $stmt->bindParam(':school', $school, PDO::PARAM_STR);
+        $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+        $stmt->bindParam(':description', $description, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_date', $date, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_start', $start, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_end', $end, PDO::PARAM_STR);
 
         $isAddOK = $stmt->execute();
 

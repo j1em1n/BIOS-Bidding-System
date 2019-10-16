@@ -49,7 +49,7 @@ class SectionDAO {
     }
 
     public function removeAll() {
-        $sql = 'TRUNCATE TABLE section';
+        $sql = 'DELETE FROM section';
         
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -64,21 +64,30 @@ class SectionDAO {
     }    
 
     public function add($section) {
-        $sql = 'INSERT INTO section (course, section, day, start, end, instructor, venue, size) VALUES (:course, :section, :day, :start, :end, instructor, venue, size)';
+        $sql = 'INSERT INTO section (course, section, day, start, end, instructor, venue, size) VALUES (:course, :section, :day, :start, :end, :instructor, :venue, :size)';
         
+        $course = $section->getCourse();
+        $sectionId = $section->getSection();
+        $day = $section->getDay();
+        $start = $section->getStart();
+        $end = $section->getEnd();
+        $instructor = $section->getInstructor();
+        $venue = $section->getVenue();
+        $size = $section->getSize();
+
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
          
         $stmt = $conn->prepare($sql); 
 
-        $stmt->bindParam(':course', $section->getCourse(), PDO::PARAM_STR);
-        $stmt->bindParam(':section', $section->getSection(), PDO::PARAM_STR);
-        $stmt->bindParam(':day', $section->getDay(), PDO::PARAM_INT);
-        $stmt->bindParam(':start', $section->getStart(), PDO::PARAM_STR);
-        $stmt->bindParam(':end', $section->getEnd(), PDO::PARAM_STR);
-        $stmt->bindParam(':instructor', $section->getInstructor(), PDO::PARAM_STR);
-        $stmt->bindParam(':venue', $section->getVenue(), PDO::PARAM_STR);
-        $stmt->bindParam(':size', $section->getSize(), PDO::PARAM_INT);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $sectionId, PDO::PARAM_STR);
+        $stmt->bindParam(':day', $day, PDO::PARAM_INT);
+        $stmt->bindParam(':start', $start, PDO::PARAM_STR);
+        $stmt->bindParam(':end', $end, PDO::PARAM_STR);
+        $stmt->bindParam(':instructor', $instructor, PDO::PARAM_STR);
+        $stmt->bindParam(':venue', $venue, PDO::PARAM_STR);
+        $stmt->bindParam(':size', $size, PDO::PARAM_INT);
 
         $isAddOK = $stmt->execute();
 
