@@ -520,17 +520,19 @@ function doBootstrap() {
 						// Check if bidding amount is a numeric value
 						if(!isNonNegativeFloat($amount)){
 							$rowErrors[] = "bid.csv - row $countBid - invalid e-dollar";
-						} elseif (!isNonNegativeInt($amount)) {
+						  } elseif (!isNonNegativeInt($amount)) {
 							//If edollar is a float, check if it has more than 2 decimal places
 							$checkedollar = strval($amount);
 							$edollarArr = explode(".", $checkedollar);
+
 							if(strlen($edollarArr[1]) > 2){
-								$rowErrors[] = "bid.csv - row $countBid - invalid e-dollar";
+							  $rowErrors[] = "bid.csv - row $countBid - invalid e-dollar";
 							}
-						} elseif ($amount < 10.0) {
-							// Check if bidding amount >= 10.0
-							$rowErrors[] = "bid.csv - row $countBid - invalid e-dollar";
-						}
+							if ($amount < 10.0) {
+							  // Check if bidding amount >= 10.0
+							  $rowErrors[] = "bid.csv - row $countBid - invalid e-dollar";
+							}
+						  }
 
 						// Check if course code is found in the course.csv
 						if(!($courseDAO->retrieve($code))) {
@@ -663,6 +665,12 @@ function doBootstrap() {
 						} else {
 							$bidObj = new Bid($userid, $amount, $code, $sectionid, "Pending");
 							$bidDAO->add($bidObj);
+							
+							// deduct amount from student's balance
+							$thisStud = $studentDAO->retrieve($userid);
+							$balance = $thisStud->getEdollar() - $amount;
+							$studentDAO->updateEdollar($userid, $balance);
+
 							$bid_processed++; #line added successfully  
 						}
 					}

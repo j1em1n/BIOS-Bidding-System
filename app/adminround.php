@@ -1,48 +1,58 @@
 <?php
-
-require_once 'common.php';
+require_once 'include/protect.php';
+require_once 'include/common.php';
 
 //status_entered
-$status_entered = "";
-if(isset($_POST['round_num'])){
-    $status_entered = "open";
-    $round_num = $_POST['round_num'];
+$roundDAO = new RoundDAO();
+$roundInfo = $roundDAO->retrieveRoundInfo();
+$currentRound = $roundInfo->getRoundNum();
+$currentStatus = $roundInfo->getStatus();
 
-    $rounddao = new RoundDAO();
-    $newRoundStatus = $rounddao->updateRoundStatus($status_entered, $round_num);
-    //var_dump($newRoundStatus);
-
-
-    if($newRoundStatus == True){
-        //display
-        echo "Round successfully changed";
-    } else {
-        //error
-        $_SESSION['errors'] = 'Round unsuccessfully changed';
-        printErrors();
-    }
+$display = $currentRound;
+if ($currentStatus == "closed" && $currentRound == 1) {
+    $display = 2;
+} elseif ($currentStatus == "closed") {
+    $display = 1;
 }
-
 
 ?>
 
+<!DOCTYPE html>
 <html>
-<form action ="AdminRound.php" method = "POST" name = "round_num">
+<head>
+    <link rel="stylesheet" type="text/css" href="include/style.css">
+</head>
+    <body>
+        <form action ="process_round.php" method = "POST">
+            <table>
+                <tr>
+                    <th>Current Round</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td><?=$currentRound?></td>
+                    <td><?=$currentStatus?></td>
+                </tr>
+                <tr><td>
+                    <?php
+                        if ($currentStatus == "opened") {
+                            echo "<button name='submit' type='submit' value='closed'>Close Round $display</button>";
+                        } else {
+                            echo "<button name='submit' type='submit' value='opened'>Open Round $display</button>";
+                        }
+                        echo "<input type='hidden' name='number' value='$display'>";
+                    ?>
+                </td></tr>
+            </table>
+        </form>
+        <p><a href="admin_index.php">Home</a></p>
 
-Choose a round to open: 
-    <select name = 'round_num'>
-        <option value = '1'>1</option>
-        <option value = '2'>2</option>
-
-    </select>
-    <br><br>
-
-    <input type = 'submit'>
-</form>
-
-
-
-
+        <p>
+            <?=printSuccess()?>
+            <?=printErrors()?>
+        </p>
+    </body>
+</html>
 
 
 </html>
