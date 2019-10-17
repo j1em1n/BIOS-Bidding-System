@@ -193,7 +193,7 @@ class BidDAO {
 
     public function updateBid($userid, $biddedAmount, $section){
 
-        $sql = 'UPDATE student SET amount=:biddedAmount, section=:section WHERE userid=:userid';
+        $sql = 'UPDATE bid SET amount=:biddedAmount, section=:section WHERE userid=:userid';
 
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();

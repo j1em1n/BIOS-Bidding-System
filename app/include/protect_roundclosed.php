@@ -2,7 +2,7 @@
     require_once 'common.php';
 
     $roundDAO = new RoundDAO();
-    $round = retrieveRoundInfo();
+    $round = $roundDAO->retrieveRoundInfo();
     $roundStatus = $round->getStatus();
 
     if ($roundStatus == "closed") {

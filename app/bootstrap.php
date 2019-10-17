@@ -14,6 +14,9 @@ require_once 'include/common.php';
 			<input id='bootstrap-file' type="file" name="bootstrap-file"></br>
 			<input type="submit" name="submit" value="Import">
 		</form>
+		<p>
+			<a href="admin_index.php">Home</a>
+		</p>
 		<?php
 			printErrors();
 			if(isset($_SESSION['success'])) {

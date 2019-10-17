@@ -7,5 +7,5 @@ if(!empty($errors)) {
     header("Location: bootstrap.php");
 } else {
     $_SESSION['success'] = "Bootstrap successful! Bidding Round 1 started.";
-    header("Location: boostrap.php");
+    header("Location: bootstrap.php");
 }

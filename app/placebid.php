@@ -1,5 +1,6 @@
 <?php
     require_once 'include/protect.php';
+    require_once 'include/protect_roundclosed.php';
     require_once 'include/common.php';
 ?>
 <!DOCTYPE html>
@@ -32,7 +33,9 @@
 
         <p>
             <?=printErrors()?>
+            <?=printSuccess()?>
         </p>
+        <p><a href="index.php">Home</a></p>
     </body>
 
 </html>
