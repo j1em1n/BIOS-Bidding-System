@@ -23,6 +23,7 @@
     // Initialise DAOs for validations
     $courseDAO = new CourseDAO();
     $sectionDAO = new SectionDAO();
+    $edollarArr = array();
 
     // Check for valid course code
     if(!($courseDAO->retrieve($courseCode))) {
@@ -43,8 +44,10 @@
     if (isNonNegativeFloat($edollar)) {
         $checkedEdollar = strval($edollar);
         $edollarArr = explode(".", $checkedEdollar);
-        if(strlen($edollarArr[1]) > 2){
-            $_SESSION['errors'][] = "E-dollar can only have up to 2 decimal places";
+        if(count($edollarArr) > 1){
+            if(strlen($edollarArr[1]) > 2){
+                $_SESSION['errors'][] = "E-dollar can only have up to 2 decimal places";
+            }
         }
     }
 
