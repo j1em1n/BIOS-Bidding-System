@@ -33,47 +33,6 @@
             header("Location: dropbid.php");
             exit();
         } else {
-<<<<<<< HEAD
-            if (!($sectionDAO->getSectionsByCourse($coursecode))) {
-                // Check if section code is found in section.csv (only for valid course code)
-                $_SESSION['errors'][] = "invalid section";
-
-                header("Location: dropbid.php");
-                exit();
-
-            } else {
-
-                $student = $studentDAO->retrieve($userid);
-                $currentedollars = $student->getEdollar();
-                $updatedamount = 0.0;
-                // get all bids from this user 
-                $listofbids = $bidDAO->retrieveByUserid($userid);
-                //var_dump($listofbids);
-                var_dump($currentedollars);
-
-                //specifiy which bid want to drop based on userid and coursecode and sectionnum
-                foreach($listofbids as $eachbid){
-                    if($eachbid->userid == $userid && $eachbid->code == $coursecode 
-                        && $eachbid->section == $sectionnum && $eachbid->getStatus() == 'pending'){
-                        // update edollars by subtraction
-                        $biddedamount = $listofbids->amount;                        
-                        $updatedamount =  strval($currentedollars - $biddedamount);
-
-                        var_dump($updatedamount);
-                        var_dump($userid);
-
-                        // update in database
-                        $studentDAO->updateEdollar($userid, $updatedamount) ;
-                        
-                        header("Location: dropbid.php");
-                        exit();
-                    }
-
-                
-
-               
-            } 
-=======
             $student = $studentDAO->retrieve($userid);
             $currentedollars = $student->getEdollar();
             $updatedamount = 0.0;
@@ -102,7 +61,6 @@
             $_SESSION['errors'][] = "You do not have any bids for this section";
             header("Location: dropbid.php");
             exit();
->>>>>>> 6244b465f531eb94835b7b3de2f65f510c32c0c2
         }
     } else {
         if(empty($coursecode)) {
