@@ -43,6 +43,13 @@ $courseDAO = new CourseDAO();
 
         <?php
             foreach ($bids as $bid){
+
+                //function for drop bid button
+                $dropbid_button = "";
+                if($bid->getStatus() == 'pending'){
+                    $dropbid_button = "<button onclick=\"location.href='dropbid.php'\">Drop Bid</button>";
+                
+                } 
                 echo "
                 <tr>
                     <td>{$bid->getCode()}</td>
@@ -50,7 +57,9 @@ $courseDAO = new CourseDAO();
                     <td>{$bid->getSection()}</td>
                     <td>{$bid->getAmount()}</td>
                     <td>{$bid->getStatus()}</td>
+                    <td>$dropbid_button</td>
                 </tr>";
+
             }
         ?>
 
