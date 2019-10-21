@@ -26,17 +26,17 @@ $currentStatus = $roundInfo->getStatus();
 
 <html>
     <head>
+
+            <div style='float: right;'><a href='logout.php'>Logout</a></div>
         <link rel="stylesheet" type="text/css" href="include/style.css">
     </head>
     <body>
 
-        <h1>BIOS BIDDING</h1>
+        <h1>BIOS BIDDING </h1>
+        
         <h2>Welcome <?=$name?>
 
-        
-        <p>
-            <a href='logout.php'>Logout</a>
-        </p>
+
         
         
         <table>
@@ -62,7 +62,7 @@ $currentStatus = $roundInfo->getStatus();
                 $drop = "";
 
                 // Check if round 1 = 'drop bid'
-                if($currentRound == '1' && $currentStatus == 'opened'){
+                if($currentStatus == 'opened' && $status == 'pending'){ // round 1 and 2 can drop bid
                     $_SESSION['code'] = $code;
                     $_SESSION['section'] = $section;
                     $_SESSION['amount'] = $amount;
@@ -77,8 +77,23 @@ $currentStatus = $roundInfo->getStatus();
 
                 } else if($currentRound == '1' && $currentStatus == 'closed'){
                     // Show results
+                    if($status == 'successful'){
+                        $color = 'green';
+                    } else {
+                        $color = 'orange';
+                    }
 
-                } else { // CurrentRound == '2' && currentStatus == 'opened'
+                    echo "
+                    <tr>
+                        <td>{$bid->getCode()}</td>
+                        <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+                        <td>{$bid->getSection()}</td>
+                        <td>{$bid->getAmount()}</td>
+                        <td style='background-color: $color'>{$bid->getStatus()}</td>
+                    </tr>";
+                    
+
+                } else if($currentRound == '2' && $currentStatus == 'opened' && $status == 'successful'){
                     $_SESSION['code'] = $code;
                     $_SESSION['section'] = $section;
                     $_SESSION['amount'] = $amount;
@@ -92,17 +107,29 @@ $currentStatus = $roundInfo->getStatus();
 
                 }
 
-                echo "
-                <tr>
-                    <td>{$bid->getCode()}</td>
-                    <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
-                    <td>{$bid->getSection()}</td>
-                    <td>{$bid->getAmount()}</td>
-                    <td>{$bid->getStatus()}</td>
-                    <td><input type = 'submit' value = '$drop'></td>
-                </tr>";
+                if($currentStatus == 'opened' && ($status == 'pending' || $status == 'successful')){
 
-                echo '</form>';
+
+                    echo "
+                    <tr>
+                        <td>{$bid->getCode()}</td>
+                        <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+                        <td>{$bid->getSection()}</td>
+                        <td>{$bid->getAmount()}</td>";
+
+                    if($status == 'successful'){
+                        $color = 'green';
+                    } else {
+                        $color = 'orange';
+                    }
+                    echo "    
+                        <td style='background-color: $color'>{$bid->getStatus()}</td>";
+                        if($currentStatus == 'opened' && ($status == 'pending' || $status == 'successful')){
+                            echo "<td><input type = 'submit' value = '$drop'></td>";
+                        } 
+                        
+                    echo '</tr></form>';
+                }
 
             }
         ?>
@@ -120,7 +147,6 @@ $currentStatus = $roundInfo->getStatus();
         
         <p>
             <a id="add" href="placebid.php">Plan & Bid</a><br>
-            <a id="dropsection" href="dropsection.php">Drop Section</a>
         </p>
         <p><?=printErrors()?>
 
@@ -129,6 +155,8 @@ $currentStatus = $roundInfo->getStatus();
             $success = $_SESSION['success'];
             echo "$success";
         }
+
+
         ?>
 
     </body>
