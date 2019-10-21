@@ -59,6 +59,7 @@ $currentStatus = $roundInfo->getStatus();
                 $status = $bid->getStatus();
 
                 $form = "";
+                $drop = "";
 
                 // Check if round 1 = 'drop bid'
                 if($currentRound == '1' && $currentStatus == 'opened'){
@@ -67,6 +68,7 @@ $currentStatus = $roundInfo->getStatus();
                     $_SESSION['amount'] = $amount;
 
                     $form = "process_dropbid.php";
+                    $drop = 'Drop Bid';
 
                     echo 
                     "<form method = 'POST' action = '$form'>";
@@ -75,13 +77,15 @@ $currentStatus = $roundInfo->getStatus();
 
                 } else if($currentRound == '1' && $currentStatus == 'closed'){
                     // Show results
-                    
+
                 } else { // CurrentRound == '2' && currentStatus == 'opened'
                     $_SESSION['code'] = $code;
                     $_SESSION['section'] = $section;
                     $_SESSION['amount'] = $amount;
 
                     $form = "process_dropsection.php";
+                    $drop = 'Drop Section';
+
 
                     echo 
                     "<form method = 'POST' action = '$form'>";
@@ -95,7 +99,7 @@ $currentStatus = $roundInfo->getStatus();
                     <td>{$bid->getSection()}</td>
                     <td>{$bid->getAmount()}</td>
                     <td>{$bid->getStatus()}</td>
-                    <td><input type = 'submit' value = 'Drop Bid'></td>
+                    <td><input type = 'submit' value = '$drop'></td>
                 </tr>";
 
                 echo '</form>';
