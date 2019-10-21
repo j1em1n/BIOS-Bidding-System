@@ -17,6 +17,11 @@ $bids = $bidDAO->retrieveByUserid($userid);
 
 $courseDAO = new CourseDAO();
 
+$roundDAO = new RoundDAO();
+$roundInfo = $roundDAO->retrieveRoundInfo();
+$currentRound = $roundInfo->getRoundNum();
+$currentStatus = $roundInfo->getStatus();
+
 ?>
 
 <html>
@@ -24,11 +29,15 @@ $courseDAO = new CourseDAO();
         <link rel="stylesheet" type="text/css" href="include/style.css">
     </head>
     <body>
+
         <h1>BIOS BIDDING</h1>
         <h2>Welcome <?=$name?>
+
+        
         <p>
             <a href='logout.php'>Logout</a>
         </p>
+        
         
         <table>
             <tr>
@@ -44,12 +53,41 @@ $courseDAO = new CourseDAO();
         <?php
             foreach ($bids as $bid){
 
-                //function for drop bid button
-                $dropbid_button = "";
-                if($bid->getStatus() == 'pending'){
-                    $dropbid_button = "<button onclick=\"location.href='dropbid.php'\">Drop Bid</button>";
-                
-                } 
+                $code = $bid->getCode();
+                $section = $bid->getSection();
+                $amount = $bid->getAmount();
+                $status = $bid->getStatus();
+
+                $form = "";
+
+                // Check if round 1 = 'drop bid'
+                if($currentRound == '1' && $currentStatus == 'opened'){
+                    $_SESSION['code'] = $code;
+                    $_SESSION['section'] = $section;
+                    $_SESSION['amount'] = $amount;
+
+                    $form = "process_dropbid.php";
+
+                    echo 
+                    "<form method = 'POST' action = '$form'>";
+
+                  
+
+                } else if($currentRound == '1' && $currentStatus == 'closed'){
+                    // Show results
+                    
+                } else { // CurrentRound == '2' && currentStatus == 'opened'
+                    $_SESSION['code'] = $code;
+                    $_SESSION['section'] = $section;
+                    $_SESSION['amount'] = $amount;
+
+                    $form = "process_dropsection.php";
+
+                    echo 
+                    "<form method = 'POST' action = '$form'>";
+
+                }
+
                 echo "
                 <tr>
                     <td>{$bid->getCode()}</td>
@@ -57,13 +95,17 @@ $courseDAO = new CourseDAO();
                     <td>{$bid->getSection()}</td>
                     <td>{$bid->getAmount()}</td>
                     <td>{$bid->getStatus()}</td>
-                    <td>$dropbid_button</td>
+                    <td><input type = 'submit' value = 'Drop Bid'></td>
                 </tr>";
+
+                echo '</form>';
 
             }
         ?>
 
         </table>
+
+
 
         <table>
             <tr>
@@ -74,10 +116,16 @@ $courseDAO = new CourseDAO();
         
         <p>
             <a id="add" href="placebid.php">Plan & Bid</a><br>
-            <a id="dropbid" href="dropbid.php">Drop Bid</a><br>
             <a id="dropsection" href="dropsection.php">Drop Section</a>
         </p>
         <p><?=printErrors()?>
+
+        <?php
+        if(isset($_SESSION['success'])){
+            $success = $_SESSION['success'];
+            echo "$success";
+        }
+        ?>
 
     </body>
 
