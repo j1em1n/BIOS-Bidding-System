@@ -89,8 +89,9 @@ class BidDAO {
         $amount = $bid->getAmount();
         $code = $bid->getCode();
         $section = $bid->getSection();
+        $status = 'pending';
         
-        $sql = 'INSERT INTO bid (userid, amount, code, section) VALUES (:userid, :amount, :code, :section)';
+        $sql = 'INSERT INTO bid (userid, amount, code, section, status) VALUES (:userid, :amount, :code, :section, :status)';
 
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
@@ -101,6 +102,7 @@ class BidDAO {
         $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
         $stmt->bindParam(':code', $code, PDO::PARAM_STR);
         $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
 
         $isAddOK = $stmt->execute();
 
