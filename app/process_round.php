@@ -18,6 +18,10 @@ if(isset($_POST['submit']) && isset($_POST['number'])){
     } else {
         $_SESSION['errors'] = "Round could not be $status_entered";
     }
+
+    if($currentRound == 1) {
+        require_once 'include/round1_clearing.php';
+    }
     
     header("Location: adminround.php");
     exit();

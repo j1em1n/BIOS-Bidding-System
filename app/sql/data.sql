@@ -32,6 +32,8 @@ CREATE TABLE section
     instructor varchar(300) NOT NULL,
     venue varchar(300) NOT NULL,
     size int(5) NOT NULL,
+    min_bid varchar(300) NOT NULL,
+    vacancies int(5) NOT NULL,
     CONSTRAINT section_pk PRIMARY KEY (course, section),
     CONSTRAINT section_fk FOREIGN KEY (course) REFERENCES course(course)
 );

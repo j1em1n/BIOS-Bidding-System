@@ -5,7 +5,9 @@ $errors = doBootstrap();
 if(!empty($errors)) {
     $_SESSION['errors'] = $errors;
     header("Location: bootstrap.php");
+    exit();
 } else {
     $_SESSION['success'] = "Bootstrap successful! Bidding Round 1 started.";
     header("Location: bootstrap.php");
+    exit();
 }

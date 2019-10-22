@@ -372,7 +372,7 @@ function doBootstrap() {
 				if(!empty($rowErrors)){
 					$errors = array_merge($errors, $rowErrors);
 				} else {
-					$sectionObj = new Section($coursecode, $sectionid, $day, $start, $end, $instructor, $venue, $size);
+					$sectionObj = new Section($coursecode, $sectionid, $day, $start, $end, $instructor, $venue, $size, '10.0', $size);
 					$sectionDAO->add($sectionObj);
 					$section_processed++; #line added successfully  
 				}
@@ -604,7 +604,7 @@ function doBootstrap() {
 
 								// Check for class timetable clash
 								// Iterate through each of the student's current bids
-								echo $countBid."<br>";
+								//echo $countBid."<br>";
 								foreach ($studentBids as $b) {
 									// Retrieve the section corresponding to the bid
 									$bCode = $b->getCode();

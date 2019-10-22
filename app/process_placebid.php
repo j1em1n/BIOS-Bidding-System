@@ -72,8 +72,8 @@
     // Perform logic validations only if input data validations are passed
 
     // Check if bid is above min bid
-    $minBid = 10.0;
-    if (($currentRound == 1 && $edollar < 10.0) || ($currentRound == 2 && $edollar < $minBid)) {
+    $minBid = $section->getMinBid();
+    if ($edollar < $minBid) {
         $_SESSION['errors'][] = "Your bid is less than the minimum bid";
     }
 

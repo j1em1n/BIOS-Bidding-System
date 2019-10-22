@@ -15,7 +15,7 @@ class SectionDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
+            $result[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size'], $row['min_bid'], $row['vacancies']);
         }
 
         $stmt = null;
@@ -39,7 +39,7 @@ class SectionDAO {
 
         $section = null;
         if($row = $stmt->fetch()) {
-            $section = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
+            $section = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size'], $row['min_bid'], $row['vacancies']);
         }
        
         $stmt = null;
@@ -64,7 +64,7 @@ class SectionDAO {
     }    
 
     public function add($section) {
-        $sql = 'INSERT INTO section (course, section, day, start, end, instructor, venue, size) VALUES (:course, :section, :day, :start, :end, :instructor, :venue, :size)';
+        $sql = 'INSERT INTO section (course, section, day, start, end, instructor, venue, size, min_bid, vacancies) VALUES (:course, :section, :day, :start, :end, :instructor, :venue, :size, :minbid, :vacancies)';
         
         $course = $section->getCourse();
         $sectionId = $section->getSection();
@@ -74,6 +74,8 @@ class SectionDAO {
         $instructor = $section->getInstructor();
         $venue = $section->getVenue();
         $size = $section->getSize();
+        $minbid = $section->getMinBid();
+        $vacancies = $section->getVacancies();
 
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
@@ -88,6 +90,8 @@ class SectionDAO {
         $stmt->bindParam(':instructor', $instructor, PDO::PARAM_STR);
         $stmt->bindParam(':venue', $venue, PDO::PARAM_STR);
         $stmt->bindParam(':size', $size, PDO::PARAM_INT);
+        $stmt->bindParam(':minbid', $minbid, PDO::PARAM_STR);
+        $stmt->bindParam(':vacancies', $vacancies, PDO::PARAM_INT);
 
         $isAddOK = $stmt->execute();
 
@@ -95,6 +99,26 @@ class SectionDAO {
         $conn = null;
 
         return $isAddOK;
+    }
+
+    public function updateVacancies($course, $section, $vacancies) {
+        $sql = 'UPDATE section SET vacancies=:vacancies WHERE course=:course AND section=:section';
+
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        $stmt->bindParam(':vacancies', $vacancies, PDO::PARAM_INT);
+
+        $isUpdateOK = $stmt->execute();
+
+        $stmt = null;
+        $conn = null;
+
+        return $isUpdateOK;
     }
 
     public function getSectionsByCourse($course){
