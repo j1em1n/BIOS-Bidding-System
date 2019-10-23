@@ -18,5 +18,8 @@ class Admin{
         return $this->hashedpassword;
     }
 
+    public function authenticate($enteredPwd) {
+        return password_verify ($enteredPwd, $this->hashedpassword);
+    }
 }
 ?>
