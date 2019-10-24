@@ -22,6 +22,27 @@ class BidDAO {
             
         return $result;
     }
+ 
+    public  function retrieveAllOrderByAmount() {
+        $sql = 'SELECT * FROM bid ORDER BY amount DESC';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = array();
+
+        while($row = $stmt->fetch()) {
+            $result[] = new Bid($row['userid'], $row['amount'],$row['code'], $row['section'], $row['status']);
+        }
+        $stmt = null;
+        $conn = null;
+            
+        return $result;
+    }
 
     public function retrieveBidsBySection($code, $section) {
         $sql = 'SELECT * FROM bid WHERE code=:code AND section=:section ORDER BY amount DESC';
