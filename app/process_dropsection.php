@@ -48,6 +48,12 @@
                 if ($isDeleteOK) {
                     $_SESSION['success'] = "Bid section dropped successfully. You have e$$updatedamount left.";
                     header("Location: index.php");
+
+                    // if the current round is round 2, process bids to get predicted results
+                    if ($currentRound == 2) {
+                        require_once 'include/round2_bid_processing.php';
+                    }
+
                     exit();
                     
                 } else {

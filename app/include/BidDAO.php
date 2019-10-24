@@ -22,27 +22,6 @@ class BidDAO {
             
         return $result;
     }
- 
-    public  function retrieveAllOrderByAmount() {
-        $sql = 'SELECT * FROM bid ORDER BY amount DESC';
-            
-        $connMgr = new ConnectionManager();      
-        $conn = $connMgr->getConnection();
-
-        $stmt = $conn->prepare($sql);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute();
-
-        $result = array();
-
-        while($row = $stmt->fetch()) {
-            $result[] = new Bid($row['userid'], $row['amount'],$row['code'], $row['section'], $row['status']);
-        }
-        $stmt = null;
-        $conn = null;
-            
-        return $result;
-    }
 
     public function retrieveBidsBySection($code, $section) {
         $sql = 'SELECT * FROM bid WHERE code=:code AND section=:section ORDER BY amount DESC';
@@ -213,7 +192,7 @@ class BidDAO {
 
     public function getBidsBySectionStatus($course, $section, $status){
 
-        $sql = 'SELECT * FROM bid WHERE code=:course AND section=:section AND status=:status';
+        $sql = 'SELECT * FROM bid WHERE code=:course AND section=:section AND status=:status ORDER BY amount DESC';
         
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
@@ -261,6 +240,31 @@ class BidDAO {
 
     public function updateBidStatus($bid, $newStatus) {
         $sql = 'UPDATE bid SET status=:newStatus WHERE userid=:userid AND code=:code AND section=:section';
+
+        $userid = $bid->getUserid();
+        $code = $bid->getCode();
+        $section = $bid->getSection();
+
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':code', $code, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+
+        $isUpdateOK = $stmt->execute();
+
+        $stmt = null;
+        $conn = null;
+        
+        return $isUpdateOK;
+    }
+
+    public function updatePredicted($bid, $newStatus) {
+        $sql = 'UPDATE bid SET predicted=:newStatus WHERE userid=:userid AND code=:code AND section=:section';
 
         $userid = $bid->getUserid();
         $code = $bid->getCode();

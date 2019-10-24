@@ -1,6 +1,6 @@
 <?php
-    require_once 'include/protect.php';
-    require_once 'include/common.php';
+    require_once 'protect.php';
+    require_once 'common.php';
 
 // retrieve bids, process based on highest bids and vacancies available, place bids into table with ranking, bid price, state (successful/unsuccessful)
 // update student e$ based on state
