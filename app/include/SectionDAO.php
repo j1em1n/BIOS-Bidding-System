@@ -121,6 +121,26 @@ class SectionDAO {
         return $isUpdateOK;
     }
 
+    public function updateMinBid($course, $section, $minbid) {
+        $sql = 'UPDATE section SET min_bid=:minbid WHERE course=:course AND section=:section';
+
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        $stmt->bindParam(':minbid', $minbid, PDO::PARAM_INT);
+
+        $isUpdateOK = $stmt->execute();
+
+        $stmt = null;
+        $conn = null;
+
+        return $isUpdateOK;
+    }
+
     public function getSectionsByCourse($course){
 
         $sql = 'SELECT section FROM section WHERE course=:course';
@@ -137,6 +157,32 @@ class SectionDAO {
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $sections[] = $row['section'];
+        }
+       
+        $stmt = null;
+        $conn = null;
+
+        return $sections;
+    }
+
+    public function searchByCourse($searchstr) {
+        $sql = "SELECT * FROM section WHERE LOWER(course) LIKE :searchstr";
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $searchstr = strtolower($searchstr);
+        $searchstr = "%$searchstr%";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':searchstr', $searchstr, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $sections = array();
+
+        while($row = $stmt->fetch()) {
+            $sections[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size'], $row['min_bid'], $row['vacancies']);
         }
        
         $stmt = null;

@@ -80,3 +80,77 @@ function printSuccess() {
         unset($_SESSION['success']);
     }    
 }
+
+function numToDay($n, $format) {
+    $days_full = [
+        '1' => 'Monday',
+        '2' => 'Tuesday',
+        '3' => 'Wednesday',
+        '4' => 'Thursday',
+        '5' => 'Friday',
+        '6' => 'Saturday',
+        '7' => 'Sunday'
+    ];
+    $days_short = [
+        '1' => 'Mon',
+        '2' => 'Tues',
+        '3' => 'Wed',
+        '4' => 'Thurs',
+        '5' => 'Fri',
+        '6' => 'Sat',
+        '7' => 'Sun'
+    ];
+    if ($format == 'full') {
+        return $days_full[$n];  
+    } elseif ($format == 'short') {
+        return $days_short[$n];
+    }
+}
+
+function printSectionInfo($sections) {
+    echo "<table>
+    <tr>
+        <th>Course</th>
+        <th>Section</th>
+        <th>Day</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Instructor</th>
+        <th>Venue</th>
+        <th>Size</th>
+        <th>Vacancies</th>
+        <th>Minimum Bid</th>
+        <th>Enter e$</th>
+        <th></th>
+    </tr>";
+    foreach($sections as $section) {
+        $code = $section->getCourse();
+        $sectId = $section->getSection();
+        $day = numToDay($section->getDay(), 'short');
+        $start = $section->getStart();
+        $end = $section->getEnd();
+        $instructor = $section->getInstructor();
+        $venue = $section->getVenue();
+        $size = $section->getSize();
+        $vacancies = $section->getVacancies();
+        $minBid = $section->getMinBid();
+
+        echo "<tr>
+            <form action='process_placebid.php' method='POST'>
+            <td>{$code}<input type='hidden' name='coursecode' value='{$code}'></td>
+            <td>{$sectId}<input type='hidden' name='sectionnum' value='{$sectId}'></td>
+            <td>{$day}</td>
+            <td>{$start}</td>
+            <td>{$end}</td>
+            <td>{$instructor}</td>
+            <td>{$venue}</td>
+            <td>{$size}</td>
+            <td>{$vacancies}</td>
+            <td>{$minBid}</td>
+            <td><input type='number' step='.01' name='edollar' style='width=50px'></td>
+            <td><input type='submit' value='Place bid'></td>
+            </form>
+        </tr>";
+    }
+    echo "</table>";
+}
