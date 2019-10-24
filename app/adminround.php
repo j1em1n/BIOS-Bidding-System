@@ -10,6 +10,7 @@ $currentStatus = $roundInfo->getStatus();
 
 $bidDAO = new BidDAO();
 $allBids = $bidDAO->retrieveAllOrderByAmount();
+$allBidsTotal = count($allBids);
 
 $sectionDAO = new SectionDAO();
 $sections = $sectionDAO->retrieveAll();
@@ -70,6 +71,12 @@ if ($currentStatus == "closed" && $currentRound == 1) {
 <?php
 
 if ($currentStatus == "closed" && $currentRound == 1) {
+
+    echo "Vacancies: $vacancies 
+        
+        <br><br>
+    
+        Total number of bids: $allBidsTotal <br>";
 
     echo "<table>
             <tr>
