@@ -5,48 +5,39 @@ require_once '../include/token.php';
 
 
 // isMissingOrEmpty(...) is in common.php
-$errors = [ isMissingOrEmpty ('username'), 
+$errors = [ isMissingOrEmpty ('userid'), 
             isMissingOrEmpty ('password') ];
 $errors = array_filter($errors);
 
 
 if (isEmpty($errors)) {
-    $username = $_POST['username'];
+    $userid = $_POST['userid'];
     $password = $_POST['password'];
 
     # complete authenticate API
 
-    # check if username and password are right. generate a token and return it in proper json format
+    # check if userid and password are right. generate a token and return it in proper json format
     
         $adminDAO = new AdminDAO();
-        $admin = $adminDAO->retrieve($username);
+        $admin = $adminDAO->retrieve($userid);
     
         if ($admin != null && $admin->authenticate($password) ) {
-            # after you are sure that the $username and $password are correct, you can do 
+            # after you are sure that the $userid and $password are correct, you can do 
             # generate a secret token for the user based on their username
 
             $token = generate_token($username);
+            $_SESSION['token'] = $token;
 
-            # verify whether the token is valid
-            $checkToken = verify_token($token);
-            if($checkToken == FALSE){
-                $result = [
-                    "status" => "error",
-                    "message"=> "Invalid token"
-                ];    
-            } else {
-                # return the token to the user via JSON    
-                $result = [
-                    "status" => "success", 
-                    "token" => $token
-                ];
-                $_SESSION['token'] = $token;
-            }
+            $result = [
+                "status" => "success", 
+                "token" => $token
+            ];
+
         # return error message if something went wrong 
         } else {
             $result = [
                 "status" => "error",
-                "message"=> "username/password invalid"
+                "message"=> "userid/password invalid"
             ];
         }
 } else {
