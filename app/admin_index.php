@@ -12,3 +12,4 @@ require_once 'include/common.php';
     <p><a href='json/stop.php'>Close Round (JSON)</a></p>
     <p><a href='logout.php'>Logout</a></p>
 </html>
+

@@ -8,12 +8,26 @@ $roundInfo = $roundDAO->retrieveRoundInfo();
 $currentRound = $roundInfo->getRoundNum();
 $currentStatus = $roundInfo->getStatus();
 
+$bidDAO = new BidDAO();
+$allBids = $bidDAO->retrieveAllOrderByAmount();
+$allBidsTotal = count($allBids);
+
+$sectionDAO = new SectionDAO();
+$sections = $sectionDAO->retrieveAll();
+
+foreach ($sections as $section) {
+    $vacancies = $section->getVacancies();
+}
+
 $display = $currentRound;
 if ($currentStatus == "closed" && $currentRound == 1) {
     $display = 2;
+
 } elseif ($currentStatus == "closed") {
     $display = 1;
 }
+
+
 
 ?>
 
@@ -54,5 +68,39 @@ if ($currentStatus == "closed" && $currentRound == 1) {
     </body>
 </html>
 
+<?php
+
+if ($currentStatus == "closed" && $currentRound == 1) {
+
+    echo "Vacancies: $vacancies 
+        
+        <br><br>
+    
+        Total number of bids: $allBidsTotal <br>";
+
+    echo "<table>
+            <tr>
+                <td>Ranking</td>
+                <td>Bid Price</td>
+                <td>State</td>
+            </tr>";
+
+    $rank = 1;
+    foreach($allBids as $eachbid){
+            echo "<tr>
+                    <td>$rank</td>
+                    <td>{$eachbid->getAmount()}</td>
+                    <td>{$eachbid->getStatus()}</td>
+                </tr>";
+            
+                $rank += 1;
+        
+    }
+
+    echo "</table>";
+
+
+}
+?>
 
 </html>

@@ -148,16 +148,10 @@ $currentStatus = $roundInfo->getStatus();
         <p>
             <a id="add" href="placebid.php">Plan & Bid</a><br>
         </p>
-        <p><?=printErrors()?>
-
-        <?php
-        if(isset($_SESSION['success'])){
-            $success = $_SESSION['success'];
-            echo "$success";
-        }
-
-
-        ?>
+        <p>
+            <?=printErrors()?>
+            <?=printSuccess()?>
+        </p>
 
     </body>
 
