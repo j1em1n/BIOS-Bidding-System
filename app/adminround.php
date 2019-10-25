@@ -9,11 +9,15 @@ $currentRound = $roundInfo->getRoundNum();
 $currentStatus = $roundInfo->getStatus();
 
 $bidDAO = new BidDAO();
-$allBids = $bidDAO->retrieveAllOrderByAmount();
-$allBidsTotal = count($allBids);
+$bids = $bidDAO->retrieveAll();
 
 $sectionDAO = new SectionDAO();
 $sections = $sectionDAO->retrieveAll();
+
+//only avail those that bidded.
+foreach($bids as $eachbid){
+    $bidsArray[] = [$eachbid->getCode() => $eachbid->getSection()];
+}
 
 foreach ($sections as $section) {
     $vacancies = $section->getVacancies();
@@ -68,15 +72,43 @@ if ($currentStatus == "closed" && $currentRound == 1) {
     </body>
 </html>
 
+
+<form method = 'post'>
+<select name = 'form' onchange='this.form.submit()'>
+<option value = '' selected = 'selected'>Please Select</option>
 <?php
 
-if ($currentStatus == "closed" && $currentRound == 1) {
+var_dump($sectionsArray);
 
-    echo "Vacancies: $vacancies 
+foreach($bidsArray as $bidsArray){
+    var_dump($bidsArray);
+    //if(isset($_POST['form'] == $bidsArray))
+    foreach($bidsArray as $course=>$sect){
+
+        echo "<option value = '$course, $sect'>$course, $sect</option>";
+    }
+}
+
+echo "</select></form>";
+
+if ($currentStatus == "closed" && $currentRound == 1 && isset($_POST['form'])) {
+
+    $selectedCodeSect = $_POST['form'];
+
+    $arr = explode(",", $selectedCodeSect, 2);
+    $selectedCode = trim($arr[0]);
+    $selectedSection = trim($arr[1]);
+
+    $allBids = $bidDAO->retrieveBidsBySection($selectedCode, $selectedSection);
+    $allBidsTotal = count($allBids);
+
+    echo "
+        <h2>Results for $selectedCodeSect</h2>        
         
-        <br><br>
-    
-        Total number of bids: $allBidsTotal <br>";
+        Vacancies: $vacancies 
+        <br>
+        <br>
+        Total number of bids: $allBidsTotal <br><br>";
 
     echo "<table>
             <tr>
