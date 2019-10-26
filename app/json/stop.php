@@ -7,16 +7,16 @@ $roundDAO = new RoundDAO();
 $roundInfo = $roundDAO->retrieveRoundInfo();
 $currentRound = $roundInfo->getRoundNum();
 $currentStatus = $roundInfo->getStatus();
-$token = $_SESSION['token'];
+//$token = $_SESSION['token'];
 
 # verify whether the token is valid
-$checkToken = verify_token($token);
-if($checkToken == FALSE){
-    $result = [
-        "status" => "error",
-        "message"=> "Invalid token"
-    ];    
-} else {  
+// $checkToken = verify_token($token);
+// if($checkToken == FALSE){
+//     $result = [
+//         "status" => "error",
+//         "message"=> "Invalid token"
+//     ];    
+// } else {  
     // Ensure that if the current status is open, we should be able to close it
     if ($currentStatus == "opened"){
         $status_entered = "closed";
@@ -45,7 +45,7 @@ if($checkToken == FALSE){
         ];
     } 
     
-}
+// }
     header('Content-Type: application/json');
     echo json_encode($result, JSON_PRETTY_PRINT);
 

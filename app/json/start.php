@@ -7,16 +7,16 @@ $roundDAO = new RoundDAO();
 $roundInfo = $roundDAO->retrieveRoundInfo();
 $currentRound = $roundInfo->getRoundNum();
 $currentStatus = $roundInfo->getStatus();
-$token = $_SESSION['token'];
+//$token = $_SESSION['token'];
 
-# verify whether the token is valid
-$checkToken = verify_token($token);
-if($checkToken == FALSE){
-    $result = [
-        "status" => "error",
-        "message"=> "Invalid token"
-    ];    
-} else {
+// # verify whether the token is valid
+// $checkToken = verify_token($token);
+// if($checkToken == FALSE){
+//     $result = [
+//         "status" => "error",
+//         "message"=> "Invalid token"
+//     ];    
+// } else {
     // If the current status is opened, success message should be shown
     if ($currentStatus == "opened"){
         $result = [
@@ -32,7 +32,7 @@ if($checkToken == FALSE){
 
     // If the current status is closed and current round is 0 / 1, we should be able to open the round successfully
     } elseif ($currentStatus == "closed" && ($currentRound == 0 || $currentRound == 1)){
-        $newNumber = $currentRound++;
+        $newNumber = strval(intval($currentRound) + 1);
         $status_entered = "opened";
         $UpdateStatusOK = $roundDAO->updateRoundStatus($status_entered);
         $UpdateNumberOK = $roundDAO->updateRoundNumber($newNumber);
@@ -41,7 +41,7 @@ if($checkToken == FALSE){
         if($UpdateStatusOK && $UpdateNumberOK){
             $result = [
                 "status" => "success", 
-                "round" => $currentRound
+                "round" => $newNumber
             ];
         } else {
             $result = [
@@ -51,7 +51,7 @@ if($checkToken == FALSE){
         }
     } 
     
-}
+// }
 
     header('Content-Type: application/json');
     echo json_encode($result, JSON_PRETTY_PRINT);
