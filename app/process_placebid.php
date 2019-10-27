@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <?php
     require_once "include/common.php";
+    require_once "include/process_bids.php";
 
     $courseCode = $_POST['coursecode'];
     $sectionNum = $_POST['sectionnum'];
@@ -138,8 +139,8 @@
 
     // If round 2, check if there are vacancies in the section
     if ($currentRound == 2) {
-        if (count($bidDAO->getBidsBySectionStatus($courseCode, $sectionNum, "Success")) == $section->getSize()) {
-            $_SESSION['errors'] = "There are no vacancies left for this section";
+        if (!($section->getVacancies() > 0)) {
+            $_SESSION['errors'][] = "There are no vacancies left for this section";
         }
     }
 
@@ -156,13 +157,25 @@
         $updatedAmount = $student->getEdollar() - $edollar;
         $studentDAO->updateEdollar($userid, $updatedAmount);
 
-        echo "<head></head>
-        <body>
-        <h2>Your bid for $courseCode {$course->getTitle()}, Section $sectionNum was placed successfully!</h2>
-        <h2>You have $$updatedAmount left in your balance.</h2>
-        <a href=\"placebid.php\">Place another bid | </a>
-        <a href=\"index.php\">Home</a>
-        </body>";
+        $_SESSION['success'] = "Your bid for $courseCode {$course->getTitle()}, Section $sectionNum was placed successfully!<br>
+        You have $$updatedAmount left in your balance.";
+
+        // if the current round is round 2, process bids to get predicted results
+        if ($currentRound == 2) {
+            $results = getBiddingResults($section, $currentRound, $bidDAO, $sectionDAO);
+            $successful = $results[0];
+            $unsuccessful = $results[1];
+            foreach($successful as $bid) {
+                $bidDAO->updatePredicted($bid, "Success");
+            }
+            foreach($unsuccessful as $bid) {
+                $bidDAO->updatePredicted($bid, "Fail");
+            }
+        }
+
+        header("Location: placebid.php");
+        exit();
+        
     }
     
 ?>

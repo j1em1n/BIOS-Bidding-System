@@ -1,5 +1,6 @@
 <?php
 require_once 'include/common.php';
+require_once 'include/process_bids.php';
 
 if(isset($_POST['submit']) && isset($_POST['number'])){
 
@@ -15,13 +16,12 @@ if(isset($_POST['submit']) && isset($_POST['number'])){
 
     if($UpdateStatusOK && $UpdateNumberOK){
         $_SESSION['success'] = "Round successfully $status_entered";
-    
     } else {
         $_SESSION['errors'] = "Round could not be $status_entered";
     }
 
-    if($currentRound == 1) {
-        require_once 'include/round1_clearing.php';
+    if ($status_entered == 'closed') {
+        processBids();
     }
     
     header("Location: adminround.php");

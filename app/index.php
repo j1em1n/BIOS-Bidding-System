@@ -62,7 +62,7 @@ $currentStatus = $roundInfo->getStatus();
                 $drop = "";
 
                 // Check if round 1 = 'drop bid'
-                if($currentStatus == 'opened' && $status == 'pending'){ // round 1 and 2 can drop bid
+                if($currentStatus == 'opened' && $status == 'Pending'){ // round 1 and 2 can drop bid
                     $_SESSION['code'] = $code;
                     $_SESSION['section'] = $section;
                     $_SESSION['amount'] = $amount;
@@ -93,7 +93,7 @@ $currentStatus = $roundInfo->getStatus();
                     </tr>";
                     
 
-                } else if($currentRound == '2' && $currentStatus == 'opened' && $status == 'successful'){
+                } else if($currentRound == '2' && $currentStatus == 'opened' && $status == 'Success'){
                     $_SESSION['code'] = $code;
                     $_SESSION['section'] = $section;
                     $_SESSION['amount'] = $amount;
@@ -107,7 +107,7 @@ $currentStatus = $roundInfo->getStatus();
 
                 }
 
-                if($currentStatus == 'opened' && ($status == 'pending' || $status == 'successful')){
+                if($currentStatus == 'opened' && ($status == 'Pending' || $status == 'Success')){
 
 
                     echo "
@@ -124,7 +124,7 @@ $currentStatus = $roundInfo->getStatus();
                     }
                     echo "    
                         <td style='background-color: $color'>{$bid->getStatus()}</td>";
-                        if($currentStatus == 'opened' && ($status == 'pending' || $status == 'successful')){
+                        if($currentStatus == 'opened' && ($status == 'Pending' || $status == 'Success')){
                             echo "<td><input type = 'submit' value = '$drop'></td>";
                         } 
                         

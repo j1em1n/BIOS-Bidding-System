@@ -113,7 +113,7 @@ class BidDAO {
         $amount = $bid->getAmount();
         $code = $bid->getCode();
         $section = $bid->getSection();
-        $status = 'pending';
+        $status = $bid->getStatus();
         
         $sql = 'INSERT INTO bid (userid, amount, code, section, status) VALUES (:userid, :amount, :code, :section, :status)';
 
