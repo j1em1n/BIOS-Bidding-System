@@ -15,8 +15,8 @@
     if (isEmpty($errors)) {
         $userid = $_POST['userid'];
         $edollar = $_POST['amount'];
-        $course = $_POST['course'];
-        $section = $_POST['section'];
+        $courseCode = $_POST['course'];
+        $sectionNum = $_POST['section'];
 
         # complete authenticate API
         
@@ -54,8 +54,7 @@
         }
 
         // Check for valid userid
-        $verifyStud = $studentDAO->retrieve($userid);
-        if($verifyStud == null){
+        if(!($studentDAO->retrieve($userid))){
             $errors = ["invalid userid"];
         }
 
@@ -158,10 +157,10 @@
             if(isEmpty($errors)){
 
                 // Check if student has any existing bid
-                $bid = $bidDAO->retrieve($userid, $course, $section);
+                $bid = $bidDAO->retrieve($userid, $courseCode, $sectionNum);
 
                 if ($bid == null){
-                    $newBid = new Bid($userid, $edollar, $course, $section, "Pending");
+                    $newBid = new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending");
                     $addResult = $bidDAO->add($newBid);
                     if ($addResult){
                         $result = [
@@ -170,7 +169,7 @@
                     }
                 } elseif ($bid->getStatus() == "Pending"){
                     // Update the bid if there's an existing bid and the status is Pending
-                    $updateResult = $bidDAO->updateBid($userid, $course, $section);
+                    $updateResult = $bidDAO->updateBid($userid, $courseCode, $sectionNum);
                     if ($updateResult){
                         $result = [
                             "status" => "success" 

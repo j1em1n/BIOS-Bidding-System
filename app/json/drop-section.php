@@ -1,7 +1,6 @@
 <?php
 
     require_once '../include/protect.php';
-    //require_once '../include/protect_roundclosed.php';
     require_once '../include/common.php';
 
     // isMissingOrEmpty(...) is in common.php
@@ -46,24 +45,30 @@
 
         // If there is active bidding round, (course, userid and section are valid) and round is currently active
         if (isEmpty($errors)){
-            if (!($bidDAO->retrieve($userid, $courseCode, $sectionNum))){
-                $errors = ["no such bid"];
-            } else {
-                $currentedollars = $student->getEdollar();
-                $updatedamount = 0.0;
-
-                $selected_bid = $bidDAO->retrieve($userid, $courseCode, $sectionNum);
-                    
-                $updatedamount =  strval($currentedollars + $biddedamount);
-                $isDeleteOK = $bidDAO->delete($selected_bid);
+            // now check against USER's BID INFO
+            $student = $studentDAO->retrieve($userid);
+            $currentedollars = $student->getEdollar();
+            $updatedamount = 0.0;
+            
+            $getBid = $bidDAO->retrieve($userid, $courseCode, $sectionNum);
+            if ($getBid->getStatus() == "successful"){
+                //update student entry in bid table
+                $isDeleteOK = $bidDAO->delete($getBid);
 
                 if ($isDeleteOK) {
+                    $bidamound = $getBid->getAmount();
+                    $updatedamount = $currentedollars + $bidamount;
+                    //update edollars
                     $studentDAO->updateEdollar($userid, $updatedamount);
+
                     $result = [
                         "status" => "success" 
                     ];
+                } else {
+                    $errors = ["no such section"];
                 }
             }
+        
         }
         
     }
