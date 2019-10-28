@@ -56,7 +56,7 @@
                 $isDeleteOK = $bidDAO->delete($getBid);
 
                 if ($isDeleteOK) {
-                    $bidamound = $getBid->getAmount();
+                    $bidamount = $getBid->getAmount();
                     $updatedamount = $currentedollars + $bidamount;
                     //update edollars
                     $studentDAO->updateEdollar($userid, $updatedamount);
