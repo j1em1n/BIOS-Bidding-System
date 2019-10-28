@@ -2,7 +2,7 @@
 DROP SCHEMA IF EXISTS is212_spm_data;
 CREATE SCHEMA is212_spm_data;
 
-DROP TABLE IF EXISTS student;
+-- DROP TABLE IF EXISTS student;
 CREATE TABLE student
 (	userid varchar(300) NOT NULL PRIMARY KEY,
 	password varchar(300) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE student
     edollar varchar(300) NOT NULL
 );
 
-DROP TABLE IF EXISTS course;
+-- DROP TABLE IF EXISTS course;
 CREATE TABLE course
 (	course varchar(300) NOT NULL PRIMARY KEY,
 	school varchar(300) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE course
     exam_end varchar(300) NOT NULL
 );
 
-DROP TABLE IF EXISTS section;
+-- DROP TABLE IF EXISTS section;
 CREATE TABLE section
 (	course varchar(300) NOT NULL,
 	section varchar(300) NOT NULL,
@@ -38,19 +38,20 @@ CREATE TABLE section
     CONSTRAINT section_fk FOREIGN KEY (course) REFERENCES course(course)
 );
 
-DROP TABLE IF EXISTS bid;
+-- DROP TABLE IF EXISTS bid;
 CREATE TABLE bid
 (	userid varchar(300) NOT NULL,
 	amount varchar(300) NOT NULL,
     code varchar(300) NOT NULL,
     section varchar(300) NOT NULL,
     status varchar(300) DEFAULT "Pending" NOT NULL,
+    predicted varchar(300),
     CONSTRAINT bid_pk PRIMARY KEY (userid, code, section),
     CONSTRAINT bid_fk1 FOREIGN KEY(userid) REFERENCES student(userid),
     CONSTRAINT bid_fk2 FOREIGN KEY(code, section) REFERENCES section(course, section)
 );
 
-DROP TABLE IF EXISTS course_completed;
+-- DROP TABLE IF EXISTS course_completed;
 CREATE TABLE course_completed
 (	userid varchar(300) NOT NULL,
 	code varchar(300) NOT NULL,
@@ -59,7 +60,7 @@ CREATE TABLE course_completed
     CONSTRAINT course_completed_fk2 FOREIGN KEY(code) REFERENCES course(course)
 );
 
-DROP TABLE IF EXISTS prerequisite;
+-- DROP TABLE IF EXISTS prerequisite;
 CREATE TABLE prerequisite
 (	course varchar(300) NOT NULL,
 	prerequisite varchar(300) NOT NULL,
@@ -68,15 +69,19 @@ CREATE TABLE prerequisite
     CONSTRAINT prerequisite_fk2 FOREIGN KEY(prerequisite) REFERENCES course(course)
 );
 
-DROP TABLE IF EXISTS admin;
+-- DROP TABLE IF EXISTS admin;
 CREATE TABLE admin
 (	userid varchar(300) NOT NULL PRIMARY KEY,
 	password varchar(300) NOT NULL
 );
 
-DROP TABLE IF EXISTS round;
+-- DROP TABLE IF EXISTS round;
 CREATE TABLE round
 (   round_num int NOT NULL,
     status varchar(300) NOT NULL,
     CONSTRAINT round_pk PRIMARY KEY (round_num, status)
 );
+
+
+INSERT INTO admin VALUES ('admin', '$2y$10$oz/TbNjQ.HqVRvz6JuRqx.jmSeorfBxIS4DXNWT7pY2r5qUf2ugc.');
+INSERT INTO round VALUES (1, 'opened');
