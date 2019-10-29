@@ -155,6 +155,14 @@ function printSectionInfo($sections) {
     echo "</table>";
 }
 
+function deleteFailedBids(){
+    $bidDAO = new BidDAO();
+    $failedBids = $bidDAO->getBidsByStatus("Fail");
+    foreach($failedBids as $bid) {
+        $bidDAO->delete($bid);
+    }
+}
+
 function commonValidationsJSON($filename) {
     $mandatoryFields = [
 		"authenticate.php" => ["password", "username"],
@@ -176,17 +184,6 @@ function commonValidationsJSON($filename) {
         $fieldsToCheck = $mandatoryFields[$filename];
 
 		foreach ($fieldsToCheck as $field) {
-            // if ($field == "token") {
-            //     if (!isset($_REQUEST[$field]) || empty($_REQUEST[$field])) {
-            //         $commonValidationErrors[] = "invalid token";
-            //     } else {
-            //         $token = $_REQUEST['token'];
-            //         $isValid = verify_token($token);
-            //         if (!$isValid || $isValid != "admin") {
-            //             $commonValidationErrors[] = "invalid token";
-            //         }
-            //     }
-            // } else
             if (!isset($_REQUEST[$field])) {
 				$commonValidationErrors[] = "missing $field";
 			} elseif (empty($_REQUEST[$field])) {

@@ -1,54 +1,50 @@
 <?php
-require_once '../include/protect.php';
 require_once '../include/common.php';
+require_once '../include/token.php';
+require_once '../include/process_bids.php';
 
-//status_entered
-$roundDAO = new RoundDAO();
-$roundInfo = $roundDAO->retrieveRoundInfo();
-$currentRound = $roundInfo->getRoundNum();
-$currentStatus = $roundInfo->getStatus();
-//$token = $_SESSION['token'];
+$errors = commonValidationsJSON(basename(__FILE__));
+$success = array();
 
-# verify whether the token is valid
-// $checkToken = verify_token($token);
-// if($checkToken == FALSE){
-//     $result = [
-//         "status" => "error",
-//         "message"=> "Invalid token"
-//     ];    
-// } else {  
-    // Ensure that if the current status is open, we should be able to close it
+if (empty($errors)) {
+    $roundDAO = new RoundDAO();
+    $roundInfo = $roundDAO->retrieveRoundInfo();
+    $currentRound = $roundInfo->getRoundNum();
+    $currentStatus = $roundInfo->getStatus();
+
+    // If the current status is open, we should be able to close it
     if ($currentStatus == "opened"){
-        $status_entered = "closed";
-        $UpdateStatusOK = $roundDAO->updateRoundStatus($status_entered);
-        $UpdateNumberOK = $roundDAO->updateRoundNumber($currentRound);
-
+        $updateStatusOK = $roundDAO->updateRoundStatus("closed");
+        try {
+            processBids();
+        } catch (Exception $e) {
+            $errors[] = $e->getMessage();
+        }
+        
         // Check if we have updated the current status successfully
-        if($UpdateStatusOK && $UpdateNumberOK){
-           $result = [
+        if($updateStatusOK){
+           $success = [
                 "status" => "success" 
             ];
 
-            // When the round status is close successfully, modify the current status of the students bid
+            // When the round status is closed successfully, modify the current status of the students bid
 
         } else {
-            $result = [
-                "status" => "error", 
-                "message" => ["Round could not be stop"]
-            ];
+            $errors[] = "round status could not be updated";
         }
     // Check that if the current status is close, an error message will be shown
     } elseif ($currentStatus == "closed"){
-        $result = [
-            "status" => "error", 
-            "message" => ["round already ended"]
-        ];
+        $errors[] = "round already ended";
     } 
-    
-// }
-    header('Content-Type: application/json');
-    echo json_encode($result, JSON_PRETTY_PRINT);
+}
 
+if (empty($errors) && !empty($success)) {
+    $result = $success;
+} else {
+    $result = jsonErrors($errors);
+}
+header('Content-Type: application/json');
+echo json_encode($result, JSON_PRETTY_PRINT);
 
 ?>
 
