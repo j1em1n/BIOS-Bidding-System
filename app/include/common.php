@@ -154,3 +154,61 @@ function printSectionInfo($sections) {
     }
     echo "</table>";
 }
+
+function commonValidationsJSON($filename) {
+    $mandatoryFields = [
+		"authenticate.php" => ["password", "username"],
+		"bootstrap.php" => ["token"],
+		"dump.php" => ["token"],
+		"start.php" => ["token"],
+		"stop.php" => ["token"],
+        "update-bid.php" => ["amount", "course", "section", "token", "userid"],
+        "delete-bid.php" => ["course", "section", "token", "userid"],
+        "drop-section.php" => ["course", "section", "token", "userid"],
+        "user-dump.php" => ["token", "userid"],
+        "bid-dump.php" => ["course", "section", "token"],
+        "section-dump.php" => ["course", "section", "token"],
+        "bid-status.php" => ["course", "section", "token"]
+    ];
+    $commonValidationErrors = array();
+	
+	if (array_key_exists($filename, $mandatoryFields)) {
+        $fieldsToCheck = $mandatoryFields[$filename];
+
+		foreach ($fieldsToCheck as $field) {
+            // if ($field == "token") {
+            //     if (!isset($_REQUEST[$field]) || empty($_REQUEST[$field])) {
+            //         $commonValidationErrors[] = "invalid token";
+            //     } else {
+            //         $token = $_REQUEST['token'];
+            //         $isValid = verify_token($token);
+            //         if (!$isValid || $isValid != "admin") {
+            //             $commonValidationErrors[] = "invalid token";
+            //         }
+            //     }
+            // } else
+            if (!isset($_REQUEST[$field])) {
+				$commonValidationErrors[] = "missing $field";
+			} elseif (empty($_REQUEST[$field])) {
+				$commonValidationErrors[] = "blank $field";
+			} elseif ($field == "token") {
+				$token = $_REQUEST["token"];
+				$isValid = verify_token($token);
+				if (!$isValid || $isValid != "admin") {
+					$commonValidationErrors[] = "invalid token";
+				}
+			}
+		}
+	}
+	
+    return $commonValidationErrors;
+}
+
+function jsonErrors($errors) {
+    $result = [
+        "status" => "error",
+        "messages" => array_values($errors)
+    ];
+    return $result;
+}
+?>
