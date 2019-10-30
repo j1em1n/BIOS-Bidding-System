@@ -1,6 +1,6 @@
 <?php
 require_once 'include/common.php';
-require_once 'include/process_bids.php';
+//require_once 'include/process_bids.php';
 
 if(isset($_POST['submit']) && isset($_POST['number'])){
 
@@ -22,6 +22,8 @@ if(isset($_POST['submit']) && isset($_POST['number'])){
 
     if ($status_entered == 'closed') {
         processBids();
+    } else {
+        deleteFailedBids();
     }
     
     header("Location: adminround.php");

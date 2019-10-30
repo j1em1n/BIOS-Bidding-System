@@ -3,12 +3,12 @@
 require_once '../include/common.php';
 require_once '../include/token.php';
 
-
-// isMissingOrEmpty(...) is in common.php
 $errors = commonValidationsJSON(basename(__FILE__));
 $success = array();
 
-if (empty($errors)) {
+if (!empty($errors)) {
+    $result = jsonErrors($errors);
+} else {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
@@ -40,13 +40,13 @@ if (empty($errors)) {
     } else {
         $errors[] = "invalid username";
     }
+    if (empty($errors) && !empty($success)) {
+        $result = $success;
+    } else {
+        sort($errors);
+        $result = jsonErrors($errors);
+    }
 } 
-
-if (empty($errors) && !empty($success)) {
-    $result = $success;
-} else {
-    $result = jsonErrors($errors);
-}
 
 header('Content-Type: application/json');
 echo json_encode($result, JSON_PRETTY_PRINT);

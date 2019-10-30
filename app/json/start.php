@@ -5,7 +5,9 @@ require_once '../include/token.php';
 $errors = commonValidationsJSON(basename(__FILE__));
 $success = array();
 
-if (empty($errors)) {
+if (!empty($errors)) {
+    $result = jsonErrors($errors);
+} else {
     $roundDAO = new RoundDAO();
     $roundInfo = $roundDAO->retrieveRoundInfo();
     $currentRound = $roundInfo->getRoundNum();
@@ -35,13 +37,14 @@ if (empty($errors)) {
     } elseif($currentRound == 2 && $currentStatus == "closed") {
         $errors[] = "round 2 ended";
     }
+    if (empty($errors) && !empty($success)) {
+        $result = $success;
+    } else {
+        sort($errors);
+        $result = jsonErrors($errors);
+    }
 }
 
-if (empty($errors) && !empty($success)) {
-    $result = $success;
-} else {
-    $result = jsonErrors($errors);
-}
 header('Content-Type: application/json');
 echo json_encode($result, JSON_PRETTY_PRINT);
 
