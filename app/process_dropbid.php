@@ -2,7 +2,7 @@
 
     require_once 'include/protect.php';
     require_once 'include/protect_roundclosed.php';
-    require_once 'include/process_bids.php';
+    //require_once 'include/process_bids.php';
     require_once 'include/common.php';
 
 
@@ -29,7 +29,7 @@
         $currentedollars = $student->getEdollar();
         $updatedamount = 0.0;
 
-        $selected_bid = $bidDAO->retrieve($userid, $code, $sectionnum);
+        $selected_bid = $bidDAO->retrieve($userid, $code);
             
         $updatedamount =  strval($currentedollars + $biddedamount);
         $studentDAO->updateEdollar($userid, $updatedamount);
