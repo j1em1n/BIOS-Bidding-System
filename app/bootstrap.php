@@ -19,10 +19,7 @@ require_once 'include/common.php';
 		</p>
 		<?php
 			printErrors();
-			if(isset($_SESSION['success'])) {
-				echo "<h3>{$_SESSION['success']}</h3>";
-				unset($_SESSION['success']);
-			}
+			printSuccess();
 		?>
 	</body>
 </html>
