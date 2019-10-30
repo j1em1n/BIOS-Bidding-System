@@ -3,81 +3,59 @@
 require_once '../include/common.php';
 require_once '../include/token.php';
 
-$retrieveInfo = $_REQUEST['r'];
-$retrieveInfo = json_decode($retrieveInfo);
+$errors = commonValidationsJSON(basename(__FILE__));
+$success = array();
 
-$coursecode = $retrieveInfo->course;
-$section = $retrieveInfo->section;
+if (!empty($errors)) {
+    $result = jsonErrors($errors);
+} else {
+    // Retrieve 'r' GET parameter
+    $jsonObj = json_decode($_REQUEST['r']);
+    
+    $coursecode = $jsonObj->course;
+    $section = $jsonObj->section;
 
-$errors = array();
-$result = array(); 
-$studentsID = array();
-$studentsAmount = array();
-$studentsInfo = array();
-$studentsInfo_2 = array();
+    $errors = array();
 
-//initialize DAO
-$sectionDAO = new SectionDAO();
-$bidDAO = new bidDAO();
+    //initialize DAO
+    $sectionDAO = new SectionDAO();
+    $bidDAO = new BidDAO();
+    $courseDAO = new CourseDAO();
 
-if(empty($coursecode)){
-    $errors[] = "Course is missing";
-} 
-
-if(empty($section)){
-    $errors[] = "Section is missing";
-}
-
-if(!empty($coursecode) && !empty($section)){
-    if(!$sectionDAO->searchByCourse($coursecode)){
+    // Check if course code is found in course
+    if(!($courseDAO->retrieve($coursecode))) {
         $errors[] = "invalid course";
-
-    } else { //correct course, invalid section
-        if(!$sectionDAO->searchByCourse($section)){
-            $errors[] = "invalid section";
-        }
+    } elseif (!($sectionDAO->retrieve($coursecode, $section))) {
+        // Check if section code is found in section (only for valid course code)
+        $errors[] = "invalid section";
     }
-}
 
-
-if(isEmpty($errors)){ 
-    
-    //course and section NOT empt
-
-    if($sectionDAO->retrieve($coursecode, $section)){
-        $result = [
-            "status" => "success" 
-        ];
-    
-        //display enrolled students here
-        $successfulBids = $bidDAO->getBidsByStatus('Success');
+    if(empty($errors)){ 
+        // Success if field validity checks are passed
+        $students = array();
+        //get enrolled students here
+        $successfulBids = $bidDAO->getEnrolledBidsBySection($coursecode, $section);
     
         foreach($successfulBids as $eachbid){
-            $studentsInfo["UserID"] = $eachbid->GetUserid();
-            $studentsInfo["Amount"] = $eachbid->GetAmount();
-            array_push($studentsInfo_2, $studentsInfo);
+            $students[] = [
+                "userid" => $eachbid->getUserid(),
+                "amount" => $eachbid->getAmount()
+            ];
         }
-
-        foreach($studentsInfo_2 as $eachinfo){
-            $result["students"][] = $eachinfo;
-
-        }
+        $success = [
+            "status" => "success",
+            "students" => $students
+        ];
+    }
+    if (empty($errors) && !empty($success)) {
+        $result = $success;
+    } else {
+        sort($errors);
+        $result = jsonErrors($errors);
     }
 }
-    
-
-
-
-if(!(isEmpty($errors))){
-
-    $result = [
-        "status" => "error",
-        "messages" => array_values($errors)
-    ];    
- }
-
 
 header('Content-Type: application/json');
-echo json_encode($result, JSON_PRETTY_PRINT);
+echo json_encode($result, JSON_PRESERVE_ZERO_FRACTION+JSON_PRETTY_PRINT);
 
 ?>

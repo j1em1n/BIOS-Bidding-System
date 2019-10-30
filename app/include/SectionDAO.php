@@ -143,7 +143,7 @@ class SectionDAO {
 
     public function getSectionsByCourse($course){
 
-        $sql = 'SELECT section FROM section WHERE course=:course';
+        $sql = 'SELECT * FROM section WHERE course=:course';
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
