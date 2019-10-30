@@ -256,10 +256,12 @@ function examClash($userid, $bidCourse) {
 function prereqCompleted($userid, $coursecode) {
     $prerequisiteDAO = new PrerequisiteDAO();
     $courseCompletedDAO = new CourseCompletedDAO();
-    $prerequisite = $prerequisiteDAO->retrieve($coursecode);
+    $prerequisite = $prerequisiteDAO->retrieveByCourse($coursecode);
     if ($prerequisite) {
-        if(!($courseCompletedDAO->retrieve($userid, $prerequisite->getPrerequisite()))){
-            return FALSE;
+        foreach($prerequisite as $p) {
+            if(!($courseCompletedDAO->retrieve($userid, $p->getPrerequisite()))){
+                return FALSE;
+            }
         }
     }
     return TRUE;

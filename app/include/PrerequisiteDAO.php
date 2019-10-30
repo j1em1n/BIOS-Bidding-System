@@ -24,7 +24,7 @@ class PrerequisiteDAO {
         return $result;
     }
 
-    public  function retrieve($coursecode) {
+    public  function retrieveByCourse($coursecode) {
         $sql = 'SELECT * FROM prerequisite where course = :coursecode';
             
         $connMgr = new ConnectionManager();      
@@ -35,8 +35,31 @@ class PrerequisiteDAO {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
+        $prerequisite = array();
+        while ($row = $stmt->fetch()) {
+            $prerequisite[] = new Prerequisite($row['course'], $row['prerequisite']);
+        }
+        
+        $stmt = null;
+        $conn = null;
+
+        return $prerequisite;
+    }
+
+    public  function retrieve($coursecode, $prereqcode) {
+        $sql = 'SELECT * FROM prerequisite WHERE course=:coursecode AND prerequisite=:prereqcode';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":coursecode", $coursecode);
+        $stmt->bindParam(":prereqcode", $prereqcode);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
         $prerequisite = null;
-        if($row = $stmt->fetch()) {
+        if ($row = $stmt->fetch()) {
             $prerequisite = new Prerequisite($row['course'], $row['prerequisite']);
         }
         
