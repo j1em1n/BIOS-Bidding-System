@@ -24,7 +24,7 @@ class BidDAO {
     }
 
     public function retrieveBidsBySection($code, $section) {
-        $sql = 'SELECT * FROM bid WHERE code=:code AND section=:section ORDER BY amount DESC';
+        $sql = 'SELECT * FROM bid WHERE code=:code AND section=:section ORDER BY amount DESC, userid ASC';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -202,6 +202,32 @@ class BidDAO {
         $stmt->bindParam(':course', $course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $section, PDO::PARAM_STR);
         $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $bids = array();
+
+        while ($row = $stmt->fetch()) {
+            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section'], $row['status']);
+        }
+
+        $stmt = null;
+        $conn = null;
+
+        return $bids;
+    }
+
+    public function getEnrolledBidsBySection($course, $section){
+
+        $sql = 'SELECT * FROM bid WHERE code=:course AND section=:section AND status="Success" ORDER BY userid ASC';
+        
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
         $stmt->execute();
 
         $bids = array();
