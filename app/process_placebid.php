@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
     require_once "include/common.php";
-    require_once "include/process_bids.php";
+    //require_once "include/process_bids.php";
 
     $courseCode = $_POST['coursecode'];
     $sectionNum = $_POST['sectionnum'];
@@ -36,20 +36,9 @@
         }
     }
 
-    // Check if e-dollar is numeric
-    if (!(isNonNegativeInt($edollar) || isNonNegativeFloat($edollar))) {
-        $_SESSION['errors'][] = "Please enter a valid number for E-dollar";
-    }
-
-    // Check if e-dollar has <= 2 dp
-    if (isNonNegativeFloat($edollar)) {
-        $checkedEdollar = strval($edollar);
-        $edollarArr = explode(".", $checkedEdollar);
-        if(count($edollarArr) > 1){
-            if(strlen($edollarArr[1]) > 2){
-                $_SESSION['errors'][] = "E-dollar can only have up to 2 decimal places";
-            }
-        }
+    // Check if is edollar is valid
+    if(!isValidEdollar($edollar)){
+        $_SESSION['errors'][] = "E-dollar must be numeric with up to 2 decimal places";
     }
 
     // If inputs do not pass field and data validations, redirect user back to placebid.php immediately
@@ -59,14 +48,12 @@
     }
 
     // Initialise the rest of the DAOs and objects needed if data validations are passed
-    $prerequisiteDAO = new PrerequisiteDAO();
-    $courseCompletedDAO = new CourseCompletedDAO();
     $studentDAO = new StudentDAO();
     $bidDAO = new BidDAO();
     $roundDAO = new RoundDAO();
+    $courseCompletedDAO = new CourseCompletedDAO();
     $currentRound = $roundDAO->retrieveRoundInfo()->getRoundNum();
     $student = $studentDAO->retrieve($userid);
-    $studentBids = $bidDAO->retrieveByUserid($userid);
     $course = $courseDAO->retrieve($courseCode);
     $section = $sectionDAO->retrieve($courseCode, $sectionNum);
 
@@ -84,33 +71,20 @@
     }
 
     // Check for class timetable clash
-    // Iterate through each of the student's current bids
-    foreach ($studentBids as $bid) {
-        // Retrieve the section corresponding to the bid
-        $bidSection = $sectionDAO->retrieve($bid->getCode(), $bid->getSection());
-        // Check if classes are on the same day and if yes, check for timing clashes
-        if (($bidSection->getDay() == $section->getDay()) && ($bidSection->getStart() == $section->getStart())) {
-            $_SESSION['errors'][] = "Class timing clashes with {$bid->getCode()} {$bid->getSection()} class";
-        }
+    $bid = classClash($userid, $section);
+    if ($bid) {
+        $_SESSION['errors'][] = "Class timing clashes with {$bid->getCode()} {$bid->getSection()} class";
     }
 
     // Check for exam timetable clash
-    // Iterate through each of the student's current bids
-    foreach ($studentBids as $bid) {
-        // Retrieve the course corresponding to the bid
-        $bidCourse = $courseDAO->retrieve($bid->getCode());
-        // Check if exams are on the same date and if yes, check for timing clashes
-        if (($bidCourse->getExamDate() == $course->getExamDate()) && ($bidCourse->getExamStart() == $course->getExamStart())) {
-            $_SESSION['errors'][] = "Exam clashes with {$bid->getCode()} exam";
-        }
+    $bid = examClash($userid, $course);
+    if ($bid) {
+        $_SESSION['errors'][] = "Exam clashes with {$bid->getCode()} exam";
     }
 
     // Check if course has a prerequisite, and if the student has completed it
-    if ($prerequisiteDAO->retrieve($courseCode)) {
-        $prerequisite = $prerequisiteDAO->retrieve($courseCode);
-        if(!($courseCompletedDAO->retrieve($userid, $prerequisite->getPrerequisite()))){
-            $_SESSION['errors'][] = "You have not yet completed the prerequisite for this course";
-        }
+    if (!prereqCompleted($userid, $courseCode)) {
+        $_SESSION['errors'][] = "You have not yet completed the prerequisite for this course";
     }
 
     // Check if student has already completed the course
@@ -119,17 +93,16 @@
     }
 
     // Check if student already made 5 bids
-    if (count($studentBids) == 5) {
+    if (count($bidDAO->retrieveByUserid($userid)) == 5) {
         $_SESSION['errors'][] = "You have reached your maximum number of bids";
     }
 
     // Check if student has already bidded for / enrolled in this course
-    foreach($studentBids as $bid) {
-        if ($bid->getCode() == $courseCode && $bid->getStatus() == "Pending") { // already bidded
-            $_SESSION['errors'][] = "You have already bidded for another section in this course";
-        } elseif ($bid->getCode() == $courseCode && $bid->getStatus() == "Success") { // already enrolled
-            $_SESSION['errors'][] = "You are already enrolled in this course";
-        }
+    $previousBid = $bidDAO->retrieve($userid, $courseCode);
+    if ($previousBid && $previousBid->getStatus() == "Pending") {
+        $_SESSION['errors'][] = "You have already bidded for another section in this course, please drop your existing bid before placing a new bid";
+    } elseif ($previousBid && $bid->getStatus() == "Success") { // already enrolled
+        $_SESSION['errors'][] = "You are already enrolled in this course, please drop section before placing a new bid";
     }
 
     // If round 1, check if course is offered by student's school
@@ -162,15 +135,7 @@
 
         // if the current round is round 2, process bids to get predicted results
         if ($currentRound == 2) {
-            $results = getBiddingResults($section, $currentRound, $bidDAO, $sectionDAO);
-            $successful = $results[0];
-            $unsuccessful = $results[1];
-            foreach($successful as $bid) {
-                $bidDAO->updatePredicted($bid, "Success");
-            }
-            foreach($unsuccessful as $bid) {
-                $bidDAO->updatePredicted($bid, "Fail");
-            }
+            generatePredictedResults($section, $currentRound, $bidDAO, $sectionDAO);
         }
 
         header("Location: placebid.php");
