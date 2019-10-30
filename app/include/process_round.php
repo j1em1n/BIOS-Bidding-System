@@ -1,6 +1,6 @@
 <?php
 require_once 'include/common.php';
-//require_once 'include/process_bids.php';
+require_once 'include/process_bids.php';
 
 if(isset($_POST['submit']) && isset($_POST['number'])){
 

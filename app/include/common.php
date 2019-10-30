@@ -27,18 +27,6 @@ function printErrors() {
     }    
 }
 
-function isMissingOrEmpty($user) {
-    if (!isset($_REQUEST[$user])) {
-        return "$user cannot be empty";
-    }
-
-    // client did send the value over
-    $value = $_REQUEST[$user];
-    if (empty($value)) {
-        return "$user cannot be empty";
-    }
-}
-
 # check if an int input is an int and non-negative
 function isNonNegativeInt($var) {
     if (is_numeric($var) && $var >= 0 && $var == round($var))
@@ -154,3 +142,261 @@ function printSectionInfo($sections) {
     }
     echo "</table>";
 }
+
+function deleteFailedBids(){
+    $bidDAO = new BidDAO();
+    $failedBids = $bidDAO->getBidsByStatus("Fail");
+    foreach($failedBids as $bid) {
+        $bidDAO->delete($bid);
+    }
+}
+
+function isMissingOrEmpty($user) {
+    if (!isset($_REQUEST[$user])) {
+        return "$user cannot be empty";
+    }
+
+    // client did send the value over
+    $value = $_REQUEST[$user];
+    if (empty($value)) {
+        return "$user cannot be empty";
+    }
+}
+
+function commonValidationsJSON($filename) {
+    $mandatoryFields = [
+		"authenticate.php" => ["password", "username"],
+		"bootstrap.php" => ["token"],
+		"dump.php" => ["token"],
+		"start.php" => ["token"],
+		"stop.php" => ["token"],
+        "update-bid.php" => ["amount", "course", "section", "token", "userid"],
+        "delete-bid.php" => ["course", "section", "token", "userid"],
+        "drop-section.php" => ["course", "section", "token", "userid"],
+        "user-dump.php" => ["token", "userid"],
+        "bid-dump.php" => ["course", "section", "token"],
+        "section-dump.php" => ["course", "section", "token"],
+        "bid-status.php" => ["course", "section", "token"]
+    ];
+    $commonValidationErrors = array();
+	
+	if (array_key_exists($filename, $mandatoryFields)) {
+        $fieldsToCheck = $mandatoryFields[$filename];
+        $request = null;
+        if (isset($_REQUEST['r'])) {
+            $request = json_decode($_REQUEST['r']);
+        }
+
+		foreach ($fieldsToCheck as $field) {
+            if ($field == "token" || $filename == "authenticate.php") {
+                if (!isset($_REQUEST[$field])) {
+                    $commonValidationErrors[] = "missing $field";
+                } elseif (empty($_REQUEST[$field])) {
+                    $commonValidationErrors[] = "blank $field";
+                } elseif ($field == "token") {
+                    $token = $_REQUEST["token"];
+                    $isValid = verify_token($token);
+                    if (!$isValid || $isValid != "admin") {
+                        $commonValidationErrors[] = "invalid token";
+                    }
+                }
+            } elseif ($request) {
+                if (!isset($request->{$field})) {
+                    $commonValidationErrors[] = "missing $field";
+                } elseif (empty($request->{$field})) {
+                    $commonValidationErrors[] = "blank $field";
+                }
+            } else {
+                $commonValidationErrors[] = "missing $field";
+            }
+		}
+	}
+	
+    return $commonValidationErrors;
+}
+
+function jsonErrors($errors) {
+    $result = [
+        "status" => "error",
+        "messages" => array_values($errors)
+    ];
+    return $result;
+}
+
+function classClash($userid, $bidSection) {
+    $bidDAO = new BidDAO();
+    $sectionDAO = new SectionDAO();
+    $studentBids = $bidDAO->retrieveByUserid($userid);
+    foreach ($studentBids as $b) {
+        // Retrieve the section corresponding to the bid
+        $bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
+        // Check if classes are on the same day and if yes, check for timing clashes
+        if (($bSection->getDay() == $bidSection->getDay()) && (($bSection->getStart() <= $bidSection->getEnd()) && ($bSection->getEnd() >= $bidSection->getStart()))) {
+            return $b;
+        }
+    }
+    return FALSE;
+}
+
+function examClash($userid, $bidCourse) {
+    $bidDAO = new BidDAO();
+    $courseDAO = new CourseDAO();
+    $studentBids = $bidDAO->retrieveByUserid($userid);
+    foreach ($studentBids as $b) {
+        // Retrieve the course corresponding to the bid
+        $bCourse = $courseDAO->retrieve($b->getCode());
+        // Check if exams are on the same date and if yes, check for timing clashes
+        if (($bCourse->getExamDate() == $bidCourse->getExamDate()) && (($bCourse->getExamStart() <= $bidCourse->getExamEnd()) && ($bCourse->getExamEnd() >= $bidCourse->getExamStart()))) {
+            return $b;
+        }
+    }
+    return FALSE;
+}
+
+function prereqCompleted($userid, $coursecode) {
+    $prerequisiteDAO = new PrerequisiteDAO();
+    $courseCompletedDAO = new CourseCompletedDAO();
+    $prerequisite = $prerequisiteDAO->retrieve($coursecode);
+    if ($prerequisite) {
+        if(!($courseCompletedDAO->retrieve($userid, $prerequisite->getPrerequisite()))){
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+function isValidEdollar($edollar) {
+    if(!isNonNegativeFloat($edollar)){
+        return FALSE;
+    } else {
+        //If edollar is a float, check if it has more than 2 decimal places
+        if (!isNonNegativeInt($edollar)) {
+            $checkedollar = strval($edollar);
+            $edollarArr = explode(".", $checkedollar);
+            if(strlen($edollarArr[1]) > 2){
+                return FALSE;
+            }
+        } 
+    }
+    return TRUE;
+}
+
+function getBiddingResults($section, $roundNum, $bidDAO, $sectionDAO) {
+
+    $courseCode = $section->getCourse();
+    $sectionNum = $section->getSection();
+    $minBid = $section->getMinBid();
+
+    // After every bid, the system sorts the 'pending' bids from the highest to the lowest
+    $sectionBids = $bidDAO->getBidsBySectionStatus($courseCode, $sectionNum, 'Pending');
+
+    // arrays to store (predicted) successful and unsucessful bids
+    $successfulBids = [];
+    $unsuccessfulBids = [];
+
+    $vacancies = $section->getVacancies();
+    // all bids can be accommodated if:
+    // Round 1 - no. of pending bids < vacancies
+    // Round 2 - no. of pending bids <= vacancies
+
+    if (!empty($sectionBids)) {
+        if (($roundNum == 1 && count($sectionBids) < $vacancies) || ($roundNum == 2 && count($sectionBids) <= $vacancies)) {
+            $successfulBids = $sectionBids;
+
+            // for round 2, if the number of bids equals the number of vacancies, min bid must be updated
+            // 'price never goes down', so only update minbid if the lowest bid is higher than the current min bid
+            if (count($sectionBids) == $vacancies && $minBid < $sectionBids[$vacancies-1]->getAmount()) {
+                $newMinBid = $sectionBids[$vacancies-1]->getAmount() + 1;
+                $sectionDAO->updateMinBid($courseCode, $sectionNum, $newMinBid);
+            }
+        } else {
+            // amount bidded by the nth student, where n = no. of vacancies. This is the clearing price.
+            $clearing = $sectionBids[$vacancies-1]->getAmount();
+            
+            // Round 1: get the (n-1)th bid (first successful bid above the nth bid)
+            // if the nth and (n-1)th bids are tied, all bids at clearing price are unsuccessful
+            if($roundNum == 1) {
+                $above = $sectionBids[$vacancies-2]->getAmount();
+            }
+            
+            // Round 2: get the (n+1)th bid (first unsuccessful bid below the nth bid)
+            // if the nth and (n+1)th bids are tied, all bids at clearing price are unsuccessful
+            if($roundNum == 2) {
+                $below = $sectionBids[$vacancies]->getAmount();
+            }
+            
+            if (($roundNum == 1 && $above == $clearing) || ($roundNum == 2 && $below == $clearing)) {
+                foreach ($sectionBids as $bid) {
+                    if ($bid->getAmount() > $clearing) {
+                        $successfulBids[] = $bid;
+                    } else {
+                        $unsuccessfulBids[] = $bid;
+                    }
+                }
+            } else {
+                // otherwise, bids up to the nth bid can be accommodated and all bids below the clearing price are unsuccessful.
+                $successfulBids = array_slice($sectionBids, 0, $vacancies);
+                $unsuccessfulBids = array_merge($unsuccessfulBids, array_slice($sectionBids, $vacancies));
+            }
+
+            // update the minimum bid for round 2
+            $newMinBid = $sectionBids[$vacancies-1]->getAmount() + 1;
+            // $sectionDAO->updateMinBid($courseCode, $sectionNum, $newMinBid);
+            if (count($sectionBids) >= $vacancies && $minBid < $sectionBids[$vacancies-1]->getAmount()) {
+                $newMinBid = $sectionBids[$vacancies-1]->getAmount() + 1;
+                $sectionDAO->updateMinBid($courseCode, $sectionNum, $newMinBid);
+            }
+        }
+    }
+    return [$successfulBids, $unsuccessfulBids];
+}
+
+function processBids() {
+    $sectionDAO = new SectionDAO();
+    $bidDAO = new BidDAO();
+    $roundDAO = new RoundDAO();
+    $round = $roundDAO->retrieveRoundInfo();
+    $roundNum = $round->getRoundNum();
+
+    $sections = $sectionDAO->retrieveAll();
+    $studentDAO = new StudentDAO();
+    foreach ($sections as $section) {
+        $vacancies = $section->getVacancies();
+        $results = getBiddingResults($section, $roundNum, $bidDAO, $sectionDAO);
+        $coursecode = $section->getCourse();
+        $sectionId = $section->getSection();
+        $successfulBids = $results[0];
+        $unsuccessfulBids = $results[1];
+
+        foreach($successfulBids as $bid) {
+            $bidDAO->updateBidStatus($bid, "Success");
+            $vacancies--;
+        }
+        
+        // update number of vacancies for this section
+        $sectionDAO->updateVacancies($coursecode, $sectionId, $vacancies);
+    
+        foreach($unsuccessfulBids as $bid) {
+            $bidDAO->updateBidStatus($bid, "Fail");
+    
+            // if bid is unsuccessful, refund student the full amount
+            $refund = $bid->getAmount();
+            $student = $studentDAO->retrieve($bid->getUserid());
+            $newBalance = $student->getEdollar() + $refund;
+            $studentDAO->updateEdollar($student->getUserid(), $newBalance);
+        }
+    }
+}
+
+function generatePredictedResults($section, $currentRound, $bidDAO, $sectionDAO) {
+    $results = getBiddingResults($section, $currentRound, $bidDAO, $sectionDAO);
+    $successful = $results[0];
+    $unsuccessful = $results[1];
+    foreach($successful as $bid) {
+        $bidDAO->updatePredicted($bid, "Success");
+    }
+    foreach($unsuccessful as $bid) {
+        $bidDAO->updatePredicted($bid, "Fail");
+    }
+}
+?>
