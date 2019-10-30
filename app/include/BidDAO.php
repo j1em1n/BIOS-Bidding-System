@@ -47,8 +47,8 @@ class BidDAO {
         return $result;
     }
 
-    public  function retrieve($userid, $code, $section) {
-        $sql = 'SELECT * FROM bid WHERE userid=:userid AND code=:code AND section=:section';
+    public function retrieve($userid, $code) {
+        $sql = 'SELECT * FROM bid WHERE userid=:userid AND code=:code';
             
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -57,7 +57,6 @@ class BidDAO {
 
         $stmt->bindParam(":userid", $userid, PDO::PARAM_STR);
         $stmt->bindParam(":code", $code, PDO::PARAM_STR);
-        $stmt->bindParam(":section", $section, PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
