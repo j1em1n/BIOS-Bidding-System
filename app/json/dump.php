@@ -7,129 +7,228 @@
     $success = array();
     $result = array();
 
-    //DAO
-    $courseDAO = new CourseDAO();
-    $allCourses = $courseDAO->retrieveAll();
-    
-    $studentDAO = new StudentDAO();
-    $allStudents = $studentDAO->retrieveAll();
+    if (!empty($errors)) {
+            $result = jsonErrors($errors);
+    } else {
+        //DAO
+        $courseDAO = new CourseDAO();
+        $allCourses = $courseDAO->retrieveAll();
+        $courseDump = array();
+        
+        $studentDAO = new StudentDAO();
+        $allStudents = $studentDAO->retrieveAll();
+        $studentDump = array();
 
-    $prerequisiteDAO = new PrerequisiteDAO();
-    $allPrerequisites = $prerequisiteDAO->retrieveAll();
+        $prerequisiteDAO = new PrerequisiteDAO();
+        $allPrerequisites = $prerequisiteDAO->retrieveAll();
+        $prerequisiteDump = array();
 
-    $sectionDAO = new SectionDAO();
-    $allSections = $sectionDAO->retrieveAll();
+        $sectionDAO = new SectionDAO();
+        $allSections = $sectionDAO->retrieveAll();
+        $sectionDump = array();
 
-    $coursecompletedDAO = new CourseCompletedDAO();
-    $allCourseCompleted = $coursecompletedDAO->retrieveAll();
+        $coursecompletedDAO = new CourseCompletedDAO();
+        $allCourseCompleted = $coursecompletedDAO->retrieveAll();
+        $courseCompletedDump = array();
 
-    $bidDAO = new BidDAO();
-    $allBids = $bidDAO->retrieveAll();
-    
-    //dump course
-    foreach($allCourses as $eachCourse){
-        $course_info[] = [ 
-            'course' => $eachCourse->getCourse(),
-            'school' => $eachCourse->getSchool(),
-            'title' => $eachCourse->getTitle(),
-            'description' => $eachCourse->getDescription(),
-            'exam date' => $eachCourse->getExamDate(),
-            'exam start' => $eachCourse->getExamStart(),
-            'exam end' => $eachCourse->getExamEnd()
-        ];
-    }
+        $bidDAO = new BidDAO();
+        $allBids = $bidDAO->retrieveAll();
+        $bidDump = array();
+        $sectionStudentDump = array();
 
-    //dump student
-    foreach($allStudents as $eachStudent){
-        $student_info[] = [
-            'userid' => $eachStudent->getUserId(),
-            'password' => $eachStudent->getPassword(),
-            'name' => $eachStudent->getName(),
-            'school' => $eachStudent->getSchool(),
-            'edollar' => $eachStudent->getEdollar()
-        ];
-    }
+        $roundDAO = new RoundDAO();
+        $currentStatus = $roundDAO->retrieveRoundInfo()->getStatus();
+        $currentNum = $roundDAO->retrieveRoundInfo()->getRoundNum();
+        
+        //dump course
+        //sort courses by course code a) alphabetically and b) numerically
+        usort($allCourses, function ($a, $b) {
+            return strnatcmp($a->getCourse(), $b->getCourse());
+        });
 
-    //dump section
-    foreach($allSections as $eachSection){
-        $section_info[] = [
-            'course'=>$eachSection->getCourse(),
-            'section'=>$eachSection->getSection(),
-            'day'=>$eachSection->getDay(),
-            'start'=>$eachSection->getStart(),
-            'end'=>$eachSection->getEnd(),
-            'instructor'=>$eachSection->getInstructor(),
-            'venue'=>$eachSection->getVenue(),
-            'size'=>$eachSection->getSize()
-        ];
-    }
+        foreach($allCourses as $eachCourse){
+            $courseDump[] = [ 
+                'course' => $eachCourse->getCourse(),
+                'school' => $eachCourse->getSchool(),
+                'title' => $eachCourse->getTitle(),
+                'description' => $eachCourse->getDescription(),
+                'exam date' => $eachCourse->getExamDate(),
+                'exam start' => $eachCourse->getExamStart(),
+                'exam end' => $eachCourse->getExamEnd()
+            ];
+        }
+        
 
-    //dump pre-req
-    foreach($allPrerequisites as $eachPrerequisite){
-        $prerequisite_info[] = [
-            'course' => $eachPrerequisite->getCourse(),
-            'prerequisite' => $eachPrerequisite->getPrerequisite()
-        ];
-    }
+        //dump student
+        //sort students by userid alphabetically
+        // usort($allStudents, function ($a, $b) {
+        //     return strcmp($a->getUserId(), $b->getUserId());
+        // });
 
-    //dump course_completed
-    foreach($allCourseCompleted as $eachCourseCompleted){
-        $courseCompleted_info[] = [
-            'userid'=> $eachCourseCompleted->getUserid(),
-            'course'=> $eachCourseCompleted->getCode()
-        ];
-    }
+        foreach($allStudents as $eachStudent){
+            $studentDump[] = [
+                'userid' => $eachStudent->getUserId(),
+                'password' => $eachStudent->getPassword(),
+                'name' => $eachStudent->getName(),
+                'school' => $eachStudent->getSchool(),
+                'edollar' => $eachStudent->getEdollar()
+            ];
+        }
 
-    //dump bids
-    foreach($allBids as $eachBid){
-        $bids_info[] = [
-            'userid'=> $eachBid->getUserid(),
-            'amount'=> $eachBid->getAmount(),
-            'course'=> $eachBid->getCode(),
-            'section'=> $eachBid->getSection()
-        ];
-    }
+        //dump section
 
-    //dump section-student
-    foreach($allSections as $eachSection){
-        foreach($allBids as $eachBid){
-            if($eachBid->getStatus() == 'Success'){
-                if($eachBid->getCode() == $eachSection->getCourse()){
-                    $sectionstudent_info[] = [
-                        'userid' => $eachBid->getUserid(),
-                        'amount' => $eachBid->getAmount(),
+        $sectionsByCourse = array();
+        foreach($allCourses as $course) {
+            $courseCode = $course->getCourse();
+            $sections = $sectionDAO->getSectionsByCourse($courseCode);
+            if ($sections) {
+                usort($sections, function ($a, $b) {
+                    return strnatcmp($a->getCourse(), $b->getCourse());
+                });
+                $sectionsByCourse[$courseCode] = array();
+
+                foreach($sections as $eachSection) {
+                    $sectionsByCourse[$courseCode][] = [
                         'course' => $eachSection->getCourse(),
-                        'section' => $eachSection->getSection()
+                        'section' => $eachSection->getSection(),
+                        'day' => $eachSection->getDay(),
+                        'start' => $eachSection->getStart(),
+                        'end' => $eachSection->getEnd(),
+                        'instructor' => $eachSection->getInstructor(),
+                        'venue' => $eachSection->getVenue(),
+                        'size' => $eachSection->getSize()
                     ];
                 }
             }
         }
+
+        array_multisort(array_keys($sectionsByCourse), SORT_NATURAL, $sectionsByCourse);
+        foreach($sectionsByCourse as $courseCode => $sections) {
+            foreach($sections as $section_info) {
+                $sectionDump[] = $section_info;
+            }
+        }
+
+        //dump pre-req
+        $prereqsByCourse = array();
+
+        foreach($allCourses as $course) {
+            $courseCode = $course->getCourse();
+            $prerequisites = $prerequisiteDAO->retrieveByCourse($courseCode);
+            if ($prerequisites) {
+                usort($prerequisites, function ($a, $b) {
+                    return strnatcmp($a->getCourse(), $b->getCourse());
+                });
+                if (!array_key_exists($courseCode, $prereqsByCourse)) {
+                    $prereqsByCourse[$courseCode] = array();
+                }
+                foreach($prerequisites as $eachPrereq) {
+                    $prereqsByCourse[$courseCode][] = [
+                        'course' => $eachPrereq->getCourse(),
+                        'prerequisite' => $eachPrereq->getPrerequisite()
+                    ];
+                }
+            }
+        }
+
+        array_multisort(array_keys($prereqsByCourse), SORT_NATURAL, $prereqsByCourse);
+        foreach($prereqsByCourse as $courseCode => $prereqs) {
+            foreach($prereqs as $prereq_info) {
+                $prereqDump[] = $prereq_info;
+            }
+        }
+
+        //dump course_completed
+        $completedByCourse = array();
+
+        foreach($allCourseCompleted as $completed) {
+            $courseCode = $completed->getCode();
+            if(!array_key_exists($courseCode, $completedByCourse)){
+                $completedByCourse[$courseCode] = array();
+            }
+            $completedByCourse[$courseCode][] = [
+                "userid" => $completed->getUserid(),
+                "course" => $courseCode
+            ];
+        }
+
+        array_multisort(array_keys($completedByCourse), SORT_NATURAL, $completedByCourse);
+        foreach($completedByCourse as $courseCode => $completed) {
+            foreach($completed as $courseCompleted_info) {
+                $courseCompletedDump[] = $courseCompleted_info;
+            }
+        }
+
+        //dump bids
+        $allBidsByCodeSection = array();
+        foreach($allSections as $section) {
+            $sectionid = $section->getSection();
+            $courseCode = $section->getCourse();
+            $sectionBids = $bidDAO->getSectionBids($courseCode, $sectionid, $currentNum);
+            if($sectionBids) {
+                if(!array_key_exists($courseCode, $allBidsByCodeSection)){
+                    $allBidsByCodeSection[$courseCode] = array();
+                } if(!array_key_exists($sectionid, $allBidsByCodeSection[$courseCode])){
+                    $allBidsByCodeSection[$courseCode][$sectionid] = array();
+                }
+                foreach($sectionBids as $bid) {
+                    $allBidsByCodeSection[$courseCode][$sectionid][] = [
+                        "userid" => $bid->getUserid(),
+                        "amount" => $bid->getAmount(),
+                        "course" => $courseCode,
+                        "section" => $sectionid
+                    ];
+                }
+            }
+        }
+
+        array_multisort(array_keys($allBidsByCodeSection), SORT_NATURAL, $allBidsByCodeSection);
+        foreach($allBidsByCodeSection as $courseSections => $sectionBids) {
+            $sections = $sectionBids;
+            array_multisort(array_keys($sections), SORT_NATURAL, $sections);
+            foreach($sections as $bids) {
+                $bidDump[] = $bids;
+            }
+        }
+
+        //dump section-student
+
+        $successfulBids = $bidDAO->getSuccessfulBids();
+        $successfulByCourse = array();
+        foreach ($successfulBids as $bid) {
+            $courseCode = $bid->getCode();
+            if(!array_key_exists($courseCode, $successfulByCourse)){
+                $successfulByCourse[$courseCode] = array();
+            }
+            $successfulByCourse[$courseCode][] = [
+                "userid" => $bid->getUserid(),
+                "course" => $courseCode,
+                "section" => $bid->getSection(),
+                "amount" => $bid->getAmount()
+            ];
+        }
+        array_multisort(array_keys($successfulByCourse), SORT_NATURAL, $successfulByCourse);
+        foreach($successfulByCourse as $courseCode => $successes) {
+            foreach($successes as $bid) {
+                $sectionStudentDump[] = $bid;
+            }
+        }
+        
+        $result = [
+            "status" => "success",
+            "course" => $courseDump,
+            "student" => $studentDump,
+            "section" => $sectionDump,
+            "prerequisite" => $prerequisiteDump,
+            "course_completed" => $courseCompletedDump,
+            "bid" => $bidDump,
+            "section-student" => $sectionStudentDump
+        ];
     }
 
-
-    asort($course_info);
-    asort($section_info);
-    asort($student_info);
-    asort($prerequisite_info);
-    asort($courseCompleted_info);
-    asort($bids_info);
-    asort($sectionstudent_info);
-    
-    if(!empty($course_info) && !empty($student_info) && !empty($prerequisite_info) && !empty($section_info)
-            && !empty($courseCompleted_info)){
-        $result["status"] = "success";
-        $result['course'] = $course_info;
-        $result['section'] = $section_info;
-        $result['student'] = $student_info;
-        $result['prerequisite'] = $prerequisite_info;
-        $result['completed-course'] = $courseCompleted_info;
-        $result['bid'] = $bids_info;
-        $result['section-student'] = $sectionstudent_info;
-    } 
-
-    if(isEmpty($errors)){
-        $result["status"] = "error";    
-    }
+    // if(isEmpty($errors)){
+    //     $result["status"] = "error";    
+    // }
     
     header('Content-Type: application/json');
     echo json_encode($result, JSON_PRETTY_PRINT);
