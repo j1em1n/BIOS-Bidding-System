@@ -567,13 +567,15 @@ function doBootstrap() {
 								*/
 								
 								// Check if student has enough e-dollars
-								if ($amount > $bidStud->getEdollar()) { // Check if student has enough e-dollars
+								// Store the previously bidded amount
+								$previousAmount = $previousBid->getAmount();
+								if ($amount > ($bidStud->getEdollar() + $previousAmount)) { // Check if student has enough e-dollars if they are refunded previous amount
 									$rowErrors[] = "not enough e-dollar";
 								}
 
 								// Check for class timetable clash only if student is bidding for another section
 								if (!$sameSection) {
-									if (classClash($userid, $bidSection)) {
+									if (classClash($userid, $bidSection, $bidSection)) {
 										$rowErrors[] = "class timetable clash";
 									}
 								}
@@ -595,7 +597,7 @@ function doBootstrap() {
 								}
 				
 								// Check for exam timetable clash
-								if (examClash($userid, $bidCourse)) {
+								if (examClash($userid, $bidCourse, $bidCourse)) {
 									$rowErrors[] = "exam timetable clash";
 								}
 								// Check if student has completed the prerequisites
@@ -624,8 +626,7 @@ function doBootstrap() {
 					} else {
 						// if (isset($alreadyBiddedCourse) && $alreadyBiddedCourse) {
 						if ($alreadyBiddedCourse) {
-							// Store the previously bidded amount
-							$previousAmount = $previousBid->getAmount();
+							
 							// Update the student's previous bid
 							$bidDAO->updateBid($userid, $amount, $sectionid);
 							// Refund amount for previous bid and charge edollars for current bid
@@ -641,9 +642,8 @@ function doBootstrap() {
 							$thisStud = $studentDAO->retrieve($userid);
 							$balance = $thisStud->getEdollar() - $amount;
 							$studentDAO->updateEdollar($userid, $balance);
-
-							$bid_processed++; #line added successfully  
 						}
+						$bid_processed++; #line added successfully  
 					}
 					$countBid++;
 				}
