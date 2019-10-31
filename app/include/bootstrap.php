@@ -108,7 +108,7 @@ function doBootstrap() {
 
 				// Skip table headings
 				$data = fgetcsv($student); 
-				$countStud = 1;
+				$countStud = 2;
 				$errors["student.csv"] = array();
 
 				//An indexed array to store all the existing userid in, to check for duplicate userid
@@ -188,7 +188,7 @@ function doBootstrap() {
 
 				// Skip table headings
 				$data = fgetcsv($course);
-				$countCourse = 1;
+				$countCourse = 2;
 				$errors["course.csv"] = array();
 
 				while ( ($data = fgetcsv($course) ) !== false){
@@ -278,7 +278,7 @@ function doBootstrap() {
 
 				// Skip table headings
 				$data = fgetcsv($section);
-				$countSect = 1;
+				$countSect = 2;
 				$errors["section.csv"] = array();
 
         		while ( ($data = fgetcsv($section) ) !== false){
@@ -387,7 +387,7 @@ function doBootstrap() {
 
 				//Skip table headings
 				$data = fgetcsv($prerequisite);
-				$countPrereq = 1;
+				$countPrereq = 2;
 				$errors["prerequisite.csv"] = array();
 
 				while ( ($data = fgetcsv($prerequisite) ) !== false){ 
@@ -436,7 +436,7 @@ function doBootstrap() {
 
 				// Skip table headings
 				$data = fgetcsv($course_completed);
-				$countCourseCompleted = 1;
+				$countCourseCompleted = 2;
 				$errors["course_completed.csv"] = array();
 				
 				while ( ($data = fgetcsv($course_completed) ) !== false){
@@ -464,13 +464,9 @@ function doBootstrap() {
 						if(!($courseDAO->retrieve($code))) {
 							$rowErrors[] = "invalid code";
 						}
-						// Check if the completed course has a prerequisite
-						if($prerequisiteDAO->retrieve($code)) {
-							$prereqcourse = $prerequisiteDAO->retrieve($code);
-							// Check if the student has completed the prerequisite (row with userid and prerequisite code exists)
-							if(!($courseCompletedDAO->retrieve($userid, $prereqcourse->getPrerequisite()))){
-								$rowErrors[] = "invalid course completed";
-							}
+						// Check if the completed course has a prerequisite and if the student has completed the prereq
+						if (!prereqCompleted($userid, $code)) {
+							$rowErrors[] = "invalid course completed";
 						}
 					}
 					if(!empty($rowErrors)){
@@ -493,7 +489,7 @@ function doBootstrap() {
 
 				// Skip table headings
 				$data = fgetcsv($bid);
-				$countBid = 1;
+				$countBid = 2;
 				$errors["bid.csv"] = array();
 
 				while ( ($data = fgetcsv($bid) ) !== false){
@@ -638,7 +634,7 @@ function doBootstrap() {
 							$studentDAO->updateEdollar($userid, $balance);
 						
 						} else {
-							$bidObj = new Bid($userid, $amount, $code, $sectionid, "Pending");
+							$bidObj = new Bid($userid, $amount, $code, $sectionid, "Pending", null);
 							$bidDAO->add($bidObj);
 							
 							// deduct amount from student's balance
@@ -681,16 +677,20 @@ function bootstrapJSON() {
 	$lines_processed = $response[0];
 	$errors = $response[1];
 	ksort($lines_processed);
+	$display_lines = array();
+	foreach($lines_processed as $file => $lines) {
+		$display_lines[] = [$file => $lines];
+	}
 
 	if (isEmpty($errors)){
 		$result = [
 			"status" => "success",
-			"num-record-loaded" => $lines_processed
+			"num-record-loaded" => $display_lines
 		];
 	} else {
 		$result = [
 			"status" => "error",
-			"num-record-loaded" => $lines_processed
+			"num-record-loaded" => $display_lines
 		];
 		$result["error"] = array();
 
@@ -716,6 +716,7 @@ function bootstrapJSON() {
 
 function bootstrapUI() {
 	$response = doBootstrap();
+	$lines_processed = $response[0];
 	$errors = $response[1];
 
 	if (!isEmpty($errors)){
@@ -727,8 +728,10 @@ function bootstrapUI() {
 				}
 			}
 		}
-	} else {
-		$_SESSION['success'] = "Bootstrap successful! Bidding Round 1 started.";
+	}
+	$_SESSION['success'][] = "Bootstrap successful! Bidding Round 1 started.";
+	foreach($lines_processed as $filename => $rows) {
+		$_SESSION['success'][] = "$filename - $rows lines successfully added";
 	}
 	header("Location: bootstrap.php");
 	exit();
