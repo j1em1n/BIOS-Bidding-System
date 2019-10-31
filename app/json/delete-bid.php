@@ -22,6 +22,7 @@
         $studentDAO = new StudentDAO();
         $roundDAO = new RoundDAO();
         $currentStatus = $roundDAO->retrieveRoundInfo()->getStatus();
+        $currentNum = $roundDAO->retrieveRoundInfo()->getRoundNum();
 
         // Check for valid course code
         if (!($courseDAO->retrieve($courseCode))) {
@@ -46,7 +47,8 @@
         // Check if bid exists only if course, userid and section are valid and round is currently active
         if (empty($errors)) {
             $bid = $bidDAO->retrieve($userid, $courseCode);
-            if (!($bid) || $bid->getStatus() != "Pending"){
+            $r1Status = $bid->getR1Status();
+            if (!($bid) || ($r1Status && $r1Status != "Pending")){
                 $errors[] = "no such bid";
             }
         }
