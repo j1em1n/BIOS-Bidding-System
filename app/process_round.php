@@ -15,9 +15,9 @@ if(isset($_POST['submit']) && isset($_POST['number'])){
     $UpdateNumberOK = $roundDAO->updateRoundNumber($newNumber);
 
     if($UpdateStatusOK && $UpdateNumberOK){
-        $_SESSION['success'] = "Round successfully $status_entered";
+        $_SESSION['success'][] = "Round successfully $status_entered";
     } else {
-        $_SESSION['errors'] = "Round could not be $status_entered";
+        $_SESSION['errors'][] = "Round could not be $status_entered";
     }
 
     if ($status_entered == 'closed') {

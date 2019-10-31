@@ -340,7 +340,7 @@ function jsonErrors($errors) {
     return $result;
 }
 
-function classClash($userid, $bidSection) {
+function classClash($userid, $bidSection, $exception = null) {
     $bidDAO = new BidDAO();
     $sectionDAO = new SectionDAO();
     $studentBids = $bidDAO->retrieveByUserid($userid);
@@ -353,13 +353,15 @@ function classClash($userid, $bidSection) {
         $bEnd = DateTime::createFromFormat("G:i",$bSection->getEnd());
         // Check if classes are on the same day and if yes, check for timing clashes
         if (($bSection->getDay() == $bidSection->getDay()) && (($bStart < $end) && ($bEnd > $start))) {
-            return $b;
+            if (!($b == $exception)) {
+                return $b;
+            }
         }
     }
     return FALSE;
 }
 
-function examClash($userid, $bidCourse) {
+function examClash($userid, $bidCourse, $exception = null) {
     $bidDAO = new BidDAO();
     $courseDAO = new CourseDAO();
     $studentBids = $bidDAO->retrieveByUserid($userid);
@@ -372,7 +374,9 @@ function examClash($userid, $bidCourse) {
         $bEnd = DateTime::createFromFormat("G:i", $bCourse->getExamEnd());
         // Check if exams are on the same date and if yes, check for timing clashes
         if (($bCourse->getExamDate() == $bidCourse->getExamDate()) && (($bStart <= $examEnd) && ($bEnd >= $examStart))) {
-            return $b;
+            if (!($b == $exception)) {
+                return $b;
+            }
         }
     }
     return FALSE;
@@ -416,7 +420,7 @@ function getBiddingResults($section, $roundNum, $bidDAO, $sectionDAO) {
 
     // After every bid, the system sorts the 'pending' bids from the highest to the lowest
     $sectionBids = $bidDAO->getSectionBids($courseCode, $sectionNum, $roundNum);
-
+    
     // arrays to store (predicted) successful and unsucessful bids
     $successfulBids = [];
     $unsuccessfulBids = [];

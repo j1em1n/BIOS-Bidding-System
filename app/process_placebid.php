@@ -99,9 +99,9 @@
 
     // Check if student has already bidded for / enrolled in this course
     $previousBid = $bidDAO->retrieve($userid, $courseCode);
-    if ($previousBid && $previousBid->getStatus() == "Pending") {
+    if ($previousBid && $previousBid->getR1Status() == "Pending") {
         $_SESSION['errors'][] = "You have already bidded for another section in this course, please drop your existing bid before placing a new bid";
-    } elseif ($previousBid && $bid->getStatus() == "Success") { // already enrolled
+    } elseif ($previousBid && $bid->getR1Status() == "Success") { // already enrolled
         $_SESSION['errors'][] = "You are already enrolled in this course, please drop section before placing a new bid";
     }
 
@@ -124,18 +124,18 @@
         exit();
     } else {
         // Create new bid object and add it to database
-        $thisBid = new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending");
+        $thisBid = ($currentRound == 1) ? new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending", null) : new Bid($userid, $edollar, $courseCode, $sectionNum, null, "Pending");
         $bidDAO->add($thisBid);
         // Update student's e-dollar balance
         $updatedAmount = $student->getEdollar() - $edollar;
         $studentDAO->updateEdollar($userid, $updatedAmount);
 
-        $_SESSION['success'] = "Your bid for $courseCode {$course->getTitle()}, Section $sectionNum was placed successfully!<br>
+        $_SESSION['success'][] = "Your bid for $courseCode {$course->getTitle()}, Section $sectionNum was placed successfully!<br>
         You have $$updatedAmount left in your balance.";
 
         // if the current round is round 2, process bids to get predicted results
         if ($currentRound == 2) {
-            generatePredictedResults($section, $currentRound, $bidDAO, $sectionDAO);
+            processBids();
         }
 
         header("Location: placebid.php");
