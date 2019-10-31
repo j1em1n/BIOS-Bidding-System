@@ -44,8 +44,8 @@ CREATE TABLE bid
 	amount varchar(300) NOT NULL,
     code varchar(300) NOT NULL,
     section varchar(300) NOT NULL,
-    status varchar(300) DEFAULT "Pending" NOT NULL,
-    predicted varchar(300),
+    r1status varchar(300),
+    r2status varchar(300),
     CONSTRAINT bid_pk PRIMARY KEY (userid, code),
     CONSTRAINT bid_fk1 FOREIGN KEY(userid) REFERENCES student(userid),
     CONSTRAINT bid_fk2 FOREIGN KEY(code, section) REFERENCES section(course, section)

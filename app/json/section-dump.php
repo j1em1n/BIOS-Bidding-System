@@ -34,12 +34,12 @@ if (!empty($errors)) {
         // Success if field validity checks are passed
         $students = array();
         //get enrolled students here
-        $successfulBids = $bidDAO->getEnrolledBidsBySection($coursecode, $section);
+        $successfulBids = $bidDAO->getSuccessfulBids();
     
         foreach($successfulBids as $eachbid){
             $students[] = [
                 "userid" => $eachbid->getUserid(),
-                "amount" => $eachbid->getAmount()
+                "amount" => floatval($eachbid->getAmount())
             ];
         }
         $success = [

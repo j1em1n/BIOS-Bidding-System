@@ -82,7 +82,7 @@
                     $alreadyBiddedCourse = TRUE;
                     if ($previousBid->getSection() == $sectionNum) {
                         $sameSection = TRUE;
-                    } if($previousBid->getStatus() == "Success") {
+                    } if($previousBid->getR1Status() == "Success") {
                         $alreadyEnrolledCourse = TRUE;
                     }
                 }
@@ -157,7 +157,7 @@
                         $balance = $thisStud->getEdollar() + $previousAmount - $edollar;
                         $studentDAO->updateEdollar($userid, $balance);
                     } else {
-                        $newBid = new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending");
+                        $newBid = ($currentRound == 1) ? new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending", null) : new Bid($userid, $edollar, $courseCode, $sectionNum, null, "Pending");
                         $bidDAO->add($newBid);
                         // Deduct amount from student's balance
                         $balance = $thisStud->getEdollar() - $edollar;
@@ -166,7 +166,7 @@
 
                     // if the current round is round 2, process bids to get predicted results
                     if ($currentRound == 2) {
-                        generatePredictedResults($section, $currentRound, $bidDAO, $sectionDAO);
+                        processBids();
                     }
 
                     $success = [
