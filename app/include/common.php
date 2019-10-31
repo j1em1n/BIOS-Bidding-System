@@ -62,9 +62,11 @@ function validateDate($date, $format)
 
 function printSuccess() {
     if(isset($_SESSION['success'])){
-        echo "<h2 id='success' style='color:DarkGreen;'>
-        {$_SESSION['success']}
-        </h2>";   
+        echo "<ul id='success' style='color:DarkGreen;'>";
+        foreach ($_SESSION['success'] as $value) {
+            echo "<li>" . $value . "</li>";
+        }
+        echo "</ul>";
         unset($_SESSION['success']);
     }    
 }
@@ -143,9 +145,124 @@ function printSectionInfo($sections) {
     echo "</table>";
 }
 
+function currentBidsTable($bids, $roundNum) {
+    $courseDAO = new CourseDAO();
+    echo "
+        <h2>Your current bids</h2>
+        <table>
+        <tr>
+            <b>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Section</th>
+            <th>Bid amount (e$)</th>
+            <th>Result</th>
+            </b>
+        </tr>";
+    foreach ($bids as $bid) {
+        $code = $bid->getCode();
+        $section = $bid->getSection();
+        $amount = $bid->getAmount();
+        $status = ($roundNum == 1) ? $bid->getR1Status() : $bid->getR2Status();
+
+        echo "
+        <tr>
+            <form action='process_dropbid.php' method='POST'>
+            <td>$code<input type='hidden' name='coursecode' value='$code'></td>
+            <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+            <td>$section<input type='hidden' name='sectionnum' value='$section'></td>
+            <td>{$bid->getAmount()}</td>
+            <td style='background-color: ".highlightBid($status)."'>$status</td>
+            <td><input type='submit' value='Drop bid'></td>
+            </form>
+        </tr>";
+    }
+    echo "</table>";
+}
+
+function bidResultsTable($bids) {
+    $courseDAO = new CourseDAO();
+    echo "
+        <h2>Bidding Results</h2>
+        <table>
+        <tr>
+            <b>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Section</th>
+            <th>Bid amount (e$)</th>
+            <th>Result</th>
+            <th></th>
+            </b>
+        </tr>";
+    foreach ($bids as $bid) {
+        $code = $bid->getCode();
+        $section = $bid->getSection();
+        $amount = $bid->getAmount();
+        $status = ($bid->getR1Status()) ? $bid->getR1Status() : $bid->getR2Status();
+
+        echo "
+        <tr>
+            <td>$code</td>
+            <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+            <td>$section</td>
+            <td>{$bid->getAmount()}</td>
+            <td style='background-color: ".highlightBid($status)."'>$status</td>
+        </tr>";
+    }
+    echo "</table>";    
+
+}
+
+function enrolledSectionsTable($bids) {
+    $courseDAO = new CourseDAO();
+    echo "
+        <h2>Your enrolled sections</h2>
+        <table>
+        <tr>
+            <b>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Section</th>
+            <th>Bid amount (e$)</th>
+            <th></th>
+            </b>
+        </tr>";
+    foreach ($bids as $bid) {
+        $code = $bid->getCode();
+        $section = $bid->getSection();
+        $amount = $bid->getAmount();
+
+        echo "
+        <tr>
+            <form action='process_dropsection.php' method='POST'>
+            <td>$code<input type='hidden' name='coursecode' value='$code'></td>
+            <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+            <td>$section<input type='hidden' name='sectionnum' value='$section'></td>
+            <td>{$bid->getAmount()}</td>
+            <td><input type='submit' value='Drop section'></td>
+            </form>
+        </tr>";
+    }
+    echo "</table>";
+}
+
+function highlightBid($status) {
+    if($status == 'Success'){
+        $colour = 'LightGreen';
+    } elseif ($status == 'Fail') {
+        $colour = 'Salmon';
+    } else {
+        $colour = 'LemonChiffon';
+    }
+    return $colour;
+}
+
 function deleteFailedBids(){
     $bidDAO = new BidDAO();
-    $failedBids = $bidDAO->getBidsByStatus("Fail");
+    $roundDAO = new RoundDAO();
+    $roundNum = $roundDAO->retrieveRoundInfo()->getRoundNum();
+    $failedBids = $bidDAO->getFailedBids();
     foreach($failedBids as $bid) {
         $bidDAO->delete($bid);
     }
@@ -218,7 +335,7 @@ function commonValidationsJSON($filename) {
 function jsonErrors($errors) {
     $result = [
         "status" => "error",
-        "messages" => array_values($errors)
+        "message" => array_values($errors)
     ];
     return $result;
 }
@@ -227,11 +344,15 @@ function classClash($userid, $bidSection) {
     $bidDAO = new BidDAO();
     $sectionDAO = new SectionDAO();
     $studentBids = $bidDAO->retrieveByUserid($userid);
+    $start = DateTime::createFromFormat("G:i", $bidSection->getStart());
+    $end = DateTime::createFromFormat("G:i", $bidSection->getEnd());
     foreach ($studentBids as $b) {
         // Retrieve the section corresponding to the bid
         $bSection = $sectionDAO->retrieve($b->getCode(), $b->getSection());
+        $bStart = DateTime::createFromFormat("G:i", $bSection->getStart());
+        $bEnd = DateTime::createFromFormat("G:i",$bSection->getEnd());
         // Check if classes are on the same day and if yes, check for timing clashes
-        if (($bSection->getDay() == $bidSection->getDay()) && (($bSection->getStart() <= $bidSection->getEnd()) && ($bSection->getEnd() >= $bidSection->getStart()))) {
+        if (($bSection->getDay() == $bidSection->getDay()) && (($bStart < $end) && ($bEnd > $start))) {
             return $b;
         }
     }
@@ -242,11 +363,15 @@ function examClash($userid, $bidCourse) {
     $bidDAO = new BidDAO();
     $courseDAO = new CourseDAO();
     $studentBids = $bidDAO->retrieveByUserid($userid);
+    $examStart = DateTime::createFromFormat("G:i", $bidCourse->getExamStart());
+    $examEnd = DateTime::createFromFormat("G:i", $bidCourse->getExamEnd());
     foreach ($studentBids as $b) {
         // Retrieve the course corresponding to the bid
         $bCourse = $courseDAO->retrieve($b->getCode());
+        $bStart = DateTime::createFromFormat("G:i", $bCourse->getExamStart());
+        $bEnd = DateTime::createFromFormat("G:i", $bCourse->getExamEnd());
         // Check if exams are on the same date and if yes, check for timing clashes
-        if (($bCourse->getExamDate() == $bidCourse->getExamDate()) && (($bCourse->getExamStart() <= $bidCourse->getExamEnd()) && ($bCourse->getExamEnd() >= $bidCourse->getExamStart()))) {
+        if (($bCourse->getExamDate() == $bidCourse->getExamDate()) && (($bStart <= $examEnd) && ($bEnd >= $examStart))) {
             return $b;
         }
     }
@@ -256,10 +381,12 @@ function examClash($userid, $bidCourse) {
 function prereqCompleted($userid, $coursecode) {
     $prerequisiteDAO = new PrerequisiteDAO();
     $courseCompletedDAO = new CourseCompletedDAO();
-    $prerequisite = $prerequisiteDAO->retrieve($coursecode);
+    $prerequisite = $prerequisiteDAO->retrieveByCourse($coursecode);
     if ($prerequisite) {
-        if(!($courseCompletedDAO->retrieve($userid, $prerequisite->getPrerequisite()))){
-            return FALSE;
+        foreach($prerequisite as $p) {
+            if(!($courseCompletedDAO->retrieve($userid, $p->getPrerequisite()))){
+                return FALSE;
+            }
         }
     }
     return TRUE;
@@ -288,7 +415,7 @@ function getBiddingResults($section, $roundNum, $bidDAO, $sectionDAO) {
     $minBid = $section->getMinBid();
 
     // After every bid, the system sorts the 'pending' bids from the highest to the lowest
-    $sectionBids = $bidDAO->getBidsBySectionStatus($courseCode, $sectionNum, 'Pending');
+    $sectionBids = $bidDAO->getSectionBids($courseCode, $sectionNum, $roundNum);
 
     // arrays to store (predicted) successful and unsucessful bids
     $successfulBids = [];
@@ -357,6 +484,7 @@ function processBids() {
     $roundDAO = new RoundDAO();
     $round = $roundDAO->retrieveRoundInfo();
     $roundNum = $round->getRoundNum();
+    $roundStatus = $round->getStatus();
 
     $sections = $sectionDAO->retrieveAll();
     $studentDAO = new StudentDAO();
@@ -368,22 +496,30 @@ function processBids() {
         $successfulBids = $results[0];
         $unsuccessfulBids = $results[1];
 
-        foreach($successfulBids as $bid) {
-            $bidDAO->updateBidStatus($bid, "Success");
-            $vacancies--;
-        }
+        if ($roundStatus == "closed") {
+            foreach($successfulBids as $bid) {
+                $bidDAO->updateBidStatus($bid, $roundNum, "Success");
+                $vacancies--;
+            }
+            
+            // update number of vacancies for this section
+            $sectionDAO->updateVacancies($coursecode, $sectionId, $vacancies);
         
-        // update number of vacancies for this section
-        $sectionDAO->updateVacancies($coursecode, $sectionId, $vacancies);
-    
-        foreach($unsuccessfulBids as $bid) {
-            $bidDAO->updateBidStatus($bid, "Fail");
-    
-            // if bid is unsuccessful, refund student the full amount
-            $refund = $bid->getAmount();
-            $student = $studentDAO->retrieve($bid->getUserid());
-            $newBalance = $student->getEdollar() + $refund;
-            $studentDAO->updateEdollar($student->getUserid(), $newBalance);
+            foreach($unsuccessfulBids as $bid) {
+                $bidDAO->updateBidStatus($bid, $roundNum, "Fail");
+        
+                // if bid is unsuccessful, refund student the full amount
+                $refund = $bid->getAmount();
+                $student = $studentDAO->retrieve($bid->getUserid());
+                $newBalance = $student->getEdollar() + $refund;
+                $studentDAO->updateEdollar($student->getUserid(), $newBalance);
+            }
+        } else {
+            foreach($successfulBids as $bid) {
+                $bidDAO->updateBidStatus($bid, $roundNum, "Success");
+            } foreach($unsuccessfulBids as $bid) {
+                $bidDAO->updateBidStatus($bid, $roundNum, "Fail");
+            }
         }
     }
 }
