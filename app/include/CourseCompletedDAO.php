@@ -47,6 +47,29 @@ class CourseCompletedDAO {
         return $result;
     }
 
+    public  function retrieveByStudent($userid) {
+        $sql = 'SELECT * FROM course_completed WHERE userid = :userid';
+            
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":userid", $userid, PDO::PARAM_STR);
+        $stmt->bindParam(":coursecode", $coursecode, PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = array();
+        while($row = $stmt->fetch()) {
+            $result[] = new CourseCompleted($row['userid'], $row['code']);
+        }
+        
+        $stmt = null;
+        $conn = null;
+
+        return $result;
+    }
+
     public function removeAll() {
         $sql = 'DELETE FROM course_completed';
         
