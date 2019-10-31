@@ -155,8 +155,8 @@ class SectionDAO {
 
         $sections = array();
 
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $sections[] = $row['section'];
+        while($row = $stmt->fetch()) {
+            $sections[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size'], $row['min_bid'], $row['vacancies']);
         }
        
         $stmt = null;

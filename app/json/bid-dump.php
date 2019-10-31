@@ -36,21 +36,22 @@ if (!empty($errors)) {
         // initialize DAO for validations
         $roundDAO = new RoundDAO();
         $currentStatus = $roundDAO->retrieveRoundInfo()->getStatus();
+        $currentNum = $roundDAO->retrieveRoundInfo()->getRoundNum();
 
         $bidStatus = "";
         $row = 1;
         $bidAmount = 0;
         $bidArr = array();
-        $bids = $bidDAO->retrieveBidsBySection($courseCode, $sectionNum);
-
+        $bids = $bidDAO->getSectionBids($courseCode, $sectionNum, $currentNum);
+        
         $bidsToDump = array();
 
         foreach ($bids as $bid) {
             $bidAmount = floatval($bid->getAmount());
-            $bidStatus = $bid->getStatus();
-            $bStatus = null;
+            $bidStatus = ($currentNum == 1) ? $bid->getR1Status() : $bid->getR2Status();
+            $bStatus = "";
             
-            if ($currentStatus == "opened" && $bidStatus == "Pending") {
+            if ($bidStatus == "Pending") {
                 $bStatus = "-";
             } elseif ($bidStatus == "Success") {
                 $bStatus = "in";

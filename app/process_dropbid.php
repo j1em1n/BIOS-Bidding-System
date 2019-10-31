@@ -5,60 +5,74 @@
     //require_once 'include/process_bids.php';
     require_once 'include/common.php';
 
+    // Protect against user attempting to access page via url
+    if(!(isset($_REQUEST['coursecode']) && isset($_REQUEST['sectionnum']))) {
+        header("Location: index.php");
+        exit();
+    }
 
     $userid = $_SESSION['userid'];
+    $coursecode = strtoupper($_POST['coursecode']);
+    $sectionnum = strtoupper($_POST['sectionnum']);
 
-    // User clicked on Drop Bid on index page
-    // Retrieve everything (userid, amount, code, section, status)
-    if(isset($_SESSION['code']) && isset($_SESSION['section']) && isset($_SESSION['amount']) ){      
-
-        var_dump($_SESSION['code']);
-
-        $code = $_SESSION['code'];
-        $sectionnum = $_SESSION['section'];
-        $biddedamount = $_SESSION['amount'];
-    
+    if (!empty($coursecode) && !empty($sectionnum)){
         $courseDAO = new CourseDAO();
         $sectionDAO = new SectionDAO();
         $bidDAO = new BidDAO();
         $studentDAO = new StudentDAO();
         $roundDAO = new RoundDAO();
-
-        $section = $sectionDAO->retrieve($code, $sectionnum);
-        $student = $studentDAO->retrieve($userid);
-        $currentedollars = $student->getEdollar();
-        $updatedamount = 0.0;
-
-        $selected_bid = $bidDAO->retrieve($userid, $code);
-            
-        $updatedamount =  strval($currentedollars + $biddedamount);
-        $studentDAO->updateEdollar($userid, $updatedamount);
-        $isDeleteOK = $bidDAO->delete($selected_bid);
-
-        if ($isDeleteOK) {
-            $_SESSION['success'] = "Bid dropped successfully. You have e$$updatedamount left.";
-
-            // if the current round is round 2, process bids to get predicted results
-            if ($roundDAO->retrieveRoundInfo()->getRoundNum() == 2) {
-                $results = getBiddingResults($section, 2, $bidDAO, $sectionDAO);
-                $successful = $results[0];
-                $unsuccessful = $results[1];
-                foreach($successful as $bid) {
-                    $bidDAO->updatePredicted($bid, "Success");
-                }
-                foreach($unsuccessful as $bid) {
-                    $bidDAO->updatePredicted($bid, "Fail");
-                }
-            }
-            
+        // Check if course exists in database
+        if(!($courseDAO->retrieve($coursecode))) {
+            $_SESSION['errors'][] = "invalid course code";
             header("Location: index.php");
             exit();
-            
+        } elseif (!($sectionDAO->retrieve($coursecode, $sectionnum))) {
+            // Check if section code is found in section.csv (only for valid course code)
+            $_SESSION['errors'][] = "invalid section";
+            header("Location: index.php");
+            exit();
         } else {
-            $_SESSION['errors'][] = "Error: unable to delete bid";
-            header("Location: index.php");
-            exit();
-        }              
-        
+            $student = $studentDAO->retrieve($userid);
+            $currentedollars = $student->getEdollar();
+            $updatedamount = 0.0;
+            $selected_bid = $bidDAO->retrieve($userid, $coursecode);
+            if ($selected_bid) {
+                if ($selected_bid->getR1Status() == "Success") {
+                    $_SESSION['errors'][] = "You are currently enrolled in this course. To drop this course, please proceed to the Drop Section page instead.";
+                    header("Location: index.php");
+                    exit();
+                }
+                $biddedamount = $selected_bid->getAmount();                        
+                $updatedamount =  strval($currentedollars + $biddedamount);
+                $studentDAO->updateEdollar($userid, $updatedamount);
+                $isDeleteOK = $bidDAO->delete($selected_bid);
+                if ($isDeleteOK) {
+                    $_SESSION['success'][] = "Bid dropped successfully. You have e$$updatedamount left.";
+                    // if the current round is round 2, process bids to get predicted results
+                    if ($roundDAO->retrieveRoundInfo()->getRoundNum() == 2) {
+                        processBids();
+                    }
+                    header("Location: index.php");
+                    exit();
+                } else {
+                    $_SESSION['errors'][] = "Error: unable to delete bid";
+                    header("Location: index.php");
+                    exit();
+                }
+            } else {
+                $_SESSION['errors'][] = "You do not have any bids for this section";
+                header("Location: index.php");
+                exit();
+            }
+        }
+    } else {
+        if(empty($coursecode)) {
+            $_SESSION['errors'][] = "blank course code";
+        }
+        if(empty($sectionnum)) {
+            $_SESSION['errors'][] = "blank section number";
+        }
+        header("Location: index.php");
+        exit();
     }
 ?>
