@@ -99,7 +99,7 @@ if ($currentStatus == "closed" && $currentRound == 1 && isset($_POST['form'])) {
     $selectedCode = trim($arr[0]);
     $selectedSection = trim($arr[1]);
 
-    $allBids = $bidDAO->retrieveBidsBySection($selectedCode, $selectedSection);
+    $allBids = $bidDAO->getSectionBids($selectedCode, $selectedSection, $currentRound);
     $allBidsTotal = count($allBids);
 
     echo "

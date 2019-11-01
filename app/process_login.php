@@ -2,7 +2,7 @@
     require_once 'include/common.php';
 
     if(!isset($_POST['userid']) || !isset($_POST['password'])) {
-        $_SESSION['errors'] = "Please enter your login details";
+        $_SESSION['errors'][] = "Please enter your login details";
         header("Location: login.php");
         exit();
     }
@@ -38,7 +38,7 @@
         }
     }
         
-    $_SESSION['errors'] = ['Invalid username / password'];
+    $_SESSION['errors'][] = ['Invalid username / password'];
     header("Location: login.php");
     exit();
 ?>

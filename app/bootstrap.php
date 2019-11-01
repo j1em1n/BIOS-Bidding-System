@@ -18,8 +18,8 @@ require_once 'include/common.php';
 			<a href="admin_index.php">Home</a>
 		</p>
 		<?php
-			printErrors();
 			printSuccess();
+			printErrors();
 		?>
 	</body>
 </html>

@@ -420,7 +420,7 @@ function getBiddingResults($section, $roundNum, $bidDAO, $sectionDAO) {
 
     // After every bid, the system sorts the 'pending' bids from the highest to the lowest
     $sectionBids = $bidDAO->getSectionBids($courseCode, $sectionNum, $roundNum);
-    
+
     // arrays to store (predicted) successful and unsucessful bids
     $successfulBids = [];
     $unsuccessfulBids = [];
