@@ -15,11 +15,23 @@ spl_autoload_register(function($class) {
 session_start();
 
 function printErrors() {
+    echo "<table>";
+           
     if(isset($_SESSION['errors'])){
         echo "<ul id='errors' style='color:red;'>";
-        
+        $sn = 0;
+
+        echo "<tr>
+                <th>Errors</th>
+            </tr>";
+
         foreach ($_SESSION['errors'] as $value) {
-            echo "<li>" . $value . "</li>";
+            $sn++;
+            
+            echo "<tr>
+            <td> $sn </td>
+            <td>" . $value . "</td>
+            </tr>";
         }
         
         echo "</ul>";   
@@ -61,10 +73,24 @@ function validateDate($date, $format)
 }
 
 function printSuccess() {
+
+    echo "<table>";
+    $sn = 0;
+       
     if(isset($_SESSION['success'])){
         echo "<ul id='success' style='color:DarkGreen;'>";
+
+        echo "<tr>
+                <th>Success</th>
+            </tr>";
+
         foreach ($_SESSION['success'] as $value) {
-            echo "<li>" . $value . "</li>";
+            $sn++;
+
+            echo "<tr>
+            <td> $sn </td>
+            <td>" . $value . "</td>
+            </tr>";
         }
         echo "</ul>";
         unset($_SESSION['success']);

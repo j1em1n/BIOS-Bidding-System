@@ -8,9 +8,11 @@ require_once 'include/common.php';
         <link rel="stylesheet" type="text/css" href="include/style.css">
     </head>
     <body>
-        <h1>Login</h1>
+        <h1>Welcome to Bios!</h1>
+        <h2>Login page<h2>
+        <h3>Sign in with your userID and password</h3>
         <form method='POST' action='process_login.php'>
-            <table>
+            <table align = "center">
                 <tr>
                     <td>Username</td>
                     <td>
