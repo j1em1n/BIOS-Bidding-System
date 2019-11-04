@@ -1,16 +1,69 @@
+@charset "UTF-8";
+
+body {
+    background-color: solid rgb(0, 0, 0);
+}
+
 h1 {
-    font: 24px Serif;
-    border-bottom: 1px solid black;
+    text-align: center;
+    font: 30px Serif;
+    border-bottom: 1.5px solid rgb(0, 0, 0);
+}
+
+h2 {
+    text-align: center;
+    font: 18px Serif;
+    background-color: solid rgb(211, 211, 214);
+    border-bottom: 0px solid rgb(0, 0, 0);
+}
+
+h3 {
+    text-align: center;
+    font: 15px Serif;
+    border-bottom: 0px solid rgb(0, 0, 0);
 }
 
 th {
-    background-color: peachpuff;
+    text-align: left;
     color:black;
     padding: 5px;
 }
 
 td {
-    background-color: palegoldenrod;
+    text-align: left;
+    background-color: rgb(211, 211, 214);
     color: black;
     padding: 5px;
 }
+
+.button:hover {
+    background-color: #4CAF50; 
+    color: white;
+  }
+
+/* logout button */
+.button1 {
+    background-color: rgb(194, 191, 150);
+    color: rgb(0, 0, 0);
+    /* border: 2px solid #4CAF50;  */
+}
+
+/* other buttons */
+.button2 {
+    background-color: rgb(194, 191, 150);
+    color: rgb(0, 0, 0);
+    /* border: 2px solid rgb(0, 0, 0);  */
+}
+
+/* .successtable {
+    background-color: rgb(255, 0, 0);
+    color: rgb(0, 0, 0);
+    border: 2px solid #4CAF50; 
+    
+}
+
+.errortable {
+    background-color: rgb(121, 5, 255);
+    color: rgb(0, 0, 0);
+    border: 2px solid #4CAF50; 
+} */
