@@ -12,17 +12,22 @@ $currentStatus = $roundInfo->getStatus();
 <html>
     <head>
 
-            <div style='float: right;'><a href='logout.php'>Logout</a></div>
-        <link rel="stylesheet" type="text/css" href="include/style.css">
+        <link rel="stylesheet" type="text/css" href="include/style.css"/>
     </head>
     <body>
-        <h1>BIOS BIDDING (Administrator)</h1>
-	<h2>Welcome, Admin</h2>
-	<h3>Current Round: <?=$currentRound?> (<?=strtoupper($currentStatus)?>)</h3>
 
-        <p><a href='bootstrap.php'>Bootstrap</a></p>
+    <h1>BIOS BIDDING (Administrator)</h1>
+	<h3>Current Round: <?=$currentRound?> <b>(<?=strtoupper($currentStatus)?>)<b></h3>
+    
+    <input class = "button2" type = "button" value = "Bootstrap" onclick = "window.location.href='bootstrap.php'"/><br>
+    <br>
+    <input class = "button2" type = "button" value = "Open/Close Bidding Round" onclick = "window.location.href='adminround.php'"/><br>
+    <br>
+    <input class = "button1" type = "button" value = "Logout" onclick = "window.location.href='logout.php'"><br>
+
+        <!-- <p><a href='bootstrap.php'>Bootstrap</a></p>
         <p><a href='adminround.php'>Open / Close Bidding Round</a></p>
-        <p><a href='logout.php'>Logout</a></p>
+        <p><a href='logout.php'>Logout</a></p> -->
     </body>
 </html>
 
