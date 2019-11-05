@@ -39,11 +39,17 @@ if (!empty($errors)) {
     $vacancy = $allInfo->getSize();
     $minBidAmt = $allInfo->getMinBid();
     $enrolledBids = $bidDAO->getBidsByCourseSection($course, $section);
+    $numOfBids = count($bidDAO->getBidsByCourseSection($course, $section));
+
     //round 1
     //check for status success
     //Minimum bid price: when #bid is less than the #vacancy,
     //report the lowest bid amount. Otherwise, set the price as the 
     //clearing price. When there is no bid made, the minimum bid price will be 10.0 dollars.
+    if($numOfBids < $vacancy){
+        $minBidAmt = 
+    }
+    
     foreach($enrolledBids as $eachBid){
         $userid = $eachBid->getUserid();
         $amount = $eachBid->getAmount();
