@@ -9,6 +9,15 @@ $success = array();
 $result = array();
 $studentArray = array();
 
+//var_dump area
+
+//var-dump area
+
+
+
+
+
+
 if (!empty($errors)) {
     $result = jsonErrors($errors);
 } else {
@@ -18,50 +27,57 @@ if (!empty($errors)) {
     $section = $jsonObj->section;
 
 
-    $courseDAO = new CourseDAO();
     $sectionDAO = new SectionDAO();
     $bidDAO = new BidDAO();
     $studentDAO = new StudentDAO();
+    $roundDAO = new RoundDAO();
+    
+    $roundNum = $roundDAO->retrieveRoundInfo();
 
+    $allInfo = $sectionDAO->retrieve($course, $section);
+
+    $vacancy = $allInfo->getSize();
+    $minBidAmt = $allInfo->getMinBid();
+    $enrolledBids = $bidDAO->getBidsByCourseSection($course, $section);
     //round 1
     //check for status success
     //Minimum bid price: when #bid is less than the #vacancy,
     //report the lowest bid amount. Otherwise, set the price as the 
     //clearing price. When there is no bid made, the minimum bid price will be 10.0 dollars.
-
-    $successfulBids = $bidDAO->getSuccessfulBids();
-    $allInfo = $sectionDAO->retrieve($course, $section);
-
-    $bidsInfo = $bidDAO->retrieveAll();
-    $bidsInfo2 = array();
-
-    foreach($bidsInfo as $eachBid){
-        $userId = $eachBid->getUserid();
-
-        //info from student table
-        $studentInfo = $studentDAO->retrieve($userId);
-        $eBalance = $studentInfo->getEdollar();
-
-        $balanceArray = [
-            $eachBid->getUserid() => $eBalance
+    foreach($enrolledBids as $eachBid){
+        $userid = $eachBid->getUserid();
+        $amount = $eachBid->getAmount();
+    
+        $studentInfo = $studentDAO->retrieve($eachBid->getUserid());
+        $balance = $studentInfo->getEdollar();
+    
+        if($roundNum->getRoundNum() == '1'){
+            $status = $eachBid->getR1Status();
+    
+        } else {
+            $status = $eachBid->getR2status();
+        }
+    
+        $studentArray[]= [
+            "userid" => $userid,
+            "amount" => $amount,
+            "balance" => $balance,
+            "status" => $status
+    
         ];
-
+       
     }
+    
+    $success = [
+        "status" => "success",
+        "vacancy" => "$vacancy",
+        "min-bid-amount" => $minBidAmt
+        //"student" => $studentArray
+    ];
 
-    // $studentArray = [
-    //     "userid"=>$bidsInfo->getUserid(),
-    //     "amount"=>$bidsInfo->getAmount(),
-    //     "balance"=> "here"
-
-
-    // ];
-
-    // $success = [
-    //     "status"=>"success",
-    //     "vacancy"=>$allInfo->getSize(),
-    //     "min-bid-amount"=>$allInfo->getMinBid(),
-    //     "students"=>"students array HERE"
-    // ];
+    foreach($studentArray as $eachStudentArray){
+        $success['student'][] = $eachStudentArray;
+    }
 
 
     if (empty($errors) && !empty($success)) {
