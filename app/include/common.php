@@ -19,17 +19,14 @@ function printErrors() {
            
     if(isset($_SESSION['errors'])){
         echo "<ul id='errors' style='color:red;'>";
-        $sn = 0;
 
         echo "<tr>
-                <th>Errors</th>
+                <th>Note</th>
             </tr>";
 
         foreach ($_SESSION['errors'] as $value) {
-            $sn++;
             
             echo "<tr>
-            <td> $sn </td>
             <td>" . $value . "</td>
             </tr>";
         }
@@ -75,20 +72,17 @@ function validateDate($date, $format)
 function printSuccess() {
 
     echo "<table>";
-    $sn = 0;
        
     if(isset($_SESSION['success'])){
         echo "<ul id='success' style='color:DarkGreen;'>";
 
         echo "<tr>
-                <th>Success</th>
+                <th>Note:</th>
             </tr>";
 
         foreach ($_SESSION['success'] as $value) {
-            $sn++;
 
             echo "<tr>
-            <td> $sn </td>
             <td>" . $value . "</td>
             </tr>";
         }
