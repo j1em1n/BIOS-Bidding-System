@@ -169,7 +169,7 @@ function currentBidsTable($bids, $roundNum) {
     $courseDAO = new CourseDAO();
     echo "
         <h2>Your current bids</h2>
-        <table>
+        <table border = '1'>
         <tr>
             <b>
             <th>Course Code</th>
@@ -204,7 +204,7 @@ function bidResultsTable($bids) {
     $courseDAO = new CourseDAO();
     echo "
         <h2>Bidding Results</h2>
-        <table>
+        <table border = '1'>
         <tr>
             <b>
             <th>Course Code</th>
