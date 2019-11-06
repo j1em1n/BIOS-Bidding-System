@@ -1,6 +1,7 @@
 <?php
 require_once 'include/protect.php';
 require_once 'include/common.php';
+require_once 'include/navbar.php';
 
 $roundDAO = new RoundDAO();
 $roundInfo = $roundDAO->retrieveRoundInfo();
@@ -23,7 +24,6 @@ $currentStatus = $roundInfo->getStatus();
     <br>
     <input class = "button2" type = "button" value = "Open/Close Bidding Round" onclick = "window.location.href='adminround.php'"/><br>
     <br>
-    <input class = "button1" type = "button" value = "Logout" onclick = "window.location.href='logout.php'"><br>
 
         <!-- <p><a href='bootstrap.php'>Bootstrap</a></p>
         <p><a href='adminround.php'>Open / Close Bidding Round</a></p>
