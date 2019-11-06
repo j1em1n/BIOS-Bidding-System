@@ -15,19 +15,18 @@ spl_autoload_register(function($class) {
 session_start();
 
 function printErrors() {
-    echo "<table>";
+    echo "<table border = '1'>";
            
     if(isset($_SESSION['errors'])){
         echo "<ul id='errors' style='color:red;'>";
 
         echo "<tr>
-                <th>Note</th>
-            </tr>";
+                <th><img src = 'include/error_icon.png' width = '30' height = '30'></th>";
 
         foreach ($_SESSION['errors'] as $value) {
             
             echo "<tr>
-            <td>" . $value . "</td>
+            <td style = 'color:red;'>" . $value . "</td>
             </tr>";
         }
         
@@ -71,19 +70,19 @@ function validateDate($date, $format)
 
 function printSuccess() {
 
-    echo "<table>";
+    echo "<table border '1'>";
        
     if(isset($_SESSION['success'])){
         echo "<ul id='success' style='color:DarkGreen;'>";
 
         echo "<tr>
-                <th>Note:</th>
+                <th><img src = 'include/success_icon.jpg' width = '30' height = '30'></th>
             </tr>";
 
         foreach ($_SESSION['success'] as $value) {
 
             echo "<tr>
-            <td>" . $value . "</td>
+            <td style='color:DarkGreen;'>" . $value . "</td>
             </tr>";
         }
         echo "</ul>";
@@ -118,7 +117,7 @@ function numToDay($n, $format) {
 }
 
 function printSectionInfo($sections) {
-    echo "<table>
+    echo "<table border '1'>
     <tr>
         <th>Course</th>
         <th>Section</th>
