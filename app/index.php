@@ -1,7 +1,8 @@
 <?php
 require_once 'include/protect.php';
 require_once 'include/common.php';
-    
+require_once 'include/navbar.php';
+
 if(isset($_SESSION['userid'])){
     $userid = $_SESSION['userid'];
 }
@@ -21,27 +22,33 @@ $currentStatus = $roundInfo->getStatus();
 <html>
     <head>
 
-            <div style='float: right;'><a href='logout.php'>Logout</a></div>
+
         <link rel="stylesheet" type="text/css" href="include/style.css">
     </head>
     <body>
 
         <h1>BIOS BIDDING </h1>
         
-        <h2>Welcome <?=$name?></h2>
-        <h3>Current Round: <?=$currentRound?> (<?=strtoupper($currentStatus)?>)</h3>
+        <h2>Welcome, <b><?=$name?></b>!</h2>
+        <h3>Current Round: <?=$currentRound?>
+        <?php 
+        
+        if($currentStatus == 'closed'){
+                $currentStatus = strtoupper($currentStatus);
+                echo "<span style = 'color:red'><b>($currentStatus)</b>";
+            } else {
+                $currentStatus = strtoupper($currentStatus);
+                echo "<span style = 'color:green'><b>($currentStatus)</b>";
+            }
+        ?>
+        </h3>
+
+        <h4>Your E-Dollar Balance: $<b><?=$edollar?></h4>
 
         <p>
             <?=printErrors()?>
             <?=printSuccess()?>
         </p>
-
-        <table>
-            <tr>
-                <th>Your E-Dollar Balance: $<?=$edollar?></th>
-            </tr>
-        
-        </table>
 
         <?php
             
@@ -68,7 +75,7 @@ $currentStatus = $roundInfo->getStatus();
         ?>
         
         <p>
-            <a id="add" href="placebid.php">Plan & Bid</a><br>
+            <div class = "button" :hover><a href="placebid.php" style = "text-decoration: none;">Plan & Bid</a><br></div>
         </p>
 
     </body>
