@@ -5,23 +5,31 @@ body {
 }
 
 h1 {
-    text-align: center;
+    text-align: left;
     font: 30px Serif;
     border-bottom: 1.5px solid rgb(0, 0, 0);
 }
 
 h2 {
-    text-align: center;
+    text-align: left;
     font: 18px Serif;
     background-color: solid rgb(211, 211, 214);
     border-bottom: 0px solid rgb(0, 0, 0);
 }
 
 h3 {
-    text-align: center;
+    text-align: left;
     font: 15px Serif;
     border-bottom: 0px solid rgb(0, 0, 0);
 }
+
+
+h4 {
+    text-align: left;
+    font: 15px Serif;
+    border-bottom: 0px solid rgb(0, 0, 0);
+}
+
 
 th {
     text-align: left;
@@ -36,34 +44,51 @@ td {
     padding: 5px;
 }
 
-.button:hover {
-    background-color: #4CAF50; 
+.button {
+    background-color: rgba(224, 224, 224, 0.568);
+    border: 2px solid rgb(0, 0, 0);
     color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s;
   }
-
-/* logout button */
-.button1 {
-    background-color: rgb(194, 191, 150);
-    color: rgb(0, 0, 0);
-    /* border: 2px solid #4CAF50;  */
+  
+.button:hover {
+    background-color: rgba(0, 92, 15, 0.445);
+    color: white;
 }
 
-/* other buttons */
-.button2 {
-    background-color: rgb(194, 191, 150);
-    color: rgb(0, 0, 0);
-    /* border: 2px solid rgb(0, 0, 0);  */
+/* Add a black background color to the top navigation */
+.topnav {
+    background-color: rgb(184, 184, 184);
+    overflow: auto;
+  }
+  
+/* Style the links inside the navigation bar */
+.topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
 }
 
-/* .successtable {
-    background-color: rgb(255, 0, 0);
-    color: rgb(0, 0, 0);
-    border: 2px solid #4CAF50; 
-    
+/* Change the color of links on hover */
+.topnav a:hover {
+    background-color: rgb(150, 247, 158);
+    color: black;
 }
 
-.errortable {
-    background-color: rgb(121, 5, 255);
-    color: rgb(0, 0, 0);
-    border: 2px solid #4CAF50; 
-} */
+/* Add a color to the active/current link */
+.topnav a.active {
+    background-color: rgb(20, 190, 4);
+    color: white;
+}
+
+a {
+    text-decoration: none;
+    }
