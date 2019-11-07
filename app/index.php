@@ -34,11 +34,9 @@ $currentStatus = $roundInfo->getStatus();
         <?php 
         
         if($currentStatus == 'closed'){
-                $currentStatus = strtoupper($currentStatus);
-                echo "<span style = 'color:red'><b>($currentStatus)</b>";
+                echo "<span style = 'color:red'><b>(".strtoupper($currentStatus).")</b>";
             } else {
-                $currentStatus = strtoupper($currentStatus);
-                echo "<span style = 'color:green'><b>($currentStatus)</b>";
+                echo "<span style = 'color:green'><b>(".strtoupper($currentStatus).")</b>";
             }
         ?>
         </h3>
@@ -55,7 +53,6 @@ $currentStatus = $roundInfo->getStatus();
             $courseDAO = new CourseDAO();
             $bidDAO = new BidDAO();
             $bids = $bidDAO->retrieveByUserid($userid);
-
             if ($currentStatus == "opened") {
                 $pending = array();
                 $success = array();
@@ -68,7 +65,9 @@ $currentStatus = $roundInfo->getStatus();
                 }
                 
                 currentBidsTable($pending, $currentRound);
-                enrolledSectionsTable($success);
+                if ($currentRound == 2) {
+                    enrolledSectionsTable($success);
+                }
             } else {
                 bidResultsTable($bids);
             }
