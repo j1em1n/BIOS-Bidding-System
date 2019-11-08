@@ -502,7 +502,7 @@ function doBootstrap() {
 					$sectionid = trim($data[3]);
 				
 					//Check for any empty fields
-					if (empty($userid) || empty($amount) || empty($code) || empty($section)) {
+					if (empty($userid) || empty($amount) || empty($code) || empty($sectionid)) {
 						if(empty($data[0])){
 							$rowErrors[] = "blank userid";
 						} 
