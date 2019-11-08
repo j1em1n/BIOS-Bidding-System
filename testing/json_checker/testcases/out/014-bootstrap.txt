@@ -1,0 +1,67 @@
+{
+    "status": "error",
+    "num-record-loaded": [
+        {
+            "bid.csv": 13
+        },
+        {
+            "course.csv": 25
+        },
+        {
+            "course_completed.csv": 4
+        },
+        {
+            "prerequisite.csv": 8
+        },
+        {
+            "section.csv": 36
+        },
+        {
+            "student.csv": 26
+        }
+    ],
+    "error": [
+        {
+            "file": "bid.csv",
+            "line": 3,
+            "message": [
+                "blank amount"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 5,
+            "message": [
+                "blank amount"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 9,
+            "message": [
+                "blank amount"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 12,
+            "message": [
+                "blank amount"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 16,
+            "message": [
+                "blank amount"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 20,
+            "message": [
+                "blank amount"
+            ]
+        }
+    ]
+}
