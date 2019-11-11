@@ -1,0 +1,1 @@
+r={"userid": "smart.future.2051","course": "IS200","section": "S1"}
