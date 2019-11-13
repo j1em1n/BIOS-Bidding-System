@@ -38,7 +38,7 @@
         }
     }
         
-    $_SESSION['errors'][] = ['Invalid username / password'];
+    $_SESSION['errors'][] = 'Invalid username / password';
     header("Location: login.php");
     exit();
 ?>

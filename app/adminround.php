@@ -51,7 +51,7 @@ if ($currentStatus == "closed" && $currentRound == 1) {
                     <?php
                         if ($currentStatus == "opened") {
                             echo "<button name='submit' type='submit' value='closed'>Close Round $display</button>";
-                        } else {
+                        } elseif ($currentRound == 1) {
                             echo "<button name='submit' type='submit' value='opened'>Open Round $display</button>";
                         }
                         echo "<input type='hidden' name='number' value='$display'>";

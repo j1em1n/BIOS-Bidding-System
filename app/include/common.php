@@ -15,21 +15,16 @@ spl_autoload_register(function($class) {
 session_start();
 
 function printErrors() {
-    echo "<table border = '1'>";
-           
+    echo "<table border='1'>";       
     if(isset($_SESSION['errors'])){
         echo "<ul id='errors' style='color:red;'>";
-
         echo "<tr>
                 <th><img src = 'include/error_icon.png' width = '30' height = '30'></th>";
-
         foreach ($_SESSION['errors'] as $value) {
-            
             echo "<tr>
             <td style = 'color:red;'>" . $value . "</td>
             </tr>";
         }
-        
         echo "</ul>";   
         unset($_SESSION['errors']);
     }    
@@ -69,18 +64,13 @@ function validateDate($date, $format)
 }
 
 function printSuccess() {
-
-    echo "<table border '1'>";
-       
+    echo "<table border='1'>";
     if(isset($_SESSION['success'])){
         echo "<ul id='success' style='color:DarkGreen;'>";
-
         echo "<tr>
                 <th><img src = 'include/success_icon.jpg' width = '30' height = '30'></th>
             </tr>";
-
         foreach ($_SESSION['success'] as $value) {
-
             echo "<tr>
             <td style='color:DarkGreen;'>" . $value . "</td>
             </tr>";
@@ -116,9 +106,16 @@ function numToDay($n, $format) {
     }
 }
 
-function printSectionInfo($sections) {
+function printSectionInfo($sections, $userid) {
+    $courseDAO = new CourseDAO();
+    $studentDAO = new StudentDAO();
+    $roundDAO = new RoundDAO();
+    $roundNum = $roundDAO->retrieveRoundInfo()->getRoundNum();
+    $student = $studentDAO->retrieve($userid);
+    $school = $student->getSchool();
     echo "<table border '1'>
     <tr>
+        <th>School</th>
         <th>Course</th>
         <th>Section</th>
         <th>Day</th>
@@ -126,14 +123,17 @@ function printSectionInfo($sections) {
         <th>End</th>
         <th>Instructor</th>
         <th>Venue</th>
-        <th>Size</th>
-        <th>Vacancies</th>
-        <th>Minimum Bid</th>
-        <th>Enter e$</th>
+        <th>Size</th>";
+    if ($roundNum == 2) {
+        echo "<th>Vacancies</th>
+        <th>Minimum Bid</th>";
+    }
+    echo "<th>Enter e$</th>
         <th></th>
     </tr>";
     foreach($sections as $section) {
         $code = $section->getCourse();
+        $school = $courseDAO->retrieve($code)->getSchool();
         $sectId = $section->getSection();
         $day = numToDay($section->getDay(), 'short');
         $start = $section->getStart();
@@ -146,6 +146,7 @@ function printSectionInfo($sections) {
 
         echo "<tr>
             <form action='process_placebid.php' method='POST'>
+            <td>{$school}</td>
             <td>{$code}<input type='hidden' name='coursecode' value='{$code}'></td>
             <td>{$sectId}<input type='hidden' name='sectionnum' value='{$sectId}'></td>
             <td>{$day}</td>
@@ -153,10 +154,12 @@ function printSectionInfo($sections) {
             <td>{$end}</td>
             <td>{$instructor}</td>
             <td>{$venue}</td>
-            <td>{$size}</td>
-            <td>{$vacancies}</td>
-            <td>{$minBid}</td>
-            <td><input type='number' step='.01' name='edollar' style='width=50px'></td>
+            <td>{$size}</td>";
+        if ($roundNum == 2) {
+            echo "<td>{$vacancies}</td>
+            <td>{$minBid}</td>";
+        }
+        echo "<td><input type='number' step='.01' name='edollar' style='width=50px'></td>
             <td><input type='submit' value='Place bid'></td>
             </form>
         </tr>";
@@ -168,7 +171,7 @@ function currentBidsTable($bids, $roundNum) {
     $courseDAO = new CourseDAO();
     echo "
         <h2>Your current bids</h2>
-        <table border = '1'>
+        <table border '1'>
         <tr>
             <b>
             <th>Course Code</th>
@@ -203,7 +206,7 @@ function bidResultsTable($bids) {
     $courseDAO = new CourseDAO();
     echo "
         <h2>Bidding Results</h2>
-        <table border = '1'>
+        <table border '1'>
         <tr>
             <b>
             <th>Course Code</th>
@@ -237,7 +240,7 @@ function enrolledSectionsTable($bids) {
     $courseDAO = new CourseDAO();
     echo "
         <h2>Your enrolled sections</h2>
-        <table>
+        <table border '1'>
         <tr>
             <b>
             <th>Course Code</th>
