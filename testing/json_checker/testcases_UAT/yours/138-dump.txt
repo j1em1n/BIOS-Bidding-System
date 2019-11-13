@@ -1,0 +1,121 @@
+{
+    "status": "success",
+    "course": [
+        {
+            "course": "EE001",
+            "school": "SCE",
+            "title": "Engineering",
+            "description": "Engines' Engine ...",
+            "exam date": "20141120",
+            "exam start": "8:30",
+            "exam end": "9:00"
+        }
+    ],
+    "student": [
+        {
+            "userid": "apple",
+            "password": "123ccd",
+            "name": "Apple",
+            "school": "SCE",
+            "edollar": "99"
+        },
+        {
+            "userid": "banana",
+            "password": "123ccd",
+            "name": "Banana",
+            "school": "SCE",
+            "edollar": "99"
+        },
+        {
+            "userid": "beet",
+            "password": "123ccd",
+            "name": "Beet",
+            "school": "SCE",
+            "edollar": "99"
+        },
+        {
+            "userid": "durian",
+            "password": "123ccd",
+            "name": "Durian",
+            "school": "SCE",
+            "edollar": "99"
+        },
+        {
+            "userid": "kiwi",
+            "password": "123ccd",
+            "name": "Kiwi",
+            "school": "SCE",
+            "edollar": "99"
+        },
+        {
+            "userid": "orange",
+            "password": "123ccd",
+            "name": "Orange",
+            "school": "SCE",
+            "edollar": "99"
+        },
+        {
+            "userid": "pear",
+            "password": "123ccd",
+            "name": "Pear",
+            "school": "SCE",
+            "edollar": "99"
+        }
+    ],
+    "section": [
+        {
+            "course": "EE001",
+            "section": "S95",
+            "day": "5",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Ana TEO",
+            "venue": "Seminar Rm 2-1",
+            "size": "3"
+        },
+        {
+            "course": "EE001",
+            "section": "S96",
+            "day": "4",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Ana TEO",
+            "venue": "Seminar Rm 2-1",
+            "size": "3"
+        },
+        {
+            "course": "EE001",
+            "section": "S97",
+            "day": "3",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Ana TEO",
+            "venue": "Seminar Rm 2-1",
+            "size": "3"
+        },
+        {
+            "course": "EE001",
+            "section": "S98",
+            "day": "2",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Ana TEO",
+            "venue": "Seminar Rm 2-1",
+            "size": "3"
+        },
+        {
+            "course": "EE001",
+            "section": "S99",
+            "day": "1",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Ana TEO",
+            "venue": "Seminar Rm 2-1",
+            "size": "3"
+        }
+    ],
+    "prerequisite": [],
+    "course_completed": [],
+    "bid": [],
+    "section-student": []
+}

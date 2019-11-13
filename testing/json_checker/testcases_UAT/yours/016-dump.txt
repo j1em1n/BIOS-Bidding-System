@@ -1,0 +1,149 @@
+{
+    "status": "success",
+    "course": [
+        {
+            "course": "EC001",
+            "school": "SOE",
+            "title": "Econs",
+            "description": "Supply and demand",
+            "exam date": "20131120",
+            "exam start": "8:30",
+            "exam end": "9:00"
+        },
+        {
+            "course": "EC002",
+            "school": "SOE",
+            "title": "Econs, #2",
+            "description": "more econs",
+            "exam date": "20131120",
+            "exam start": "9:00",
+            "exam end": "10:00"
+        },
+        {
+            "course": "EC003",
+            "school": "SOE",
+            "title": "Econs 3",
+            "description": "more more econs",
+            "exam date": "20131120",
+            "exam start": "10:00",
+            "exam end": "11:00"
+        },
+        {
+            "course": "EC004",
+            "school": "SOE",
+            "title": "Econs 4",
+            "description": "4 more",
+            "exam date": "20131120",
+            "exam start": "11:00",
+            "exam end": "12:00"
+        },
+        {
+            "course": "EC005",
+            "school": "SOE",
+            "title": "Econs 5",
+            "description": "5 more",
+            "exam date": "20131120",
+            "exam start": "12:00",
+            "exam end": "12:15"
+        },
+        {
+            "course": "EC006",
+            "school": "SOE",
+            "title": "Econs 6",
+            "description": "6 more",
+            "exam date": "20131120",
+            "exam start": "12:15",
+            "exam end": "12:30"
+        }
+    ],
+    "student": [
+        {
+            "userid": "alpha",
+            "password": "abc123",
+            "name": "Alpha Wee",
+            "school": "SOE",
+            "edollar": "88"
+        },
+        {
+            "userid": "beta",
+            "password": "abc124",
+            "name": "Beta WEE",
+            "school": "SOE",
+            "edollar": "89"
+        },
+        {
+            "userid": "charlie",
+            "password": "abc125",
+            "name": "Charlie WEE",
+            "school": "SOE",
+            "edollar": "89"
+        }
+    ],
+    "section": [
+        {
+            "course": "EC001",
+            "section": "S1",
+            "day": "1",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Ana TEO",
+            "venue": "Seminar Rm 2-1",
+            "size": "3"
+        },
+        {
+            "course": "EC001",
+            "section": "S2",
+            "day": "1",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Bliss TEO",
+            "venue": "Seminar Rm 2-2",
+            "size": "3"
+        },
+        {
+            "course": "EC001",
+            "section": "S3",
+            "day": "1",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Camelia TEO",
+            "venue": "Seminar Rm 2-3",
+            "size": "3"
+        },
+        {
+            "course": "EC001",
+            "section": "S6",
+            "day": "1",
+            "start": "8:30",
+            "end": "11:45",
+            "instructor": "Finch TEO",
+            "venue": "Seminar Rm 2-6",
+            "size": "3"
+        }
+    ],
+    "prerequisite": [],
+    "course_completed": [],
+    "bid": [
+        [
+            {
+                "userid": "alpha",
+                "amount": "12",
+                "course": "EC001",
+                "section": "S1"
+            },
+            {
+                "userid": "beta",
+                "amount": "11",
+                "course": "EC001",
+                "section": "S1"
+            },
+            {
+                "userid": "charlie",
+                "amount": "11",
+                "course": "EC001",
+                "section": "S1"
+            }
+        ]
+    ],
+    "section-student": []
+}
