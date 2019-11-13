@@ -12,7 +12,7 @@
     $coursecode = strtoupper($_POST['coursecode']);
     $sectionnum = strtoupper($_POST['sectionnum']);
 
-    if (!empty($coursecode) && !empty($sectionnum)){
+    if (!isEmptyString($coursecode) && !isEmptyString($sectionnum)){
         $courseDAO = new CourseDAO();
         $sectionDAO = new SectionDAO();
         $bidDAO = new BidDAO();
@@ -63,10 +63,10 @@
             }
         }
     } else {
-        if(empty($coursecode)) {
+        if(isEmptyString($coursecode)) {
             $_SESSION['errors'][] = "blank course code";
         }
-        if(empty($sectionnum)) {
+        if(isEmptyString($sectionnum)) {
             $_SESSION['errors'][] = "blank section number";
         }
         header("Location: index.php");

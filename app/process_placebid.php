@@ -9,12 +9,12 @@
     $userid = $_SESSION['userid'];
 
     // Check for empty fields
-    if (empty($courseCode) || empty($sectionNum) || empty($edollar)) {
-        if (empty($courseCode)) {
+    if (isEmptyString($courseCode) || isEmptyString($sectionNum) || isEmptyString($edollar)) {
+        if (isEmptyString($courseCode)) {
             $_SESSION['errors'][] = "Course code cannot be blank";
-        } if (empty($sectionNum)) {
+        } if (isEmptyString($sectionNum)) {
             $_SESSION['errors'][] = "Section number cannot be blank";
-        } if (empty($edollar)) {
+        } if (isEmptyString($edollar)) {
             $_SESSION['errors'][] = "E-dollar cannot be blank";
         }
         header("Location: placebid.php");
