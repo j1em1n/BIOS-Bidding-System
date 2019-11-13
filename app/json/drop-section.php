@@ -40,7 +40,7 @@
 
         // Check for any active round
         if ($currentStatus == "closed"){
-            $errors[] = "round ended";
+            $errors[] = "round not active";
         }
 
         // If there is active bidding round, (course, userid and section are valid) and round is currently active
@@ -60,6 +60,11 @@
                     $updatedamount = $currentedollars + $bidamount;
                     //update edollars
                     $studentDAO->updateEdollar($userid, $updatedamount);
+
+                    // if the current round is round 2, process bids to get predicted results
+                    if ($roundDAO->retrieveRoundInfo()->getRoundNum() == 2) {
+                        round2Processing(FALSE, TRUE);
+                    }
 
                     $success = [
                         "status" => "success" 
