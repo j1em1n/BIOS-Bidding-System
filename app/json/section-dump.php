@@ -21,6 +21,9 @@ if (!empty($errors)) {
     $sectionDAO = new SectionDAO();
     $bidDAO = new BidDAO();
     $courseDAO = new CourseDAO();
+    $roundDAO = new RoundDAO();
+    $roundNum = $roundDAO->retrieveRoundInfo()->getRoundNum();
+    $roundStatus = $roundDAO->retrieveRoundInfo()->getStatus();
 
     // Check if course code is found in course
     if(!($courseDAO->retrieve($coursecode))) {
@@ -34,12 +37,26 @@ if (!empty($errors)) {
         // Success if field validity checks are passed
         $students = array();
         //get enrolled students here
-        $successfulBids = $bidDAO->getSuccessfulBids();
+        $successfulBids = $bidDAO->getSuccessfulBidsBySection($coursecode, $section);
+        usort($successfulBids, function ($a, $b) {
+            return strnatcmp($a->getUserid(), $b->getUserid());
+        });
+
+        if ($roundNum == 2 && $roundStatus == "opened") {
+            $temp = $successfulBids;
+            $return = array();
+            foreach ($temp as $bid) {
+                if ($bid->getR1Status() == "Success") {
+                    $return[] = $bid;
+                }
+            }
+            $successfulBids = $return;
+        }
     
         foreach($successfulBids as $eachbid){
             $students[] = [
                 "userid" => $eachbid->getUserid(),
-                "amount" => floatval($eachbid->getAmount())
+                "amount" => (float)($eachbid->getAmount())
             ];
         }
         $success = [
