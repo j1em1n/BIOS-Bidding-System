@@ -14,6 +14,30 @@ spl_autoload_register(function($class) {
 
 session_start();
 
+// function printErrors() {
+//     echo "<table border = '1'>";
+           
+//     if(isset($_SESSION['errors'])){
+//         echo "<ul id='errors' style='color:red;'>";
+        
+//         $sn = 0;
+
+//         echo "<tr>
+//         <th><img src = 'include/error_icon.png' width = '30' height = '30'></th>";
+
+//         foreach ($_SESSION['errors'] as $value) {
+//             $sn++;
+            
+//             echo "<tr>
+//             <td> $sn </td>
+//             <td style = 'color:red;'>" . $value . "</td>
+//             </tr>";
+//         }
+//         echo "</ul>";
+//         unset($_SESSION['errors']);
+//     }
+// }
+
 function printErrors() {
     echo "<table border='1'>";       
     if(isset($_SESSION['errors'])){
@@ -62,6 +86,31 @@ function validateDate($date, $format)
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
+
+// function printSuccess() {
+
+//     echo "<table border = '1'>";
+//     $sn = 0;
+       
+//     if(isset($_SESSION['success'])){
+//         echo "<ul id='success' style='color:DarkGreen;'>";
+
+//         echo "<tr>
+//         <th><img src = 'include/success_icon.jpg' width = '30' height = '30'></th>
+//             </tr>";
+
+//         foreach ($_SESSION['success'] as $value) {
+//             $sn++;
+
+//             echo "<tr>
+//             <td> $sn </td>
+//             <td style='color:DarkGreen;'>" . $value . "</td>
+//             </tr>";
+//         }
+//         echo "</ul>";
+//         unset($_SESSION['success']);
+//     }
+// }
 
 function printSuccess() {
     echo "<table border='1'>";
@@ -302,6 +351,14 @@ function isMissingOrEmpty($user) {
     }
 }
 
+function isEmptyString($myStr) {
+    if (isset($myStr) && $myStr === "") {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
 function commonValidationsJSON($filename) {
     $mandatoryFields = [
 		"authenticate.php" => ["password", "username"],
@@ -342,7 +399,7 @@ function commonValidationsJSON($filename) {
             } elseif ($request) {
                 if (!isset($request->{$field})) {
                     $commonValidationErrors[] = "missing $field";
-                } elseif (empty($request->{$field})) {
+                } elseif (isEmptyString($request->{$field})) {
                     $commonValidationErrors[] = "blank $field";
                 }
             } else {
@@ -395,7 +452,7 @@ function examClash($userid, $bidCourse, $exception = null) {
         $bStart = DateTime::createFromFormat("G:i", $bCourse->getExamStart());
         $bEnd = DateTime::createFromFormat("G:i", $bCourse->getExamEnd());
         // Check if exams are on the same date and if yes, check for timing clashes
-        if (($bCourse->getExamDate() == $bidCourse->getExamDate()) && (($bStart <= $examEnd) && ($bEnd >= $examStart))) {
+        if (($bCourse->getExamDate() == $bidCourse->getExamDate()) && (($bStart < $examEnd) && ($bEnd > $examStart))) {
             if (!($b == $exception)) {
                 return $b;
             }
@@ -421,15 +478,14 @@ function prereqCompleted($userid, $coursecode) {
 function isValidEdollar($edollar) {
     if(!isNonNegativeFloat($edollar)){
         return FALSE;
-    } else {
-        //If edollar is a float, check if it has more than 2 decimal places
-        if (!isNonNegativeInt($edollar)) {
-            $checkedollar = strval($edollar);
-            $edollarArr = explode(".", $checkedollar);
-            if(strlen($edollarArr[1]) > 2){
-                return FALSE;
-            }
-        } 
+    } elseif (!isNonNegativeInt($edollar)) { //If edollar is a float, check if it has more than 2 decimal places
+        $checkedollar = strval($edollar);
+        $edollarArr = explode(".", $checkedollar);
+        if(strlen($edollarArr[1]) > 2){
+            return FALSE;
+        } if ($edollar < 10.0){
+            return FALSE;
+        }
     }
     return TRUE;
 }
@@ -630,4 +686,5 @@ function round2Clearing() {
         }
     }
 }
+
 ?>
