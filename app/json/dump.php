@@ -53,17 +53,13 @@
                 'title' => $eachCourse->getTitle(),
                 'description' => $eachCourse->getDescription(),
                 'exam date' => $eachCourse->getExamDate(),
-                'exam start' => $eachCourse->getExamStart(),
-                'exam end' => $eachCourse->getExamEnd()
+                'exam start' => str_replace(":","",$eachCourse->getExamStart()),
+                'exam end' => str_replace(":","",$eachCourse->getExamEnd())
             ];
         }
         
 
         //dump student
-        //sort students by userid alphabetically
-        // usort($allStudents, function ($a, $b) {
-        //     return strcmp($a->getUserId(), $b->getUserId());
-        // });
 
         foreach($allStudents as $eachStudent){
             $studentDump[] = [
@@ -71,7 +67,7 @@
                 'password' => $eachStudent->getPassword(),
                 'name' => $eachStudent->getName(),
                 'school' => $eachStudent->getSchool(),
-                'edollar' => $eachStudent->getEdollar()
+                'edollar' => (float)($eachStudent->getEdollar())
             ];
         }
 
@@ -91,12 +87,12 @@
                     $sectionsByCourse[$courseCode][] = [
                         'course' => $eachSection->getCourse(),
                         'section' => $eachSection->getSection(),
-                        'day' => $eachSection->getDay(),
-                        'start' => $eachSection->getStart(),
-                        'end' => $eachSection->getEnd(),
+                        'day' => numToDay($eachSection->getDay(),"full"),
+                        'start' => str_replace(":","",$eachSection->getStart()),
+                        'end' => str_replace(":","",$eachSection->getEnd()),
                         'instructor' => $eachSection->getInstructor(),
                         'venue' => $eachSection->getVenue(),
-                        'size' => $eachSection->getSize()
+                        'size' => (int)($eachSection->getSize())
                     ];
                 }
             }
@@ -172,22 +168,26 @@
                     $allBidsByCodeSection[$courseCode][$sectionid] = array();
                 }
                 foreach($sectionBids as $bid) {
-                    $allBidsByCodeSection[$courseCode][$sectionid][] = [
-                        "userid" => $bid->getUserid(),
-                        "amount" => $bid->getAmount(),
-                        "course" => $courseCode,
-                        "section" => $sectionid
-                    ];
+                    $allBidsByCodeSection[$courseCode][$sectionid][] = $bid;
                 }
+                //var_dump($allBidsByCodeSection[$courseCode][$sectionid]);
+                //$allBidsByCodeSection[$courseCode][$sectionid] = sortBids($allBidsByCodeSection[$courseCode][$sectionid]);
             }
         }
 
         array_multisort(array_keys($allBidsByCodeSection), SORT_NATURAL, $allBidsByCodeSection);
-        foreach($allBidsByCodeSection as $courseSections => $sectionBids) {
-            $sections = $sectionBids;
+        foreach($allBidsByCodeSection as $coursecode => $sectionnum) {
+            $sections = $sectionnum;
             array_multisort(array_keys($sections), SORT_NATURAL, $sections);
-            foreach($sections as $bids) {
-                $bidDump[] = $bids;
+            foreach($sections as $sectionbids) {
+                foreach($sectionbids as $bid) {
+                    $bidDump[] = [
+                        "userid" => $bid->getUserid(),
+                        "amount" => (float)($bid->getAmount()),
+                        "course" => $bid->getCode(),
+                        "section" => $bid->getSection()
+                    ];
+                }
             }
         }
 
@@ -204,7 +204,7 @@
                 "userid" => $bid->getUserid(),
                 "course" => $courseCode,
                 "section" => $bid->getSection(),
-                "amount" => $bid->getAmount()
+                "amount" => (float)($bid->getAmount())
             ];
         }
         array_multisort(array_keys($successfulByCourse), SORT_NATURAL, $successfulByCourse);
@@ -217,11 +217,11 @@
         $result = [
             "status" => "success",
             "course" => $courseDump,
-            "student" => $studentDump,
             "section" => $sectionDump,
+            "student" => $studentDump,
             "prerequisite" => $prerequisiteDump,
-            "course_completed" => $courseCompletedDump,
             "bid" => $bidDump,
+            "completed-course" => $courseCompletedDump,
             "section-student" => $sectionStudentDump
         ];
     }
@@ -231,6 +231,6 @@
     // }
     
     header('Content-Type: application/json');
-    echo json_encode($result, JSON_PRETTY_PRINT);
+    echo json_encode($result, JSON_PRESERVE_ZERO_FRACTION+JSON_PRETTY_PRINT);
 
 ?>
