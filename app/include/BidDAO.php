@@ -210,9 +210,8 @@ class BidDAO {
         return $bids;
     }
 
-    public function getR1EnrolledBidsBySection($course, $section){
-
-        $sql = 'SELECT * FROM bid WHERE code=:course AND section=:section AND r1status="Success" ORDER BY userid ASC';
+    public function getSuccessfulBidsBySection($course, $section){
+        $sql = "SELECT * FROM bid WHERE code=:course AND section=:section AND (r1status='Success' OR r2status='Success') ORDER BY amount*1 DESC, userid ASC";
         
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
@@ -236,9 +235,36 @@ class BidDAO {
         return $bids;
     }
 
-    public function updateBid($userid, $biddedAmount, $section){
+    public function getEnrolledBidsBySectionRound($course, $section, $roundNum){
+        $sql = "";
+        $column = ($roundNum == 1) ? "r1status" : "r2status";
+        $sql = "SELECT * FROM bid WHERE code=:course AND section=:section AND $column='Success' ORDER BY amount*1 DESC, userid ASC";
+        
+        $connMgr = new ConnectionManager();       
+        $conn = $connMgr->getConnection();
+         
+        $stmt = $conn->prepare($sql); 
 
-        $sql = 'UPDATE bid SET amount=:biddedAmount, section=:section WHERE userid=:userid';
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $bids = array();
+
+        while ($row = $stmt->fetch()) {
+            $bids[] = new Bid($row['userid'],$row['amount'], $row['code'], $row['section'], $row['r1status'], $row['r2status']);
+        }
+
+        $stmt = null;
+        $conn = null;
+
+        return $bids;
+    }
+
+    public function updateBid($userid, $biddedAmount, $course, $section){
+
+        $sql = 'UPDATE bid SET amount=:biddedAmount, section=:section WHERE userid=:userid AND code=:course';
 
         $connMgr = new ConnectionManager();       
         $conn = $connMgr->getConnection();
@@ -246,6 +272,7 @@ class BidDAO {
         $stmt = $conn->prepare($sql); 
 
         $stmt->bindParam(':biddedAmount', $biddedAmount, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $section, PDO::PARAM_STR);
         $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
 

@@ -135,7 +135,7 @@
 
         // if the current round is round 2, process bids to get predicted results
         if ($currentRound == 2) {
-            processBids();
+            round2Processing(TRUE, FALSE);
         }
 
         header("Location: placebid.php");

@@ -1,6 +1,5 @@
 <?php
 require_once 'include/common.php';
-//require_once 'include/process_bids.php';
 
 if(isset($_POST['submit']) && isset($_POST['number'])){
 
@@ -11,17 +10,17 @@ if(isset($_POST['submit']) && isset($_POST['number'])){
     $roundInfo = $roundDAO->retrieveRoundInfo();
     $currentRound = $roundInfo->getRoundNum();
 
-    $UpdateStatusOK = $roundDAO->updateRoundStatus($status_entered);
-    $UpdateNumberOK = $roundDAO->updateRoundNumber($newNumber);
+    $updateStatusOK = $roundDAO->updateRoundStatus($status_entered);
+    $updateNumberOK = $roundDAO->updateRoundNumber($newNumber);
 
-    if($UpdateStatusOK && $UpdateNumberOK){
+    if($updateStatusOK && $updateNumberOK){
         $_SESSION['success'][] = "Round successfully $status_entered";
     } else {
         $_SESSION['errors'][] = "Round could not be $status_entered";
     }
 
     if ($status_entered == 'closed') {
-        processBids();
+        if ($newNumber == 1) { round1Clearing(); } else { round2Clearing(); }
     } else {
         deleteFailedBids();
     }
