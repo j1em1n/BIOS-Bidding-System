@@ -2,51 +2,53 @@
     "status": "error",
     "num-record-loaded": [
         {
-            "bid.csv": 15
+            "bid.csv": 7
         },
         {
-            "course.csv": 25
+            "course.csv": 2
         },
         {
-            "course_completed.csv": 4
+            "course_completed.csv": 0
         },
         {
-            "prerequisite.csv": 8
+            "prerequisite.csv": 0
         },
         {
-            "section.csv": 36
+            "section.csv": 3
         },
         {
-            "student.csv": 26
+            "student.csv": 8
         }
     ],
     "error": [
         {
             "file": "bid.csv",
-            "line": 3,
+            "line": 4,
             "message": [
-                "invalid section"
+                "blank userid",
+                "blank amount",
+                "blank code",
+                "blank section"
             ]
         },
         {
             "file": "bid.csv",
-            "line": 6,
+            "line": 7,
             "message": [
-                "invalid section"
+                "blank userid",
+                "blank amount",
+                "blank code",
+                "blank section"
             ]
         },
         {
             "file": "bid.csv",
-            "line": 10,
+            "line": 9,
             "message": [
-                "invalid section"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 16,
-            "message": [
-                "invalid section"
+                "blank userid",
+                "blank amount",
+                "blank code",
+                "blank section"
             ]
         }
     ]

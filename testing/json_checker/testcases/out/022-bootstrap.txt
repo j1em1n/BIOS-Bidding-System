@@ -2,10 +2,10 @@
     "status": "error",
     "num-record-loaded": [
         {
-            "bid.csv": 3
+            "bid.csv": 0
         },
         {
-            "course.csv": 6
+            "course.csv": 2
         },
         {
             "course_completed.csv": 0
@@ -14,53 +14,60 @@
             "prerequisite.csv": 0
         },
         {
-            "section.csv": 11
+            "section.csv": 1
         },
         {
-            "student.csv": 9
+            "student.csv": 5
         }
     ],
     "error": [
         {
             "file": "bid.csv",
+            "line": 2,
+            "message": [
+                "invalid section"
+            ]
+        },
+        {
+            "file": "bid.csv",
             "line": 3,
             "message": [
-                "invalid userid"
+                "invalid section"
             ]
         },
         {
             "file": "bid.csv",
             "line": 4,
             "message": [
-                "invalid userid"
+                "invalid section"
             ]
         },
         {
-            "file": "bid.csv",
+            "file": "section.csv",
+            "line": 2,
+            "message": [
+                "invalid section"
+            ]
+        },
+        {
+            "file": "section.csv",
+            "line": 3,
+            "message": [
+                "invalid size"
+            ]
+        },
+        {
+            "file": "section.csv",
             "line": 5,
             "message": [
-                "invalid userid"
+                "invalid size"
             ]
         },
         {
-            "file": "bid.csv",
+            "file": "section.csv",
             "line": 6,
             "message": [
-                "invalid userid"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 7,
-            "message": [
-                "invalid userid"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 9,
-            "message": [
-                "invalid userid"
+                "invalid section"
             ]
         }
     ]
