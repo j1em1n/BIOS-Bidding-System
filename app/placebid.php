@@ -2,6 +2,7 @@
     require_once 'include/protect.php';
     require_once 'include/protect_roundclosed.php';
     require_once 'include/common.php';
+    require_once 'include/navbar.php';
     $roundDAO = new RoundDAO();
     $roundInfo = $roundDAO->retrieveRoundInfo();
     $currentRound = $roundInfo->getRoundNum();
