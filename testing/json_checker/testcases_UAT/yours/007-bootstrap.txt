@@ -1,8 +1,8 @@
 {
-    "status": "error",
+    "status": "success",
     "num-record-loaded": [
         {
-            "bid.csv": 1
+            "bid.csv": 6
         },
         {
             "course.csv": 6
@@ -18,43 +18,6 @@
         },
         {
             "student.csv": 3
-        }
-    ],
-    "error": [
-        {
-            "file": "bid.csv",
-            "line": 3,
-            "message": [
-                "class timetable clash"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 4,
-            "message": [
-                "class timetable clash"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 5,
-            "message": [
-                "class timetable clash"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 6,
-            "message": [
-                "class timetable clash"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 7,
-            "message": [
-                "class timetable clash"
-            ]
         }
     ]
 }

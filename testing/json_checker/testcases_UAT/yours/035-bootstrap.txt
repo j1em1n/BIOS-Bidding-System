@@ -1,8 +1,8 @@
 {
-    "status": "error",
+    "status": "success",
     "num-record-loaded": [
         {
-            "bid.csv": 3
+            "bid.csv": 5
         },
         {
             "course.csv": 6
@@ -17,30 +17,7 @@
             "section.csv": 6
         },
         {
-            "student.csv": 5
-        }
-    ],
-    "error": [
-        {
-            "file": "bid.csv",
-            "line": 3,
-            "message": [
-                "exam timetable clash"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 5,
-            "message": [
-                "exam timetable clash"
-            ]
-        },
-        {
-            "file": "student.csv",
-            "line": 3,
-            "message": [
-                "blank e-dollar"
-            ]
+            "student.csv": 6
         }
     ]
 }

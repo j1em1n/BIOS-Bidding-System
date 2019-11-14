@@ -1,7 +1,4 @@
 {
-    "status": "error",
-    "message": [
-        "class timetable clash"
-    ]
+    "status": "success"
 }
 

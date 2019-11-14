@@ -1,4 +1,11 @@
 {
     "status": "success",
-    "bids": []
+    "bids": [
+        {
+            "row": 1,
+            "userid": "duke",
+            "amount": 10.0,
+            "result": "-"
+        }
+    ]
 }

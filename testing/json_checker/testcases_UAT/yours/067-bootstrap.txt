@@ -25,8 +25,8 @@
             "file": "bid.csv",
             "line": 2,
             "message": [
-                "invalid code",
-                "invalid userid"
+                "invalid userid",
+                "invalid course"
             ]
         },
         {

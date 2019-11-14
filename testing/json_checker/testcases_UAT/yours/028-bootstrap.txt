@@ -39,7 +39,7 @@
             "file": "section.csv",
             "line": 2,
             "message": [
-                "blank size"
+                "invalid size"
             ]
         },
         {

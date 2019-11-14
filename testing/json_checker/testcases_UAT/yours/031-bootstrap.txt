@@ -17,7 +17,7 @@
             "section.csv": 3
         },
         {
-            "student.csv": 5
+            "student.csv": 6
         }
     ],
     "error": [
@@ -25,7 +25,7 @@
             "file": "bid.csv",
             "line": 3,
             "message": [
-                "invalid userid"
+                "not enough e-dollar"
             ]
         },
         {
@@ -33,13 +33,6 @@
             "line": 4,
             "message": [
                 "not own school course"
-            ]
-        },
-        {
-            "file": "student.csv",
-            "line": 3,
-            "message": [
-                "blank e-dollar"
             ]
         },
         {
