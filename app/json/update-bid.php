@@ -63,13 +63,8 @@
 
                 // Check if bid is above min bid
                 $minBid = $section->getMinBid();
-                if ($edollar < $minBid) {
+                if ($currentRound == 2 && $edollar < $minBid) {
                     $errors[] = "bid too low";
-                }
-
-                // Check if student has enough e-dollars
-                if ($edollar > $student->getEdollar()) { // Check if student has enough e-dollars
-                    $errors[] = "insufficient e$";
                 }
 
                 // Check if student has already bidded for this course and update bid if yes
@@ -87,8 +82,11 @@
                     }
                 }
                 
+                
                 if ($alreadyEnrolledCourse) {
                     $errors[] = "course enrolled";
+                    $errors[] = "class timetable clash";
+                    $errors[] = "exam timetable clash";
                 } elseif($alreadyBiddedCourse) {
                     /* if the student has an existing bid for this course, we can assume that:
                         1. There is no exam timetable clash
@@ -101,7 +99,7 @@
                     // Check for class timetable clash only if student is bidding for another section
                     if (!$sameSection) {
                         // Check for class timing clashes
-                        if (classClash($userid, $section)) {
+                        if (classClash($userid, $section, $previousBid)) {
                             $errors[] = "class timetable clash";
                         }
                         // If round 2, check if there are vacancies in the section
@@ -109,14 +107,24 @@
                             $errors[] = "no vacancy";
                         }
                     }
+                    // Check if student has enough e-dollars if they are refunded previous amount
+                    $previousAmount = $previousBid->getAmount();
+                    if ($edollar > ($student->getEdollar() + $previousAmount)) {
+                        $rowErrors[] = "insufficient e$";
+                    }
                 } else {
+                    // Check if student has enough e-dollars
+                    if ($edollar > $student->getEdollar()) {
+                        $errors[] = "insufficient e$";
+                    }
+
                     // Check for class timetable clash
                     if (classClash($userid, $section)) {
                         $errors[] = "class timetable clash";
                     }
 
                     // Check for exam timetable clash
-                    if (examClash($userid, $course)) {
+                    if (examClash($userid, $course, $previousBid)) {
                         $errors[] = "exam timetable clash";
                     }
 
@@ -152,7 +160,7 @@
                         // Store the previously bidded amount
                         $previousAmount = $previousBid->getAmount();
                         // Update the student's previous bid
-                        $bidDAO->updateBid($userid, $edollar, $sectionNum);
+                        $bidDAO->updateBid($userid, $edollar, $courseCode, $sectionNum);
                         // Refund amount for previous bid and charge edollars for current bid
                         $balance = $thisStud->getEdollar() + $previousAmount - $edollar;
                         $studentDAO->updateEdollar($userid, $balance);
@@ -166,7 +174,7 @@
 
                     // if the current round is round 2, process bids to get predicted results
                     if ($currentRound == 2) {
-                        processBids();
+                        round2Processing(TRUE, FALSE);
                     }
 
                     $success = [

@@ -1,0 +1,60 @@
+{
+    "status": "error",
+    "num-record-loaded": [
+        {
+            "bid.csv": 1
+        },
+        {
+            "course.csv": 6
+        },
+        {
+            "course_completed.csv": 0
+        },
+        {
+            "prerequisite.csv": 0
+        },
+        {
+            "section.csv": 6
+        },
+        {
+            "student.csv": 3
+        }
+    ],
+    "error": [
+        {
+            "file": "bid.csv",
+            "line": 3,
+            "message": [
+                "class timetable clash"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 4,
+            "message": [
+                "class timetable clash"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 5,
+            "message": [
+                "class timetable clash"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 6,
+            "message": [
+                "class timetable clash"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 7,
+            "message": [
+                "class timetable clash"
+            ]
+        }
+    ]
+}

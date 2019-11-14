@@ -6,6 +6,7 @@
     $roundInfo = $roundDAO->retrieveRoundInfo();
     $currentRound = $roundInfo->getRoundNum();
     $roundStatus = $roundInfo->getStatus();
+    $userid = $_SESSION['userid'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -35,12 +36,12 @@
 
                 if (!isset($_POST['coursecode'])) {
                     $sectionList = $sectionDAO->retrieveAll();
-                    printSectionInfo($sectionList);                    
+                    printSectionInfo($sectionList, $userid);                    
                 } else {
                     $search = $_POST['coursecode'];
                     $sectionList = $sectionDAO->searchByCourse($search);
                     if (count($sectionList)) {
-                        printSectionInfo($sectionList);
+                        printSectionInfo($sectionList, $userid);
                     } else {
                         echo "<h3>Sorry! No results found for '$search'.</h3>";
                     }

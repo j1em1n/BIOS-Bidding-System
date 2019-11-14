@@ -63,6 +63,12 @@
 
             if ($isDeleteOK) {
                 $studentDAO->updateEdollar($userid, $updatedamount);
+
+                // if the current round is round 2, process bids to get predicted results
+                if ($roundDAO->retrieveRoundInfo()->getRoundNum() == 2) {
+                    round2Processing(FALSE, FALSE);
+                }
+                
                 $success = [
                     "status" => "success" 
                 ];

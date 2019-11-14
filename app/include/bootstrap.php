@@ -123,23 +123,23 @@ function doBootstrap() {
 					$school = trim($data[3]);
 					$edollar = trim($data[4]);
 					//Check for any empty field 
-					if (empty($userId) || empty($pwd) || empty($name) || empty($school) || empty($edollar)) {
+					if (isEmptyString($userId) || isEmptyString($pwd) || isEmptyString($name) || isEmptyString($school) || isEmptyString($edollar)) {
 						//pass the line in the file 
 						//Print out all the errors for user
-						if(empty($data[0])){
+						if(isEmptyString($data[0])){
 							$rowErrors[] = "blank userid";
 						} 
-						if(empty($data[1])){
+						if(isEmptyString($data[1])){
 							$rowErrors[] = "blank password";
 						}
-						if(empty($data[2])){
+						if(isEmptyString($data[2])){
 							$rowErrors[] = "blank name";
 						}
-						if(empty($data[3])){
+						if(isEmptyString($data[3])){
 							$rowErrors[] = " blank school";
 						}
-						if(empty($data[4])){
-							$rowErrors[] = "blank e-dollar";
+						if(isEmptyString($data[4])){
+							$rowErrors[] = "blank edollar";
 						}
 					} else {
 						//Checking if the userid field is > 128 characters
@@ -203,37 +203,29 @@ function doBootstrap() {
 					$exam_end = trim($data[6]);
 
 					//Check for any empty field 
-					if (empty($coursecode) || empty($school) || empty($title) || empty($description) || empty($exam_date) || empty($exam_start) || empty($exam_end)) {
-						if(empty($data[0])){
+					if (isEmptyString($coursecode) || isEmptyString($school) || isEmptyString($title) || isEmptyString($description) || isEmptyString($exam_date) || isEmptyString($exam_start) || isEmptyString($exam_end)) {
+						if(isEmptyString($data[0])){
 							$rowErrors[] = "blank course";
 						} 
-						if(empty($data[1])){
+						if(isEmptyString($data[1])){
 							$rowErrors[] = "blank school";
 						}
-						if(empty($data[2])){
+						if(isEmptyString($data[2])){
 							$rowErrors[] = "blank title";
 						}
-						if(empty($data[3])){
+						if(isEmptyString($data[3])){
 							$rowErrors[] = "blank description";
 						}
-						if(empty($data[4])){
+						if(isEmptyString($data[4])){
 							$rowErrors[] = "blank exam date";
 						}
-						if(empty($data[5])){
+						if(isEmptyString($data[5])){
 							$rowErrors[] = "blank exam start";
 						}
-						if(empty($data[6])){
+						if(isEmptyString($data[6])){
 							$rowErrors[] = "blank exam end";
 						}
 					} else {
-						//Checking if the title field is > 100 characters
-						if(strlen($title) > 100){
-							$rowErrors[] = "invalid title";
-						} 
-						//Checking if the description field has > 1000 characters
-						if(strlen($description) > 1000){
-							$rowErrors[] = "invalid description";
-						}
 						//Checking if the date field is in ymd format
 						if(validateDate($exam_date, "Ymd") == FALSE){
 							$rowErrors[] = "invalid exam date";
@@ -256,6 +248,16 @@ function doBootstrap() {
 								$rowErrors[] = "invalid exam end";
 							}
 						}
+
+						//Checking if the title field is > 100 characters
+						if(strlen($title) > 100){
+							$rowErrors[] = "invalid title";
+						} 
+						//Checking if the description field has > 1000 characters
+						if(strlen($description) > 1000){
+							$rowErrors[] = "invalid description";
+						}
+						
 					}
 					//Check if row has any errors and if no, create Course object and add to database
 					if(!empty($rowErrors)){
@@ -295,29 +297,29 @@ function doBootstrap() {
 					$size = trim($data[7]);
 
 					//Check for any empty fields
-					if (empty($coursecode) || empty($sectionid) || empty($day) || empty($start) || empty($end) || empty($instructor) || empty($venue)|| empty($size)) {
-						if(empty($data[0])){
+					if (isEmptyString($coursecode) || isEmptyString($sectionid) || isEmptyString($day) || isEmptyString($start) || isEmptyString($end) || isEmptyString($instructor) || isEmptyString($venue) || isEmptyString($size)) {
+						if(isEmptyString($data[0])){
 							$rowErrors[] = "blank course";
 						} 
-						if(empty($data[1])){
+						if(isEmptyString($data[1])){
 							$rowErrors[] = "blank section";
 						}
-						if(empty($data[2])){
+						if(isEmptyString($data[2])){
 							$rowErrors[] = "blank day";
 						}
-						if(empty($data[3])){
-							$rowErrors[] = "blank start time";
+						if(isEmptyString($data[3])){
+							$rowErrors[] = "blank start";
 						}
-						if(empty($data[4])){
-							$rowErrors[] = "blank end time";
+						if(isEmptyString($data[4])){
+							$rowErrors[] = "blank end";
 						}
-						if(empty($data[5])){
+						if(isEmptyString($data[5])){
 							$rowErrors[] = "blank instructor";
 						}
-						if(empty($data[6])){
+						if(isEmptyString($data[6])){
 							$rowErrors[] = "blank venue";
 						}
-						if(empty($data[7])){
+						if(isEmptyString($data[7])){
 							$rowErrors[] = "blank size";
 						}
 					} else {
@@ -326,9 +328,12 @@ function doBootstrap() {
 							$rowErrors[] = "invalid course";
 						} else {
 							//intval returns 0 if the parameter cannot be converted to int successfully.
-							$sectionNum = intval(substr($sectionid, 1));
+							$sectionNum = substr($sectionid, 1);
+							// echo "$countSect: ";
+							// var_dump($sectionNum);
+							// echo "<br>";
 							//check if the first character should be an S followed by a positive numeric number (1-99). Check only if course is valid.
-							if($sectionid[0] !== 'S' || !($sectionNum >= 1 && $sectionNum <= 99)){
+							if($sectionid[0] !== 'S' || $sectionid[1] == 0 || !(is_numeric($sectionNum) && $sectionNum == round($sectionNum) && $sectionNum >= 1 && $sectionNum <= 99)){
 								$rowErrors[] = "invalid section";
 							}
 						}
@@ -363,7 +368,7 @@ function doBootstrap() {
 							$rowErrors[] = "invalid venue";
 						}
 						// Check if the size field is a positive numeric number.
-						if(!isNonNegativeInt($size)) {
+						if(!(is_numeric($size) && $size > 0 && $size == round($size))) {
 							$rowErrors[] = "invalid size";
 						}
 				} 
@@ -398,11 +403,11 @@ function doBootstrap() {
 					$prerequisiteid = trim($data[1]);
 				
 					//Check for any empty fields
-					if(empty($coursecode) || empty($prerequisiteid)) {
-						if(empty($data[0])){
+					if(isEmptyString($coursecode) || isEmptyString($prerequisiteid)) {
+						if(isEmptyString($data[0])){
 							$rowErrors[] = "blank course";
 						} 
-						if(empty($data[1])){
+						if(isEmptyString($data[1])){
 							$rowErrors[] = "blank prerequisite";
 						}
 					} else {
@@ -447,11 +452,11 @@ function doBootstrap() {
 					$code = trim($data[1]);
 				
 					//Check for any empty fields
-					if (empty($userid) || empty($code)) {
-						if(empty($data[0])){
+					if (isEmptyString($userid) || isEmptyString($code)) {
+						if(isEmptyString($data[0])){
 							$rowErrors[] = "blank userid";
 						} 
-						if(empty($data[1])){
+						if(isEmptyString($data[1])){
 							$rowErrors[] = "blank code";
 						}
 					} else {
@@ -462,7 +467,7 @@ function doBootstrap() {
 							$rowErrors[] = "invalid userid";
 						}
 						if(!($courseDAO->retrieve($code))) {
-							$rowErrors[] = "invalid code";
+							$rowErrors[] = "invalid course";
 						}
 						// Check if the completed course has a prerequisite and if the student has completed the prereq
 						if (!prereqCompleted($userid, $code)) {
@@ -502,22 +507,21 @@ function doBootstrap() {
 					$sectionid = trim($data[3]);
 				
 					//Check for any empty fields
-					if (empty($userid) || empty($amount) || empty($code) || empty($sectionid)) {
-						if(empty($data[0])){
+					if (isEmptyString($userid) || isEmptyString($amount) || isEmptyString($code) || isEmptyString($sectionid)) {
+						if(isEmptyString($data[0])){
 							$rowErrors[] = "blank userid";
 						} 
-						if(empty($data[1])){
+						if(isEmptyString($data[1])){
 							$rowErrors[] = "blank amount";
 						}
-						if(empty($data[2])){
+						if(isEmptyString($data[2])){
 							$rowErrors[] = "blank code";
 						}
-						if(empty($data[3])){
+						if(isEmptyString($data[3])){
 							$rowErrors[] = "blank section";
 						}
 					} else {
 						// Data validations
-
 						// Check if userid is found in the student.csv
 						if(!($studentDAO->retrieve($userid))) {
 							$rowErrors[] = "invalid userid";
@@ -525,15 +529,15 @@ function doBootstrap() {
 
 						// Check if bidding amount is a numeric value
 						if(!isValidEdollar($amount)){
-							$rowErrors[] = "invalid e-dollar";
+							$rowErrors[] = "invalid amount";
 						} elseif ($amount < 10.0) {
 							// Check if bidding amount >= 10.0
-							$rowErrors[] = "invalid e-dollar";
+							$rowErrors[] = "invalid amount";
 						}
 
 						// Check if course code is found in the course.csv
 						if(!($courseDAO->retrieve($code))) {
-							$rowErrors[] = "invalid code";
+							$rowErrors[] = "invalid course";
 						} elseif (!($sectionDAO->retrieve($code, $sectionid))) {
 							// Check if section code is found in section.csv (only for valid course code)
 							$rowErrors[] = "invalid section";
@@ -545,6 +549,11 @@ function doBootstrap() {
 							$bidCourse = $courseDAO->retrieve($code);
 							$bidSection = $sectionDAO->retrieve($code, $sectionid);
 							
+							// Check if course is offered by student's school
+							if (!($bidStud->getSchool() == $bidCourse->getSchool())) {
+								$rowErrors[] = "not own school course";
+							}
+
 							// Check if student has already bidded for this course and update bid if yes
 							$alreadyBiddedCourse = FALSE;
 							$sameSection = FALSE;
@@ -565,31 +574,22 @@ function doBootstrap() {
 									4. The student has not completed the course
 									5. Since the bid is being updated, the student has <= 5 bids, so there is no need to check for the section limit
 								*/
-								
+
+								// Check for class timetable clash only if student is bidding for another section
+								if (!$sameSection) {
+									if (classClash($userid, $bidSection, $previousBid)) {
+										$rowErrors[] = "class timetable clash";
+									}
+								}
+
 								// Check if student has enough e-dollars
 								// Store the previously bidded amount
 								$previousAmount = $previousBid->getAmount();
 								if ($amount > ($bidStud->getEdollar() + $previousAmount)) { // Check if student has enough e-dollars if they are refunded previous amount
 									$rowErrors[] = "not enough e-dollar";
 								}
-
-								// Check for class timetable clash only if student is bidding for another section
-								if (!$sameSection) {
-									if (classClash($userid, $bidSection, $bidSection)) {
-										$rowErrors[] = "class timetable clash";
-									}
-								}
 								
 							} else {
-								// Check if course is offered by student's school
-								if (!($bidStud->getSchool() == $bidCourse->getSchool())) {
-									$rowErrors[] = "not own school course";
-								}
-
-								// Check if student has enough e-dollars
-								if ($amount > $bidStud->getEdollar()) { // Check if student has enough e-dollars
-									$rowErrors[] = "not enough e-dollar";
-								}
 
 								// Check for class timetable clash
 								if (classClash($userid, $bidSection)) {
@@ -597,7 +597,7 @@ function doBootstrap() {
 								}
 				
 								// Check for exam timetable clash
-								if (examClash($userid, $bidCourse, $bidCourse)) {
+								if (examClash($userid, $bidCourse, $previousBid)) {
 									$rowErrors[] = "exam timetable clash";
 								}
 								// Check if student has completed the prerequisites
@@ -614,6 +614,11 @@ function doBootstrap() {
 								if (count($bidDAO->retrieveByUserid($userid)) == 5) {
 									$rowErrors[] = "section limit reached";
 								}
+
+								// Check if student has enough e-dollars
+								if ($amount > $bidStud->getEdollar()) { // Check if student has enough e-dollars
+									$rowErrors[] = "not enough e-dollar";
+								}
 							}
 						}
 					}
@@ -628,7 +633,7 @@ function doBootstrap() {
 						if ($alreadyBiddedCourse) {
 							
 							// Update the student's previous bid
-							$bidDAO->updateBid($userid, $amount, $sectionid);
+							$bidDAO->updateBid($userid, $amount, $code, $sectionid);
 							// Refund amount for previous bid and charge edollars for current bid
 							$thisStud = $studentDAO->retrieve($userid);
 							$balance = $thisStud->getEdollar() + $previousAmount - $amount;
@@ -698,10 +703,6 @@ function bootstrapJSON() {
 		foreach($errors as $filename => $fileErrors) {
 			foreach($fileErrors as $rowErrors) {
 				$message = $rowErrors["message"];
-
-				if (strpos($message[0], "blank") === FALSE) {
-					sort($message);
-				}
 				
 				$result["error"][] = [
 					"file" => $filename,

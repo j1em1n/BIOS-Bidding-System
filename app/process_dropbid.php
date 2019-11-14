@@ -15,7 +15,7 @@
     $coursecode = strtoupper($_POST['coursecode']);
     $sectionnum = strtoupper($_POST['sectionnum']);
 
-    if (!empty($coursecode) && !empty($sectionnum)){
+    if (!isEmptyString($coursecode) && !isEmptyString($sectionnum)){
         $courseDAO = new CourseDAO();
         $sectionDAO = new SectionDAO();
         $bidDAO = new BidDAO();
@@ -50,7 +50,7 @@
                     $_SESSION['success'][] = "Bid dropped successfully. You have e$$updatedamount left.";
                     // if the current round is round 2, process bids to get predicted results
                     if ($roundDAO->retrieveRoundInfo()->getRoundNum() == 2) {
-                        processBids();
+                        round2Processing(FALSE, FALSE);
                     }
                     header("Location: index.php");
                     exit();
@@ -66,10 +66,10 @@
             }
         }
     } else {
-        if(empty($coursecode)) {
+        if(isEmptyString($coursecode)) {
             $_SESSION['errors'][] = "blank course code";
         }
-        if(empty($sectionnum)) {
+        if(isEmptyString($sectionnum)) {
             $_SESSION['errors'][] = "blank section number";
         }
         header("Location: index.php");

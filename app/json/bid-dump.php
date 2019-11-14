@@ -51,7 +51,7 @@ if (!empty($errors)) {
             $bidStatus = ($currentNum == 1) ? $bid->getR1Status() : $bid->getR2Status();
             $bStatus = "";
             
-            if ($bidStatus == "Pending") {
+            if ($currentStatus == "opened" || $bidStatus == "Pending") {
                 $bStatus = "-";
             } elseif ($bidStatus == "Success") {
                 $bStatus = "in";

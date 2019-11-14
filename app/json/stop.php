@@ -18,7 +18,7 @@ if (!empty($errors)) {
     if ($currentStatus == "opened"){
         $updateStatusOK = $roundDAO->updateRoundStatus("closed");
         try {
-            processBids();
+            if ($currentRound == 1) { round1Clearing(); } else { round2Clearing(); }
         } catch (Exception $e) {
             $errors[] = $e->getMessage();
         }
