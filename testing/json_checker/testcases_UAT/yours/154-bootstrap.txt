@@ -32,14 +32,14 @@
             "file": "bid.csv",
             "line": 3,
             "message": [
-                "invalid code"
+                "invalid course"
             ]
         },
         {
             "file": "course_completed.csv",
             "line": 2,
             "message": [
-                "invalid code"
+                "invalid course"
             ]
         },
         {

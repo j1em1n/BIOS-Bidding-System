@@ -1,7 +1,4 @@
 {
-    "status": "error",
-    "message": [
-        "insufficient e$"
-    ]
+    "status": "success"
 }
 

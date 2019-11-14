@@ -4,5 +4,5 @@
     "password": "abc123",
     "name": "Alpha Wee",
     "school": "SOE",
-    "edollar": 30.01
+    "edollar": 50.0
 }

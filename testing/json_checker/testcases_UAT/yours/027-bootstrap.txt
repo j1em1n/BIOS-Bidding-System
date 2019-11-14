@@ -25,22 +25,22 @@
             "file": "bid.csv",
             "line": 2,
             "message": [
-                "invalid code",
-                "invalid e-dollar"
+                "invalid amount",
+                "invalid course"
             ]
         },
         {
             "file": "bid.csv",
             "line": 3,
             "message": [
-                "invalid code"
+                "invalid course"
             ]
         },
         {
             "file": "bid.csv",
             "line": 4,
             "message": [
-                "invalid code"
+                "invalid course"
             ]
         },
         {

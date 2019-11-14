@@ -9,12 +9,6 @@
         },
         {
             "row": 2,
-            "userid": "duke",
-            "amount": 99.0,
-            "result": "-"
-        },
-        {
-            "row": 3,
             "userid": "geeko",
             "amount": 99.0,
             "result": "-"
