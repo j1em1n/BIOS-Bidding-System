@@ -44,6 +44,7 @@ td {
     padding: 5px;
 }
 
+
 .button {
     background-color: rgba(224, 224, 224, 0.568);
     border: 2px solid rgb(0, 0, 0);
@@ -63,32 +64,43 @@ td {
 
 /* Add a black background color to the top navigation */
 .topnav {
-    background-color: rgb(184, 184, 184);
+    background-color: rgb(29, 59, 31);
     overflow: auto;
   }
   
 /* Style the links inside the navigation bar */
 .topnav a {
     float: left;
-    color: #f2f2f2;
+    color: #ffffff;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
+    border: 0.1px solid rgb(255, 255, 255); /* Green */
+
 }
 
 /* Change the color of links on hover */
 .topnav a:hover {
-    background-color: rgb(150, 247, 158);
+    background-color: rgba(216, 216, 216, 0.781);
+    border: 0.1px solid rgb(255, 255, 255);
     color: black;
 }
 
 /* Add a color to the active/current link */
-.topnav a.active {
+/* .topnav a:active {
     background-color: rgb(20, 190, 4);
+    border: 1px solid rgb(255, 255, 255);
     color: white;
-}
+} */
 
 a {
     text-decoration: none;
+    }
+
+div.sticky {
+    position: sticky;
+    top: 0;
+    /* background-color: green; */
+    /* border: 2px solid #4CAF50; */
     }

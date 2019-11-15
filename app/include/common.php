@@ -162,7 +162,7 @@ function printSectionInfo($sections, $userid) {
     $roundNum = $roundDAO->retrieveRoundInfo()->getRoundNum();
     $student = $studentDAO->retrieve($userid);
     $school = $student->getSchool();
-    echo "<table border '1'>
+    echo "<table border '1' style = 'width:60%; float: left'>
     <tr>
         <th>School</th>
         <th>Course</th>
@@ -208,13 +208,52 @@ function printSectionInfo($sections, $userid) {
             echo "<td>{$vacancies}</td>
             <td>{$minBid}</td>";
         }
-        echo "<td><input type='number' step='.01' name='edollar' style='width=50px'></td>
+        echo "<td><input type='number' step='.01' name='edollar' style='width=auto'></td>
             <td><input type='submit' value='Place bid'></td>
             </form>
         </tr>";
     }
     echo "</table>";
 }
+
+//for placebid reminder
+function currentBidsTableInPlaceBid($bids, $roundNum) {
+    $courseDAO = new CourseDAO();
+    echo "
+    
+        <table border '1' style = 'width:30%; float: right'>
+        <th colspan = '4' bgcolor='#B7C8B7' ><b>Your current bids<b></th>
+        <tr>
+            <b>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Section</th>
+            <th>Bid amount (e$)</th>
+            </b>
+        </tr>";
+    foreach ($bids as $bid) {
+        $code = $bid->getCode();
+        $section = $bid->getSection();
+        $amount = $bid->getAmount();
+        $status = ($roundNum == 1) ? $bid->getR1Status() : $bid->getR2Status();
+
+        echo "
+        <tr>
+            <td>$code<input type='hidden' name='coursecode' value='$code'></td>
+            <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+            <td>$section<input type='hidden' name='sectionnum' value='$section'></td>
+            <td>{$bid->getAmount()}</td>
+        </tr>";
+    }
+    echo " <tr>
+                <td colspan = '1' style = 'color: red; background-color: white'><b>Note:</b></td>
+                <td colspan = '3' style = 'color: red; background-color: white'>Dropping of bid(s)/section(s) only to be done in <b>Home Page</b></td>
+            </tr>";
+
+    echo "</table>";
+}
+
+
 
 function currentBidsTable($bids, $roundNum) {
     $courseDAO = new CourseDAO();

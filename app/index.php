@@ -41,7 +41,7 @@ $currentStatus = $roundInfo->getStatus();
         ?>
         </h3>
 
-        <h4>Your E-Dollar Balance: $<b><?=$edollar?></h4>
+        <h4>Your E-Dollar Balance: <b><u>$<?=$edollar?></u></b></h4>
 
         <p>
             <?=printErrors()?>
@@ -73,9 +73,9 @@ $currentStatus = $roundInfo->getStatus();
             }
         ?>
         
-        <p>
+        <!-- <p>
             <div class = "button" :hover><a href="placebid.php" style = "text-decoration: none;">Plan & Bid</a><br></div>
-        </p>
+        </p> -->
 
     </body>
 
