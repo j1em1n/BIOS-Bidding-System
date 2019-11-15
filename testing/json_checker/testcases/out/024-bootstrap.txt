@@ -2,51 +2,51 @@
     "status": "error",
     "num-record-loaded": [
         {
-            "bid.csv": 6
+            "bid.csv": 0
         },
         {
-            "course.csv": 3
+            "course.csv": 2
         },
         {
             "course_completed.csv": 0
         },
         {
-            "prerequisite.csv": 0
+            "prerequisite.csv": 1
         },
         {
-            "section.csv": 4
+            "section.csv": 2
         },
         {
-            "student.csv": 12
+            "student.csv": 2
         }
     ],
     "error": [
         {
             "file": "bid.csv",
-            "line": 4,
+            "line": 2,
             "message": [
-                "blank code"
+                "incomplete prerequisites"
             ]
         },
         {
             "file": "bid.csv",
-            "line": 6,
+            "line": 3,
             "message": [
-                "blank code"
+                "not own school course"
             ]
         },
         {
-            "file": "bid.csv",
-            "line": 8,
+            "file": "prerequisite.csv",
+            "line": 3,
             "message": [
-                "blank code"
+                "invalid prerequisite"
             ]
         },
         {
-            "file": "bid.csv",
-            "line": 9,
+            "file": "section.csv",
+            "line": 3,
             "message": [
-                "blank code"
+                "invalid size"
             ]
         }
     ]

@@ -2,58 +2,58 @@
     "status": "error",
     "num-record-loaded": [
         {
-            "bid.csv": 14
+            "bid.csv": 2
         },
         {
-            "course.csv": 25
+            "course.csv": 4
         },
         {
-            "course_completed.csv": 4
+            "course_completed.csv": 3
         },
         {
-            "prerequisite.csv": 8
+            "prerequisite.csv": 0
         },
         {
-            "section.csv": 36
+            "section.csv": 11
         },
         {
-            "student.csv": 26
+            "student.csv": 11
         }
     ],
     "error": [
         {
             "file": "bid.csv",
+            "line": 4,
+            "message": [
+                "invalid amount"
+            ]
+        },
+        {
+            "file": "bid.csv",
             "line": 5,
             "message": [
-                "invalid e-dollar"
+                "invalid amount"
             ]
         },
         {
             "file": "bid.csv",
-            "line": 11,
+            "line": 6,
             "message": [
-                "invalid e-dollar"
+                "invalid amount"
             ]
         },
         {
             "file": "bid.csv",
-            "line": 13,
+            "line": 7,
             "message": [
-                "invalid e-dollar"
+                "invalid amount"
             ]
         },
         {
             "file": "bid.csv",
-            "line": 16,
+            "line": 8,
             "message": [
-                "invalid e-dollar"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 20,
-            "message": [
-                "invalid e-dollar"
+                "invalid amount"
             ]
         }
     ]

@@ -2,10 +2,10 @@
     "status": "error",
     "num-record-loaded": [
         {
-            "bid.csv": 6
+            "bid.csv": 0
         },
         {
-            "course.csv": 5
+            "course.csv": 2
         },
         {
             "course_completed.csv": 0
@@ -14,32 +14,32 @@
             "prerequisite.csv": 0
         },
         {
-            "section.csv": 5
+            "section.csv": 1
         },
         {
-            "student.csv": 9
+            "student.csv": 2
         }
     ],
     "error": [
         {
-            "file": "bid.csv",
+            "file": "section.csv",
+            "line": 2,
+            "message": [
+                "invalid start"
+            ]
+        },
+        {
+            "file": "section.csv",
             "line": 3,
             "message": [
-                "invalid section"
+                "invalid size"
             ]
         },
         {
-            "file": "bid.csv",
-            "line": 5,
+            "file": "student.csv",
+            "line": 4,
             "message": [
-                "invalid section"
-            ]
-        },
-        {
-            "file": "bid.csv",
-            "line": 7,
-            "message": [
-                "invalid section"
+                "duplicate userid"
             ]
         }
     ]
