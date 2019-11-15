@@ -1,5 +1,6 @@
 <?php
 
+
 // this will autoload the class that we need in our code
 spl_autoload_register(function($class) {
  
@@ -162,7 +163,10 @@ function printSectionInfo($sections, $userid) {
     $roundNum = $roundDAO->retrieveRoundInfo()->getRoundNum();
     $student = $studentDAO->retrieve($userid);
     $school = $student->getSchool();
-    echo "<table border '1' style = 'width:60%; float: left'>
+
+
+    echo "<div class='scroll'>
+    <table border '1' style = 'width:100%; float: left'>
     <tr>
         <th>School</th>
         <th>Course</th>
@@ -193,7 +197,8 @@ function printSectionInfo($sections, $userid) {
         $vacancies = $section->getVacancies();
         $minBid = $section->getMinBid();
 
-        echo "<tr>
+        echo "
+            <tr>
             <form action='process_placebid.php' method='POST'>
             <td>{$school}</td>
             <td>{$code}<input type='hidden' name='coursecode' value='{$code}'></td>
@@ -213,14 +218,15 @@ function printSectionInfo($sections, $userid) {
             </form>
         </tr>";
     }
-    echo "</table>";
+
+    echo "
+    </table></div>";
 }
 
 //for placebid reminder
 function currentBidsTableInPlaceBid($bids, $roundNum) {
     $courseDAO = new CourseDAO();
     echo "
-    
         <table border '1' style = 'width:30%; float: right'>
         <th colspan = '4' bgcolor='#B7C8B7' ><b>Your current bids<b></th>
         <tr>
@@ -267,6 +273,7 @@ function currentBidsTable($bids, $roundNum) {
             <th>Section</th>
             <th>Bid amount (e$)</th>
             <th>Result</th>
+            <th>Drop</th>
             </b>
         </tr>";
     foreach ($bids as $bid) {
@@ -335,7 +342,7 @@ function enrolledSectionsTable($bids) {
             <th>Course Name</th>
             <th>Section</th>
             <th>Bid amount (e$)</th>
-            <th></th>
+            <th>Drop</th>
             </b>
         </tr>";
     foreach ($bids as $bid) {

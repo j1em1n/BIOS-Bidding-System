@@ -74,13 +74,9 @@
             } else {
                 currentBidsTableInPlaceBid($pending, $currentRound);
             }
-            echo "</div>";
         ?>
-        </div>
-
-         
-
-
+    <br>
+    <br>
     </body>
 
 </html>

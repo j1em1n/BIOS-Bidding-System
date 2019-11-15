@@ -44,8 +44,13 @@ td {
     padding: 5px;
 }
 
-
-.button {
+.scroll {
+    position: absolute;
+    max-height: 500px;
+    width: 1000px;
+    overflow: auto;
+}
+/* .button {
     background-color: rgba(224, 224, 224, 0.568);
     border: 2px solid rgb(0, 0, 0);
     color: white;
@@ -60,7 +65,7 @@ td {
 .button:hover {
     background-color: rgba(0, 92, 15, 0.445);
     color: white;
-}
+} */
 
 /* Add a black background color to the top navigation */
 .topnav {
