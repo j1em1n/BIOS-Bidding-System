@@ -637,7 +637,7 @@ function doBootstrap() {
 							// Refund amount for previous bid and charge edollars for current bid
 							$thisStud = $studentDAO->retrieve($userid);
 							$balance = $thisStud->getEdollar() + $previousAmount - $amount;
-							$studentDAO->updateEdollar($userid, $balance);
+							$studentDAO->updateEdollar($userid, round($balance,2));
 						
 						} else {
 							$bidObj = new Bid($userid, $amount, $code, $sectionid, "Pending", null);
@@ -646,7 +646,7 @@ function doBootstrap() {
 							// deduct amount from student's balance
 							$thisStud = $studentDAO->retrieve($userid);
 							$balance = $thisStud->getEdollar() - $amount;
-							$studentDAO->updateEdollar($userid, $balance);
+							$studentDAO->updateEdollar($userid, round($balance,2));
 						}
 						$bid_processed++; #line added successfully  
 					}
