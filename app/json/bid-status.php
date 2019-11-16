@@ -67,7 +67,18 @@ if (!empty($errors)) {
                     $successful[] = $bid;
                 }
             }
-            $minBid = end($successful)->getAmount();
+            
+            if ($roundNum == 2) {
+                $r2bids = array();
+                foreach($successful as $bid) {
+                    if ($bid->getR2Status()){
+                        $r2bids[] = $bid;
+                    }
+                }
+                $minBid = end($r2bids)->getAmount();
+            } else {
+                $minBid = end($successful)->getAmount();
+            }
         }
     
         $bidDump = array();

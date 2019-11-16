@@ -10,7 +10,7 @@ if(isset($_SESSION['userid'])){
 $studentDAO = new StudentDAO();
 $student = $studentDAO->retrieve($userid);
 $name = $student->getName();
-$edollar = $student->getEdollar();
+$edollar = number_format($student->getEdollar(),2);
 
 $roundDAO = new RoundDAO();
 $roundInfo = $roundDAO->retrieveRoundInfo();
@@ -73,9 +73,9 @@ $currentStatus = $roundInfo->getStatus();
             }
         ?>
         
-        <!-- <p>
+        <p>
             <div class = "button" :hover><a href="placebid.php" style = "text-decoration: none;">Plan & Bid</a><br></div>
-        </p> -->
+        </p>
 
     </body>
 

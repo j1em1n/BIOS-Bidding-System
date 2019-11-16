@@ -35,11 +35,15 @@
             // Check if e-dollar is numeric
             if(!isValidEdollar($edollar)){
                 $errors[] = "invalid amount";
+            } elseif ($edollar < 10.0) {
+                // Check if bidding amount >= 10.0
+                $errors[] = "invalid amount";
             }
+
 
             // Check for valid course code
             if(!($courseDAO->retrieve($courseCode))) {
-                $errors[] = "invalid course code";
+                $errors[] = "invalid course";
             } else {
                 if (!($sectionDAO->retrieve($courseCode, $sectionNum))) {
                     // Check for valid section (only if course code is valid)
@@ -163,13 +167,13 @@
                         $bidDAO->updateBid($userid, $edollar, $courseCode, $sectionNum);
                         // Refund amount for previous bid and charge edollars for current bid
                         $balance = $thisStud->getEdollar() + $previousAmount - $edollar;
-                        $studentDAO->updateEdollar($userid, $balance);
+                        $studentDAO->updateEdollar($userid, round($balance,2));
                     } else {
                         $newBid = ($currentRound == 1) ? new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending", null) : new Bid($userid, $edollar, $courseCode, $sectionNum, null, "Pending");
                         $bidDAO->add($newBid);
                         // Deduct amount from student's balance
                         $balance = $thisStud->getEdollar() - $edollar;
-                        $studentDAO->updateEdollar($userid, $balance);
+                        $studentDAO->updateEdollar($userid, round($balance,2));
                     }
 
                     // if the current round is round 2, process bids to get predicted results

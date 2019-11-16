@@ -21,7 +21,7 @@
 
         $prerequisiteDAO = new PrerequisiteDAO();
         $allPrerequisites = $prerequisiteDAO->retrieveAll();
-        $prerequisiteDump = array();
+        $prereqDump = array();
 
         $sectionDAO = new SectionDAO();
         $allSections = $sectionDAO->retrieveAll();
@@ -219,7 +219,7 @@
             "course" => $courseDump,
             "section" => $sectionDump,
             "student" => $studentDump,
-            "prerequisite" => $prerequisiteDump,
+            "prerequisite" => $prereqDump,
             "bid" => $bidDump,
             "completed-course" => $courseCompletedDump,
             "section-student" => $sectionStudentDump

@@ -43,7 +43,7 @@
                     exit();
                 }
                 $biddedamount = $selected_bid->getAmount();                        
-                $updatedamount =  strval($currentedollars + $biddedamount);
+                $updatedamount =  number_format($currentedollars + $biddedamount,2);
                 $studentDAO->updateEdollar($userid, $updatedamount);
                 $isDeleteOK = $bidDAO->delete($selected_bid);
                 if ($isDeleteOK) {

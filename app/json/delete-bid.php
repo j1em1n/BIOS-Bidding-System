@@ -47,9 +47,13 @@
         // Check if bid exists only if course, userid and section are valid and round is currently active
         if (empty($errors)) {
             $bid = $bidDAO->retrieve($userid, $courseCode);
-            $r1Status = $bid->getR1Status();
-            if (!($bid) || ($r1Status && $r1Status != "Pending")){
+            if (!($bid)){
                 $errors[] = "no such bid";
+            } else {
+                $r1Status = $bid->getR1Status();
+                if ($r1Status && $r1Status != "Pending"){
+                    $errors[] = "no such bid";
+                }
             }
         }
 
@@ -62,7 +66,7 @@
             $isDeleteOK = $bidDAO->delete($selected_bid);
 
             if ($isDeleteOK) {
-                $studentDAO->updateEdollar($userid, $updatedamount);
+                $studentDAO->updateEdollar($userid, round($updatedamount,2));
 
                 // if the current round is round 2, process bids to get predicted results
                 if ($roundDAO->retrieveRoundInfo()->getRoundNum() == 2) {

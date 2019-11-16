@@ -16,7 +16,7 @@ if (!empty($errors)) {
     if ($currentStatus == "opened") {
         $success = [
             "status" => "success",
-            "round" => $currentRound
+            "round" => (int)($currentRound)
         ];
     } elseif($currentRound == 1) {
         $updateStatusOK = $roundDAO->updateRoundStatus("opened");
