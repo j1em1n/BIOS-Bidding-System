@@ -1,0 +1,6 @@
+{
+    "status": "success",
+    "vacancy": 2,
+    "min-bid-amount": 14.0,
+    "students": []
+}

@@ -1,0 +1,202 @@
+{
+    "status": "success",
+    "course": [
+        {
+            "course": "ECON001",
+            "school": "SOE",
+            "title": "Microeconomics",
+            "description": "Microeconomics is about economics in smaller scale (e.g. firm-scale)",
+            "exam date": "20131101",
+            "exam start": "1530",
+            "exam end": "1845"
+        },
+        {
+            "course": "IS207",
+            "school": "SIS",
+            "title": "GUI Bloopers",
+            "description": "Common User Interface Design Don'ts and Dos",
+            "exam date": "20131103",
+            "exam start": "1530",
+            "exam end": "1845"
+        },
+        {
+            "course": "IS208",
+            "school": "SIS",
+            "title": "Artifical Intelligence",
+            "description": "The science and engineering of making intelligent machine",
+            "exam date": "20131103",
+            "exam start": "830",
+            "exam end": "1145"
+        },
+        {
+            "course": "MGMT001",
+            "school": "SOB",
+            "title": "Business,Government, and Society",
+            "description": "learn the interrelation amongst the three",
+            "exam date": "20131102",
+            "exam start": "830",
+            "exam end": "1145"
+        },
+        {
+            "course": "MGMT002",
+            "school": "SOB",
+            "title": "Technology and World Change",
+            "description": "As technology changes, so does the world",
+            "exam date": "20131101",
+            "exam start": "1200",
+            "exam end": "1515"
+        }
+    ],
+    "section": [
+        {
+            "course": "ECON001",
+            "section": "S1",
+            "day": "Thursday",
+            "start": "830",
+            "end": "1145",
+            "instructor": "John KHOO",
+            "venue": "Seminar Rm 2-34",
+            "size": 10
+        },
+        {
+            "course": "IS207",
+            "section": "S1",
+            "day": "Monday",
+            "start": "830",
+            "end": "1145",
+            "instructor": "Edmund KHOO",
+            "venue": "Seminar Rm 2-31",
+            "size": 10
+        },
+        {
+            "course": "IS208",
+            "section": "S1",
+            "day": "Tuesday",
+            "start": "1200",
+            "end": "1515",
+            "instructor": "Febrice KHOO",
+            "venue": "Seminar Rm 2-32",
+            "size": 10
+        },
+        {
+            "course": "MGMT001",
+            "section": "S1",
+            "day": "Wednesday",
+            "start": "830",
+            "end": "1145",
+            "instructor": "Gavin KHOO",
+            "venue": "Seminar Rm 2-33",
+            "size": 5
+        },
+        {
+            "course": "MGMT002",
+            "section": "S1",
+            "day": "Wednesday",
+            "start": "1530",
+            "end": "1845",
+            "instructor": "Bob KHOO",
+            "venue": "Seminar Rm 2-37",
+            "size": 5
+        }
+    ],
+    "student": [
+        {
+            "userid": "ben.ng.2009",
+            "password": "qwerty129",
+            "name": "Ben NG",
+            "school": "SIS",
+            "edollar": 189.0
+        },
+        {
+            "userid": "calvin.ng.2009",
+            "password": "qwerty130",
+            "name": "Calvin NG",
+            "school": "SIS",
+            "edollar": 200.0
+        },
+        {
+            "userid": "eddy.ng.2009",
+            "password": "qwerty132",
+            "name": "Eddy NG",
+            "school": "SIS",
+            "edollar": 186.0
+        },
+        {
+            "userid": "neilson.ng.2009",
+            "password": "qwerty141",
+            "name": "Neilson NG",
+            "school": "SIS",
+            "edollar": 200.0
+        },
+        {
+            "userid": "olivia.ng.2009",
+            "password": "qwerty142",
+            "name": "Olivia NG",
+            "school": "SIS",
+            "edollar": 178.0
+        },
+        {
+            "userid": "timothy.ng.2009",
+            "password": "qwerty147",
+            "name": "Timothy NG",
+            "school": "SOE",
+            "edollar": 200.0
+        },
+        {
+            "userid": "ursala.ng.2009",
+            "password": "qwerty148",
+            "name": "Ursala NG",
+            "school": "SOE",
+            "edollar": 172.0
+        },
+        {
+            "userid": "xavier.ng.2009",
+            "password": "qwerty151",
+            "name": "Xavier NG",
+            "school": "SOB",
+            "edollar": 200.0
+        },
+        {
+            "userid": "yasir.ng.2009",
+            "password": "qwerty152",
+            "name": "Yasir NG",
+            "school": "SOB",
+            "edollar": 168.0
+        }
+    ],
+    "prerequisite": [],
+    "bid": [
+        {
+            "userid": "ursala.ng.2009",
+            "amount": 28.0,
+            "course": "ECON001",
+            "section": "S1"
+        },
+        {
+            "userid": "eddy.ng.2009",
+            "amount": 14.0,
+            "course": "IS207",
+            "section": "S1"
+        },
+        {
+            "userid": "ben.ng.2009",
+            "amount": 11.0,
+            "course": "IS207",
+            "section": "S1"
+        },
+        {
+            "userid": "olivia.ng.2009",
+            "amount": 22.0,
+            "course": "IS208",
+            "section": "S1"
+        },
+        {
+            "userid": "yasir.ng.2009",
+            "amount": 32.0,
+            "course": "MGMT002",
+            "section": "S1"
+        }
+    ],
+    "completed-course": [],
+    "section-student": []
+}

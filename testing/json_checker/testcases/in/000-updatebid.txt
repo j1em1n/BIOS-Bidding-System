@@ -1,6 +1,0 @@
-r={
-   "userid": "ursala.ng.2009",
-   "amount": "10dollars",
-   "course": "IS100",
-   "section": "S1"
-}
