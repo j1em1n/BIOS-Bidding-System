@@ -243,14 +243,18 @@ function currentBidsTableInPlaceBid($userid) {
 function printSimplifiedTable($bids) {
     $courseDAO = new CourseDAO();
     echo "
-    <tr>
-        <b>
-        <th>Course Code</th>
-        <th>Course Name</th>
-        <th>Section</th>
-        <th>Bid amount (e$)</th>
-        </b>
-    </tr>"; 
+        <p style =  'font-size: 20; font-family:Fenix; font-style: bold; color:#160761'>Current bids</p>
+        <table border '1'>
+        <tr>
+            <b>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Section</th>
+            <th>Bid amount (e$)</th>
+            <th>Result</th>
+            <th>Drop</th>
+            </b>
+        </tr>";
     foreach ($bids as $bid) {
         $amount = number_format($bid->getAmount(),2);
         echo "
@@ -342,22 +346,23 @@ function bidResultsTable($bids) {
 
 function enrolledSectionsTable($bids) {
     $courseDAO = new CourseDAO();
-    echo "<h2><b>Your enrolled sections</b></h2>";
-    if(!empty($bids)) {
-        echo "<table border='1'>
-            <tr>
-                <b>
-                <th>Course Code</th>
-                <th>Course Name</th>
-                <th>Section</th>
-                <th>Bid amount (e$)</th>
-                <th>Drop</th>
-                </b>
-            </tr>";
-        foreach ($bids as $bid) {
-            $code = $bid->getCode();
-            $section = $bid->getSection();
-            $amount = number_format($bid->getAmount(),2);
+    echo "
+        <p style =  'font-size: 20; font-family:Fenix; font-style: bold; color:#160761'>Enrolled sections</p>
+
+        <table border '1'>
+        <tr>
+            <b>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Section</th>
+            <th>Bid amount (e$)</th>
+            <th>Drop</th>
+            </b>
+        </tr>";
+    foreach ($bids as $bid) {
+        $code = $bid->getCode();
+        $section = $bid->getSection();
+        $amount = $bid->getAmount();
 
             echo "
             <tr>

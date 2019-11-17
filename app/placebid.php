@@ -25,7 +25,7 @@
         <form action='placebid.php' method='POST'>
             <table>
                 <tr>
-                    <th>Course Code</th>
+                    <td>Course Code</td>
                     <td><input name='coursecode' type='text'></td>
                     <td><input type='submit' value='Search Courses'></td>
                     <td><button onClick="window.location.reload();">View All</button></td>

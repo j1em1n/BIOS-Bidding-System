@@ -29,10 +29,26 @@ $currentStatus = $roundInfo->getStatus();
 
         <h1>BIOS BIDDING </h1>
         
-        <div style='float:left; width:60%'>
-            <h2>Welcome, <b><?=$name?></b>!</h2>
-            <h3>Current Round: <?=$currentRound?>
-            <?php 
+        <h2>Welcome, <b><?=$name?></b>!</h2>
+        <h3>Current Round: <?=$currentRound?>
+        <?php 
+        
+        if($currentStatus == 'closed'){
+                echo "<span style = 'color:red'><b>(".strtoupper($currentStatus).")</b>";
+            } else {
+                echo "<span style = 'color:green'><b>(".strtoupper($currentStatus).")</b>";
+            }
+        ?>
+        </h3>
+
+        <h3>Your E-Dollar Balance: <b><u>$<?=$edollar?></u></b></h3>
+
+        <p>
+            <?=printErrors()?>
+            <?=printSuccess()?>
+        </p>
+            <hr>
+        <?php
             
             if($currentStatus == 'closed'){
                     echo "<span style = 'color:red'><b>(".strtoupper($currentStatus).")</b>";
