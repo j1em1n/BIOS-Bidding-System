@@ -193,7 +193,17 @@
 
         //dump section-student
 
-        $successfulBids = $bidDAO->getSuccessfulBids();
+        if ($currentNum == 2 && $currentStatus == "opened") {
+            $temp = $bidDAO->getSuccessfulBids();
+            $successfulBids = array();
+            foreach($temp as $bid) {
+                if ($bid->getR1Status() == "Success") {
+                    $successfulBids[] = $bid;
+                }
+            }
+        } else {
+            $successfulBids = $bidDAO->getSuccessfulBids();
+        }
         $successfulByCourse = array();
         foreach ($successfulBids as $bid) {
             $courseCode = $bid->getCode();

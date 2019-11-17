@@ -840,12 +840,6 @@
     ],
     "section-student": [
         {
-            "userid": "dawn.ng.2009",
-            "course": "IS100",
-            "section": "S1",
-            "amount": 11.0
-        },
-        {
             "userid": "fred.ng.2009",
             "course": "IS100",
             "section": "S1",
@@ -886,12 +880,6 @@
             "course": "IS100",
             "section": "S1",
             "amount": 22.0
-        },
-        {
-            "userid": "parker.ng.2009",
-            "course": "IS100",
-            "section": "S1",
-            "amount": 12.0
         }
     ]
 }
