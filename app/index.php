@@ -41,13 +41,13 @@ $currentStatus = $roundInfo->getStatus();
         ?>
         </h3>
 
-        <h4>Your E-Dollar Balance: <b><u>$<?=$edollar?></u></b></h4>
+        <h3>Your E-Dollar Balance: <b><u>$<?=$edollar?></u></b></h3>
 
         <p>
             <?=printErrors()?>
             <?=printSuccess()?>
         </p>
-
+            <hr>
         <?php
             
             $courseDAO = new CourseDAO();

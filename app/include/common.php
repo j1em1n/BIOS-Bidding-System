@@ -264,7 +264,7 @@ function currentBidsTableInPlaceBid($bids, $roundNum) {
 function currentBidsTable($bids, $roundNum) {
     $courseDAO = new CourseDAO();
     echo "
-        <h2>Your current bids</h2>
+        <p style =  'font-size: 20; font-family:Fenix; font-style: bold; color:#160761'>Current bids</p>
         <table border '1'>
         <tr>
             <b>
@@ -334,7 +334,8 @@ function bidResultsTable($bids) {
 function enrolledSectionsTable($bids) {
     $courseDAO = new CourseDAO();
     echo "
-        <h2>Your enrolled sections</h2>
+        <p style =  'font-size: 20; font-family:Fenix; font-style: bold; color:#160761'>Enrolled sections</p>
+
         <table border '1'>
         <tr>
             <b>
