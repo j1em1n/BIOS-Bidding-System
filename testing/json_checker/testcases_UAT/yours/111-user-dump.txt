@@ -1,8 +1,0 @@
-{
-    "status": "success",
-    "userid": "apple",
-    "password": "123ccd",
-    "name": "Apple",
-    "school": "SCE",
-    "edollar": 99.0
-}

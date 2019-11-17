@@ -15,42 +15,32 @@ spl_autoload_register(function($class) {
 
 session_start();
 
-// function printErrors() {
-//     echo "<table border = '1'>";
-           
-//     if(isset($_SESSION['errors'])){
-//         echo "<ul id='errors' style='color:red;'>";
-        
-//         $sn = 0;
-
-//         echo "<tr>
-//         <th><img src = 'include/error_icon.png' width = '30' height = '30'></th>";
-
-//         foreach ($_SESSION['errors'] as $value) {
-//             $sn++;
-            
-//             echo "<tr>
-//             <td> $sn </td>
-//             <td style = 'color:red;'>" . $value . "</td>
-//             </tr>";
-//         }
-//         echo "</ul>";
-//         unset($_SESSION['errors']);
-//     }
-// }
-
 function printErrors() {
-    echo "<table border='1'>";       
     if(isset($_SESSION['errors'])){
-        echo "<ul id='errors' style='color:red;'>";
+        echo "<table border='1'>";  
         echo "<tr>
-                <th><img src = 'include/error_icon.png' width = '30' height = '30'></th>";
+                <th><img src = 'include/error_icon.png' width = '30' height = '30'>&nbsp;&nbsp;&nbsp;&nbsp;Error</th>";
         foreach ($_SESSION['errors'] as $value) {
             echo "<tr>
             <td style = 'color:red;'>" . $value . "</td>
             </tr>";
         }
-        echo "</ul>";   
+        echo "</table>";   
+        unset($_SESSION['errors']);
+    }    
+}
+
+function printErrorsFloat() {    
+    if(isset($_SESSION['errors'])){
+        echo "<table border='1' style='width:80%; float:left;'>";   
+        echo "<tr>
+                <th><img src = 'include/error_icon.png' width = '30' height = '30'>&nbsp;&nbsp;&nbsp;&nbsp;Error</th>";
+        foreach ($_SESSION['errors'] as $value) {
+            echo "<tr>
+            <td style = 'color:red;'>" . $value . "</td>
+            </tr>";
+        }
+        echo "</table>";   
         unset($_SESSION['errors']);
     }    
 }
@@ -88,44 +78,34 @@ function validateDate($date, $format)
     return $d && $d->format($format) == $date;
 }
 
-// function printSuccess() {
-
-//     echo "<table border = '1'>";
-//     $sn = 0;
-       
-//     if(isset($_SESSION['success'])){
-//         echo "<ul id='success' style='color:DarkGreen;'>";
-
-//         echo "<tr>
-//         <th><img src = 'include/success_icon.jpg' width = '30' height = '30'></th>
-//             </tr>";
-
-//         foreach ($_SESSION['success'] as $value) {
-//             $sn++;
-
-//             echo "<tr>
-//             <td> $sn </td>
-//             <td style='color:DarkGreen;'>" . $value . "</td>
-//             </tr>";
-//         }
-//         echo "</ul>";
-//         unset($_SESSION['success']);
-//     }
-// }
-
 function printSuccess() {
-    echo "<table border='1'>";
     if(isset($_SESSION['success'])){
-        echo "<ul id='success' style='color:DarkGreen;'>";
+        echo "<table border='1'>";
         echo "<tr>
-                <th><img src = 'include/success_icon.jpg' width = '30' height = '30'></th>
+                <th><img src = 'include/success_icon.jpg' width = '30' height = '30'>&nbsp;&nbsp;&nbsp;&nbsp;Success</th>
             </tr>";
         foreach ($_SESSION['success'] as $value) {
             echo "<tr>
             <td style='color:DarkGreen;'>" . $value . "</td>
             </tr>";
         }
-        echo "</ul>";
+        echo "</table>";
+        unset($_SESSION['success']);
+    }    
+}
+
+function printSuccessFloat() {
+    if(isset($_SESSION['success'])){
+        echo "<table border='1' style='width:80%; float:left;'>";
+        echo "<tr>
+                <th><img src = 'include/success_icon.jpg' width = '30' height = '30'>&nbsp;&nbsp;&nbsp;&nbsp;Success</th>
+            </tr>";
+        foreach ($_SESSION['success'] as $value) {
+            echo "<tr>
+            <td style='color:DarkGreen;'>" . $value . "</td>
+            </tr>";
+        }
+        echo "</table>";
         unset($_SESSION['success']);
     }    
 }
@@ -165,8 +145,8 @@ function printSectionInfo($sections, $userid) {
     $school = $student->getSchool();
 
 
-    echo "<div class='scroll'>
-    <table border '1' style = 'width:100%; float: left'>
+    echo "<div class='scroll' style='width:70%'>
+    <table border='1' style = 'width:100%; font-size:80%'>
     <tr>
         <th>School</th>
         <th>Course</th>
@@ -224,32 +204,33 @@ function printSectionInfo($sections, $userid) {
 }
 
 //for placebid reminder
-function currentBidsTableInPlaceBid($bids, $roundNum) {
+function currentBidsTableInPlaceBid($userid) {
+    $bidDAO = new BidDAO();
     $courseDAO = new CourseDAO();
-    echo "
-        <table border '1' style = 'width:30%; float: right'>
-        <th colspan = '4' bgcolor='#B7C8B7' ><b>Your current bids<b></th>
-        <tr>
-            <b>
-            <th>Course Code</th>
-            <th>Course Name</th>
-            <th>Section</th>
-            <th>Bid amount (e$)</th>
-            </b>
-        </tr>";
+    $pending = array();
+    $enrolled = array();
+    $bids = $bidDAO->retrieveByUserid($userid);
+    
     foreach ($bids as $bid) {
-        $code = $bid->getCode();
-        $section = $bid->getSection();
-        $amount = $bid->getAmount();
-        $status = ($roundNum == 1) ? $bid->getR1Status() : $bid->getR2Status();
+        if ($bid->getR1Status() == "Success") {
+            $enrolled[] = $bid;
+        } elseif ($bid->getR1Status() == "Pending" || $bid->getR2Status()) {
+            $pending[] = $bid;
+        }
+    }
+    echo "<table border='1' style = 'width:25%; float: right; font-size:80%'>
+    <th colspan = '4' bgcolor='#B7C8B7' ><b>Your current bids<b></th>";
 
-        echo "
-        <tr>
-            <td>$code<input type='hidden' name='coursecode' value='$code'></td>
-            <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
-            <td>$section<input type='hidden' name='sectionnum' value='$section'></td>
-            <td>{$bid->getAmount()}</td>
-        </tr>";
+    if (!empty($pending)) {
+        printSimplifiedTable($pending);
+    } else {
+        echo "<tr><td colspan='4'>You have no active bids</td></tr>";
+    }
+    echo "<th colspan = '4' bgcolor='#B7C8B7' ><b>Your enrolled sections<b></th>";
+    if(!empty($enrolled)) {
+        printSimplifiedTable($enrolled);
+    } else {
+        echo "<tr><td colspan='4'>You are not enrolled in any sections</td></tr>";
     }
     echo " <tr>
                 <td colspan = '1' style = 'color: red; background-color: white'><b>Note:</b></td>
@@ -259,109 +240,140 @@ function currentBidsTableInPlaceBid($bids, $roundNum) {
     echo "</table>";
 }
 
-
-
-function currentBidsTable($bids, $roundNum) {
+function printSimplifiedTable($bids) {
     $courseDAO = new CourseDAO();
     echo "
-        <h2>Your current bids</h2>
-        <table border '1'>
-        <tr>
-            <b>
-            <th>Course Code</th>
-            <th>Course Name</th>
-            <th>Section</th>
-            <th>Bid amount (e$)</th>
-            <th>Result</th>
-            <th>Drop</th>
-            </b>
-        </tr>";
+    <tr>
+        <b>
+        <th>Course Code</th>
+        <th>Course Name</th>
+        <th>Section</th>
+        <th>Bid amount (e$)</th>
+        </b>
+    </tr>"; 
     foreach ($bids as $bid) {
-        $code = $bid->getCode();
-        $section = $bid->getSection();
-        $amount = $bid->getAmount();
-        $status = ($roundNum == 1) ? $bid->getR1Status() : $bid->getR2Status();
-
+        $amount = number_format($bid->getAmount(),2);
         echo "
         <tr>
-            <form action='process_dropbid.php' method='POST'>
-            <td>$code<input type='hidden' name='coursecode' value='$code'></td>
+            <td>{$bid->getCode()}</td>
             <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
-            <td>$section<input type='hidden' name='sectionnum' value='$section'></td>
-            <td>{$bid->getAmount()}</td>
-            <td style='background-color: ".highlightBid($status)."'>$status</td>
-            <td><input type='submit' value='Drop bid'></td>
-            </form>
+            <td>{$bid->getSection()}</td>
+            <td>$amount</td>
         </tr>";
     }
-    echo "</table>";
+}
+
+function currentBidsTable($bids, $roundNum) {
+    echo "<h2><b>Your current bids:</b></h2>";
+    if (!empty($bids)) {
+        $courseDAO = new CourseDAO();
+        echo "
+            <table border='1'>
+            <tr>
+                <b>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Section</th>
+                <th>Bid amount (e$)</th>
+                <th>Result</th>
+                <th>Drop</th>
+                </b>
+            </tr>";
+        foreach ($bids as $bid) {
+            $code = $bid->getCode();
+            $section = $bid->getSection();
+            $amount = number_format($bid->getAmount(),2);
+            $status = ($roundNum == 1) ? $bid->getR1Status() : $bid->getR2Status();
+
+            echo "
+            <tr>
+                <form action='process_dropbid.php' method='POST'>
+                <td>$code<input type='hidden' name='coursecode' value='$code'></td>
+                <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+                <td>$section<input type='hidden' name='sectionnum' value='$section'></td>
+                <td>$amount</td>
+                <td style='background-color: ".highlightBid($status)."'>$status</td>
+                <td><input type='submit' value='Drop bid'></td>
+                </form>
+            </tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "<table border='1'><tr><td><h3>You have no active bids.</h3></td></tr></table>";
+    }
+    
 }
 
 function bidResultsTable($bids) {
-    $courseDAO = new CourseDAO();
-    echo "
-        <h2>Bidding Results</h2>
-        <table border '1'>
-        <tr>
-            <b>
-            <th>Course Code</th>
-            <th>Course Name</th>
-            <th>Section</th>
-            <th>Bid amount (e$)</th>
-            <th>Result</th>
-            <th></th>
-            </b>
-        </tr>";
-    foreach ($bids as $bid) {
-        $code = $bid->getCode();
-        $section = $bid->getSection();
-        $amount = $bid->getAmount();
-        $status = ($bid->getR1Status()) ? $bid->getR1Status() : $bid->getR2Status();
+    echo "<h2><b>Bidding Results</b></h2>";
+    if(!empty($bids)) {
+        $courseDAO = new CourseDAO();
+        echo "<table border='1'>
+            <tr>
+                <b>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Section</th>
+                <th>Bid amount (e$)</th>
+                <th>Result</th>
+                <th></th>
+                </b>
+            </tr>";
+        foreach ($bids as $bid) {
+            $code = $bid->getCode();
+            $section = $bid->getSection();
+            $amount = number_format($bid->getAmount(),2);
+            $status = ($bid->getR1Status()) ? $bid->getR1Status() : $bid->getR2Status();
 
-        echo "
-        <tr>
-            <td>$code</td>
-            <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
-            <td>$section</td>
-            <td>{$bid->getAmount()}</td>
-            <td style='background-color: ".highlightBid($status)."'>$status</td>
-        </tr>";
+            echo "
+            <tr>
+                <td>$code</td>
+                <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+                <td>$section</td>
+                <td>$amount</td>
+                <td style='background-color: ".highlightBid($status)."'>$status</td>
+            </tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "<table border='1'><tr><td><h3>You did not place any bids.</h3></td></tr></table>";
     }
-    echo "</table>";    
-
 }
 
 function enrolledSectionsTable($bids) {
     $courseDAO = new CourseDAO();
-    echo "
-        <h2>Your enrolled sections</h2>
-        <table border '1'>
-        <tr>
-            <b>
-            <th>Course Code</th>
-            <th>Course Name</th>
-            <th>Section</th>
-            <th>Bid amount (e$)</th>
-            <th>Drop</th>
-            </b>
-        </tr>";
-    foreach ($bids as $bid) {
-        $code = $bid->getCode();
-        $section = $bid->getSection();
-        $amount = $bid->getAmount();
+    echo "<h2><b>Your enrolled sections</b></h2>";
+    if(!empty($bids)) {
+        echo "<table border='1'>
+            <tr>
+                <b>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Section</th>
+                <th>Bid amount (e$)</th>
+                <th>Drop</th>
+                </b>
+            </tr>";
+        foreach ($bids as $bid) {
+            $code = $bid->getCode();
+            $section = $bid->getSection();
+            $amount = number_format($bid->getAmount(),2);
 
-        echo "
-        <tr>
-            <form action='process_dropsection.php' method='POST'>
-            <td>$code<input type='hidden' name='coursecode' value='$code'></td>
-            <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
-            <td>$section<input type='hidden' name='sectionnum' value='$section'></td>
-            <td>{$bid->getAmount()}</td>
-            <td><input type='submit' value='Drop section'></td>
-            </form>
-        </tr>";
+            echo "
+            <tr>
+                <form action='process_dropsection.php' method='POST'>
+                <td>$code<input type='hidden' name='coursecode' value='$code'></td>
+                <td>{$courseDAO->retrieve($bid->getCode())->getTitle()}</td>
+                <td>$section<input type='hidden' name='sectionnum' value='$section'></td>
+                <td>$amount</td>
+                <td><input type='submit' value='Drop section'></td>
+                </form>
+            </tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "<table border='1'><tr><td><h3>You are not enrolled in any courses.</h3></td></tr></table>";
     }
-    echo "</table>";
 }
 
 function highlightBid($status) {

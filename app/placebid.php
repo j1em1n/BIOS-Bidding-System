@@ -21,6 +21,7 @@
             <?=printErrors()?>
             <?=printSuccess()?>
         </p>
+        <br>
         <form action='placebid.php' method='POST'>
             <table>
                 <tr>
@@ -30,7 +31,6 @@
                     <td><button onClick="window.location.reload();">View All</button></td>
                 </tr>
             </table>
-           <br><br>
 
         </form>
 
@@ -49,31 +49,7 @@
                     echo "<h3>Sorry! No results found for '$search'.</h3>";
                 }
             }
-            
-            $roundDAO = new RoundDAO();
-            $roundInfo = $roundDAO->retrieveRoundInfo();
-            $currentRound = $roundInfo->getRoundNum();
-            $currentStatus = $roundInfo->getStatus();
-
-            $courseDAO = new CourseDAO();
-            $bidDAO = new BidDAO();
-            $bids = $bidDAO->retrieveByUserid($userid);
-            if ($currentStatus == "opened") {
-                $pending = array();
-                $success = array();
-                foreach ($bids as $bid) {
-                    if ($bid->getR1Status() == "Pending" || $bid->getR2Status()) {
-                        $pending[] = $bid;
-                    } elseif ($bid->getR1Status() == "Success") {
-                        $success[] = $bid;
-                    }
-                }
-                
-                currentBidsTableInPlaceBid($pending, $currentRound);
-              
-            } else {
-                currentBidsTableInPlaceBid($pending, $currentRound);
-            }
+            currentBidsTableInPlaceBid($userid);
         ?>
     <br>
     <br>

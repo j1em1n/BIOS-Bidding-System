@@ -1,10 +1,7 @@
-<?require_once 'include/common.php';?>
-
-
 <div class="topnav">
-    <a class="active" href="admin_index.php">Home</a>
+    <a class="navbutton" href="admin_index.php"><b>Home</b></a>
 
 
-    <div style = "float:right"><a class="active" href="logout.php">Logout</a></div>
+    <div style = "float:right"><a class="navbutton" href="logout.php"><b>Logout</b></a></div>
 
 </div>

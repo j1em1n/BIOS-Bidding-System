@@ -672,7 +672,8 @@ function doBootstrap() {
 		"course_completed.csv" => $course_completed_processed,
 		"bid.csv" => $bid_processed
 	];
-
+	ksort($lines_processed);
+	ksort($errors);
 	return [$lines_processed, $errors];
 
 }
@@ -681,7 +682,6 @@ function bootstrapJSON() {
 	$response = doBootstrap();
 	$lines_processed = $response[0];
 	$errors = $response[1];
-	ksort($lines_processed);
 	$display_lines = array();
 	foreach($lines_processed as $file => $lines) {
 		$display_lines[] = [$file => $lines];
@@ -699,7 +699,6 @@ function bootstrapJSON() {
 		];
 		$result["error"] = array();
 
-		ksort($errors);
 		foreach($errors as $filename => $fileErrors) {
 			foreach($fileErrors as $rowErrors) {
 				$message = $rowErrors["message"];
@@ -734,7 +733,7 @@ function bootstrapUI() {
 	foreach($lines_processed as $filename => $rows) {
 		$_SESSION['success'][] = "$filename - $rows lines successfully added";
 	}
-	header("Location: bootstrap.php");
+	header("Location: admin_index.php");
 	exit();
 }
 ?>

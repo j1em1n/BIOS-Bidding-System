@@ -1,6 +1,5 @@
 <?php
 require_once 'include/common.php';
-require_once 'include/navbar.php';
 
 ?>
 
@@ -10,7 +9,7 @@ require_once 'include/navbar.php';
     </head>
 
     <body>
-        <h1>Welcome to Bios!</h1>
+        <h1>Login to BIOS Bidding</h1>
         <form method='POST' action='process_login.php'>
             <table align = "left">
                 <tr>
@@ -27,7 +26,7 @@ require_once 'include/navbar.php';
                 </tr>
                 <tr>
                     <td colspan='2'>
-                        <input name='Login' type='submit' />
+                        <input name='Login' type='submit' value='Login'/>
                     </td>
                 </tr>
             </table>             

@@ -25,7 +25,7 @@ if(isset($_POST['submit']) && isset($_POST['number'])){
         deleteFailedBids();
     }
     
-    header("Location: adminround.php");
+    header("Location: admin_index.php");
     exit();
 }
 ?>

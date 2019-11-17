@@ -29,54 +29,50 @@ $currentStatus = $roundInfo->getStatus();
 
         <h1>BIOS BIDDING </h1>
         
-        <h2>Welcome, <b><?=$name?></b>!</h2>
-        <h3>Current Round: <?=$currentRound?>
-        <?php 
-        
-        if($currentStatus == 'closed'){
-                echo "<span style = 'color:red'><b>(".strtoupper($currentStatus).")</b>";
-            } else {
-                echo "<span style = 'color:green'><b>(".strtoupper($currentStatus).")</b>";
-            }
-        ?>
-        </h3>
-
-        <h4>Your E-Dollar Balance: <b><u>$<?=$edollar?></u></b></h4>
-
-        <p>
-            <?=printErrors()?>
-            <?=printSuccess()?>
-        </p>
-
-        <?php
+        <div style='float:left; width:60%'>
+            <h2>Welcome, <b><?=$name?></b>!</h2>
+            <h3>Current Round: <?=$currentRound?>
+            <?php 
             
-            $courseDAO = new CourseDAO();
-            $bidDAO = new BidDAO();
-            $bids = $bidDAO->retrieveByUserid($userid);
-            if ($currentStatus == "opened") {
-                $pending = array();
-                $success = array();
-                foreach ($bids as $bid) {
-                    if ($bid->getR1Status() == "Pending" || $bid->getR2Status()) {
-                        $pending[] = $bid;
-                    } elseif ($bid->getR1Status() == "Success") {
-                        $success[] = $bid;
-                    }
+            if($currentStatus == 'closed'){
+                    echo "<span style = 'color:red'><b>(".strtoupper($currentStatus).")</b>";
+                } else {
+                    echo "<span style = 'color:green'><b>(".strtoupper($currentStatus).")</b>";
                 }
-                
-                currentBidsTable($pending, $currentRound);
-                if ($currentRound == 2) {
-                    enrolledSectionsTable($success);
-                }
-            } else {
-                bidResultsTable($bids);
-            }
-        ?>
-        
-        <p>
-            <div class = "button" :hover><a href="placebid.php" style = "text-decoration: none;">Plan & Bid</a><br></div>
-        </p>
+            ?>
+            </h3>
 
+            <h4>Your E-Dollar Balance: <b><u>$<?=$edollar?></u></b></h4>
+
+            <?php
+                
+                $courseDAO = new CourseDAO();
+                $bidDAO = new BidDAO();
+                $bids = $bidDAO->retrieveByUserid($userid);
+                if ($currentStatus == "opened") {
+                    $pending = array();
+                    $success = array();
+                    foreach ($bids as $bid) {
+                        if ($bid->getR1Status() == "Pending" || $bid->getR2Status()) {
+                            $pending[] = $bid;
+                        } elseif ($bid->getR1Status() == "Success") {
+                            $success[] = $bid;
+                        }
+                    }
+                    
+                    currentBidsTable($pending, $currentRound);
+                    if ($currentRound == 2) {
+                        enrolledSectionsTable($success);
+                    }
+                } else {
+                    bidResultsTable($bids);
+                }
+            ?>
+        </div>
+        <div style='float:right; width:40%'>
+            <?=printSuccessFloat()?>
+            <?=printErrorsFloat()?>
+        </div>
     </body>
 
 </html>
