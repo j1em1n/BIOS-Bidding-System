@@ -195,7 +195,7 @@ function printSectionInfo($sections, $userid) {
         $venue = $section->getVenue();
         $size = $section->getSize();
         $vacancies = $section->getVacancies();
-        $minBid = $section->getMinBid();
+        $minBid = number_format($section->getMinBid(),2);
 
         echo "
             <tr>
@@ -530,8 +530,6 @@ function isValidEdollar($edollar) {
         $edollarArr = explode(".", $checkedollar);
         if(strlen($edollarArr[1]) > 2){
             return FALSE;
-        } if ($edollar < 10.0){
-            return FALSE;
         }
     }
     return TRUE;
@@ -613,7 +611,7 @@ function round1Clearing() {
             $studentName = $bid->getUserid();
             $student = $studentDAO->retrieve($studentName);
             $newBalance = $student->getEdollar() + $refund;
-            $studentDAO->updateEdollar($studentName, $newBalance);
+            $studentDAO->updateEdollar($studentName, round($newBalance,2));
         }
 
         // update vacancies for round 2
@@ -721,7 +719,7 @@ function round2Clearing() {
                 $studentName = $bid->getUserid();
                 $student = $studentDAO->retrieve($studentName);
                 $newBalance = $student->getEdollar() + $refund;
-                $studentDAO->updateEdollar($studentName, $newBalance);
+                $studentDAO->updateEdollar($studentName, round($newBalance,2));
             } else {
                 $countSuccess++;
                 $vacancies--;

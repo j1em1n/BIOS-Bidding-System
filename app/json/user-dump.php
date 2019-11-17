@@ -29,14 +29,15 @@ if (!empty($errors)) {
     } else {
         $errors[] = "invalid userid"; 
     }
+    if (empty($errors) && !empty($success)) {
+        $result = $success;
+    } else {
+        sort($errors);
+        $result = jsonErrors($errors);
+    }
 }
 
-if (empty($errors) && !empty($success)) {
-    $result = $success;
-} else {
-    sort($errors);
-    $result = jsonErrors($errors);
-}
+
 
 
 header('Content-Type: application/json');

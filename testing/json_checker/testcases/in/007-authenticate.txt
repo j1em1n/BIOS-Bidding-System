@@ -1,2 +1,0 @@
-username=fakeadmin
-password=wrongpassword

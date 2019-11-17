@@ -1,0 +1,8 @@
+{
+    "status": "error",
+    "message": [
+        "blank course",
+        "invalid token",
+        "missing userid"
+    ]
+}

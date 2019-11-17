@@ -1,0 +1,207 @@
+{
+    "status": "success",
+    "course": [
+        {
+            "course": "ECON001",
+            "school": "SOE",
+            "title": "Microeconomics",
+            "description": "Microeconomics is about economics in smaller scale (e.g. firm-scale)",
+            "exam date": "20131101",
+            "exam start": "1530",
+            "exam end": "1845"
+        },
+        {
+            "course": "IS100",
+            "school": "SIS",
+            "title": "Calculus",
+            "description": "The basic objective of Calculus is to relate small-scale (differential) quantities to large-scale (integrated) quantities. This is accomplished by means of the Fundamental Theorem of Calculus. Students should demonstrate an understanding of the integral as a cumulative sum, of the derivative as a rate of change, and of the inverse relationship between integration and differentiation.",
+            "exam date": "20131119",
+            "exam start": "830",
+            "exam end": "1145"
+        },
+        {
+            "course": "IS205",
+            "school": "SIS",
+            "title": "All Talk, No Action",
+            "description": "The easiest course of all. We will sit around and talk.",
+            "exam date": "20131104",
+            "exam start": "830",
+            "exam end": "1145"
+        },
+        {
+            "course": "IS209",
+            "school": "SIS",
+            "title": "Information Storage and Management",
+            "description": "Information storage and management (ISM) - once a relatively straightforward operation -has developed into a highly sophisticated pillar of information technology, requiring proven technical expertise.",
+            "exam date": "20131102",
+            "exam start": "1200",
+            "exam end": "1515"
+        },
+        {
+            "course": "MGMT001",
+            "school": "SOB",
+            "title": "Business,Government, and Society",
+            "description": "learn the interrelation amongst the three",
+            "exam date": "20131102",
+            "exam start": "830",
+            "exam end": "1145"
+        }
+    ],
+    "section": [
+        {
+            "course": "ECON001",
+            "section": "S1",
+            "day": "Thursday",
+            "start": "830",
+            "end": "1145",
+            "instructor": "John KHOO",
+            "venue": "Seminar Rm 2-34",
+            "size": 10
+        },
+        {
+            "course": "IS100",
+            "section": "S1",
+            "day": "Monday",
+            "start": "830",
+            "end": "1145",
+            "instructor": "Albert KHOO",
+            "venue": "Seminar Rm 2-1",
+            "size": 10
+        },
+        {
+            "course": "IS100",
+            "section": "S2",
+            "day": "Tuesday",
+            "start": "1200",
+            "end": "1515",
+            "instructor": "Billy KHOO",
+            "venue": "Seminar Rm 2-2",
+            "size": 10
+        },
+        {
+            "course": "IS205",
+            "section": "S1",
+            "day": "Thursday",
+            "start": "1200",
+            "end": "1515",
+            "instructor": "Carlo KHOO",
+            "venue": "Seminar Rm 2-29",
+            "size": 10
+        },
+        {
+            "course": "MGMT001",
+            "section": "S1",
+            "day": "Wednesday",
+            "start": "830",
+            "end": "1145",
+            "instructor": "Gavin KHOO",
+            "venue": "Seminar Rm 2-33",
+            "size": 5
+        }
+    ],
+    "student": [
+        {
+            "userid": "amy.ng.2009",
+            "password": "qwerty128",
+            "name": "Amy NG",
+            "school": "SIS",
+            "edollar": 200.0
+        },
+        {
+            "userid": "ben.ng.2009",
+            "password": "qwerty129",
+            "name": "Ben NG",
+            "school": "SIS",
+            "edollar": 189.0
+        },
+        {
+            "userid": "calvin.ng.2009",
+            "password": "qwerty130",
+            "name": "Calvin NG",
+            "school": "SIS",
+            "edollar": 200.0
+        },
+        {
+            "userid": "dawn.ng.2009",
+            "password": "qwerty131",
+            "name": "Dawn NG",
+            "school": "SIS",
+            "edollar": 187.0
+        },
+        {
+            "userid": "eddy.ng.2009",
+            "password": "qwerty132",
+            "name": "Eddy NG",
+            "school": "SIS",
+            "edollar": 200.0
+        },
+        {
+            "userid": "fred.ng.2009",
+            "password": "qwerty133",
+            "name": "Fred NG",
+            "school": "SIS",
+            "edollar": 185.0
+        },
+        {
+            "userid": "ian.ng.2009",
+            "password": "qwerty136",
+            "name": "Ian NG",
+            "school": "SIS",
+            "edollar": 182.0
+        },
+        {
+            "userid": "yasir.ng.2009",
+            "password": "qwerty152",
+            "name": "Yasir NG",
+            "school": "SOB",
+            "edollar": 168.0
+        },
+        {
+            "userid": "zac.ng.2009",
+            "password": "qwerty153",
+            "name": "Zac NG",
+            "school": "SOB",
+            "edollar": 200.0
+        }
+    ],
+    "prerequisite": [],
+    "bid": [
+        {
+            "userid": "ian.ng.2009",
+            "amount": 18.0,
+            "course": "IS100",
+            "section": "S1"
+        },
+        {
+            "userid": "fred.ng.2009",
+            "amount": 15.0,
+            "course": "IS100",
+            "section": "S1"
+        },
+        {
+            "userid": "dawn.ng.2009",
+            "amount": 13.0,
+            "course": "IS100",
+            "section": "S1"
+        },
+        {
+            "userid": "ben.ng.2009",
+            "amount": 11.0,
+            "course": "IS100",
+            "section": "S1"
+        },
+        {
+            "userid": "yasir.ng.2009",
+            "amount": 32.0,
+            "course": "MGMT001",
+            "section": "S1"
+        }
+    ],
+    "completed-course": [
+        {
+            "userid": "amy.ng.2009",
+            "course": "IS100"
+        }
+    ],
+    "section-student": []
+}

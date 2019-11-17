@@ -1,0 +1,70 @@
+{
+    "status": "success",
+    "course": [
+        {
+            "course": "IS110",
+            "school": "SIS",
+            "title": "Technology and World Change",
+            "description": "As technology changes, so does the world",
+            "exam date": "20191127",
+            "exam start": "1000",
+            "exam end": "1100"
+        },
+        {
+            "course": "IS205",
+            "school": "SIS",
+            "title": "Software Project Management",
+            "description": "Testing your ability to adapt to changes in the real world!",
+            "exam date": "20191130",
+            "exam start": "800",
+            "exam end": "1130"
+        }
+    ],
+    "section": [
+        {
+            "course": "IS110",
+            "section": "S1",
+            "day": "Monday",
+            "start": "800",
+            "end": "1130",
+            "instructor": "Felicia HENG",
+            "venue": "Seminar Rm 2-4",
+            "size": 10
+        },
+        {
+            "course": "IS205",
+            "section": "S1",
+            "day": "Monday",
+            "start": "800",
+            "end": "1130",
+            "instructor": "Kyle KHOO",
+            "venue": "Seminar RM 2-8",
+            "size": 20
+        }
+    ],
+    "student": [
+        {
+            "userid": "adam.ng.2017",
+            "password": "qwerty123",
+            "name": "adam NG",
+            "school": "SIS",
+            "edollar": 200.0
+        },
+        {
+            "userid": "eugene.tsai.2018",
+            "password": "qwerty124",
+            "name": "eugene TSAI",
+            "school": "SOB",
+            "edollar": 300.0
+        }
+    ],
+    "prerequisite": [
+        {
+            "course": "IS205",
+            "prerequisite": "IS110"
+        }
+    ],
+    "bid": [],
+    "completed-course": [],
+    "section-student": []
+}

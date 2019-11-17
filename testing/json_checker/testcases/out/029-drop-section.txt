@@ -1,0 +1,9 @@
+{
+    "status": "error",
+    "message": [
+        "blank course",
+        "blank section",
+        "blank token",
+        "blank userid"
+    ]
+}

@@ -38,7 +38,10 @@
 
     // Check if is edollar is valid
     if(!isValidEdollar($edollar)){
-        $_SESSION['errors'][] = "E-dollar must be numeric with up to 2 decimal places";
+        $_SESSION['errors'][] = "E-dollar must be a positive number with up to 2 decimal places";
+    } elseif ($edollar < 10.0) {
+        // Check if bidding amount >= 10.0
+        $_SESSION['errors'][] = "E-dollar must be greater than 10.00";
     }
 
     // If inputs do not pass field and data validations, redirect user back to placebid.php immediately
@@ -60,9 +63,11 @@
     // Perform logic validations only if input data validations are passed
 
     // Check if bid is above min bid
-    $minBid = $section->getMinBid();
-    if ($edollar < $minBid) {
-        $_SESSION['errors'][] = "Your bid is less than the minimum bid";
+    if ($currentRound == 2) {
+        $minBid = $section->getMinBid();
+        if ($edollar < $minBid) {
+            $_SESSION['errors'][] = "Your bid is less than the minimum bid";
+        }
     }
 
     // Check if student has enough e-dollars
@@ -127,8 +132,8 @@
         $thisBid = ($currentRound == 1) ? new Bid($userid, $edollar, $courseCode, $sectionNum, "Pending", null) : new Bid($userid, $edollar, $courseCode, $sectionNum, null, "Pending");
         $bidDAO->add($thisBid);
         // Update student's e-dollar balance
-        $updatedAmount = $student->getEdollar() - $edollar;
-        $studentDAO->updateEdollar($userid, $updatedAmount);
+        $updatedAmount = number_format($student->getEdollar() - $edollar,2);
+        $studentDAO->updateEdollar($userid, round($updatedAmount,2));
 
         $_SESSION['success'][] = "Your bid for $courseCode {$course->getTitle()}, Section $sectionNum was placed successfully!<br>
         You have $$updatedAmount left in your balance.";
