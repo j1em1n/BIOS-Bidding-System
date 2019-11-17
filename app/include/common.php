@@ -345,24 +345,25 @@ function bidResultsTable($bids) {
 }
 
 function enrolledSectionsTable($bids) {
-    $courseDAO = new CourseDAO();
-    echo "
-        <p style =  'font-size: 20; font-family:Fenix; font-style: bold; color:#160761'>Enrolled sections</p>
+    if(!empty($bids)) {
+        $courseDAO = new CourseDAO();
+        echo "
+            <p style =  'font-size: 20; font-family:Fenix; font-style: bold; color:#160761'>Enrolled sections</p>
 
-        <table border '1'>
-        <tr>
-            <b>
-            <th>Course Code</th>
-            <th>Course Name</th>
-            <th>Section</th>
-            <th>Bid amount (e$)</th>
-            <th>Drop</th>
-            </b>
-        </tr>";
-    foreach ($bids as $bid) {
-        $code = $bid->getCode();
-        $section = $bid->getSection();
-        $amount = $bid->getAmount();
+            <table border '1'>
+            <tr>
+                <b>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Section</th>
+                <th>Bid amount (e$)</th>
+                <th>Drop</th>
+                </b>
+            </tr>";
+        foreach ($bids as $bid) {
+            $code = $bid->getCode();
+            $section = $bid->getSection();
+            $amount = $bid->getAmount();
 
             echo "
             <tr>
