@@ -83,5 +83,5 @@ CREATE TABLE round
 );
 
 
-INSERT INTO admin VALUES ('admin', '$2y$10$oz/TbNjQ.HqVRvz6JuRqx.jmSeorfBxIS4DXNWT7pY2r5qUf2ugc.');
+INSERT INTO admin VALUES ('admin', '$2y$10$aMqX.qWFAnB.Viy7QuJYk.afV1hE1txcF8sxJ2tTYdRUazUaqRv86');
 INSERT INTO round VALUES (1, 'opened');
