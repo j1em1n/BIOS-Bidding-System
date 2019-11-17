@@ -243,18 +243,14 @@ function currentBidsTableInPlaceBid($userid) {
 function printSimplifiedTable($bids) {
     $courseDAO = new CourseDAO();
     echo "
-        <p style =  'font-size: 20; font-family:Fenix; font-style: bold; color:#160761'>Current bids</p>
-        <table border '1'>
-        <tr>
-            <b>
-            <th>Course Code</th>
-            <th>Course Name</th>
-            <th>Section</th>
-            <th>Bid amount (e$)</th>
-            <th>Result</th>
-            <th>Drop</th>
-            </b>
-        </tr>";
+    <tr>
+        <b>
+        <th>Course Code</th>
+        <th>Course Name</th>
+        <th>Section</th>
+        <th>Bid amount (e$)</th>
+        </b>
+    </tr>"; 
     foreach ($bids as $bid) {
         $amount = number_format($bid->getAmount(),2);
         echo "
@@ -345,12 +341,10 @@ function bidResultsTable($bids) {
 }
 
 function enrolledSectionsTable($bids) {
+    $courseDAO = new CourseDAO();
+    echo "<h2><b>Your enrolled sections</b></h2>";
     if(!empty($bids)) {
-        $courseDAO = new CourseDAO();
-        echo "
-            <p style =  'font-size: 20; font-family:Fenix; font-style: bold; color:#160761'>Enrolled sections</p>
-
-            <table border '1'>
+        echo "<table border='1'>
             <tr>
                 <b>
                 <th>Course Code</th>
@@ -363,7 +357,7 @@ function enrolledSectionsTable($bids) {
         foreach ($bids as $bid) {
             $code = $bid->getCode();
             $section = $bid->getSection();
-            $amount = $bid->getAmount();
+            $amount = number_format($bid->getAmount(),2);
 
             echo "
             <tr>
