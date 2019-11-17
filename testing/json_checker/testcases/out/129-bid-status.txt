@@ -1,7 +1,7 @@
 {
     "status": "success",
     "vacancy": 10,
-    "min-bid-amount": 12.0,
+    "min-bid-amount": 13.0,
     "students": [
         {
             "userid": "olivia.ng.2009",
@@ -54,7 +54,7 @@
         {
             "userid": "calvin.ng.2009",
             "amount": 13.0,
-            "balance": 188.0,
+            "balance": 187.0,
             "status": "pending"
         },
         {

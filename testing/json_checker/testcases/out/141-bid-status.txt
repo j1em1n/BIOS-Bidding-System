@@ -1,7 +1,7 @@
 {
     "status": "success",
-    "vacancy": 10,
-    "min-bid-amount": 12.0,
+    "vacancy": 2,
+    "min-bid-amount": 14.0,
     "students": [
         {
             "userid": "olivia.ng.2009",
@@ -54,13 +54,13 @@
         {
             "userid": "dawn.ng.2009",
             "amount": 13.0,
-            "balance": 187.0,
+            "balance": 200.0,
             "status": "fail"
         },
         {
             "userid": "calvin.ng.2009",
             "amount": 13.0,
-            "balance": 188.0,
+            "balance": 200.0,
             "status": "fail"
         }
     ]

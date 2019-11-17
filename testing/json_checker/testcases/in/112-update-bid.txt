@@ -1,1 +1,1 @@
-r={"userid": "whothisname", "amount": HAHA, "course": "coursecourse", "section": "sectionsection"}
+r={"userid": "whothisname", "amount": "HAHA", "course": "coursecourse", "section": "sectionsection"}
