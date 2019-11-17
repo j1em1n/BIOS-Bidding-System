@@ -1,7 +1,0 @@
-{
-  "status" : "success",
-  "students" : [ {
-    "userid" : "pear",
-    "amount" : 12.0
-  } ]
-}

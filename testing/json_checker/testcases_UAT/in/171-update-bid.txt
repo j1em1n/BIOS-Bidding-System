@@ -1,1 +1,0 @@
-r={   "userid": "charlie",   "amount": 350.0,   "course": "EC001",   "section": "S1"}
